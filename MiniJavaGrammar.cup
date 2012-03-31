@@ -1,6 +1,16 @@
 // CUP specification for a simple expression evaluator (w/ actions)
 
 import java_cup.runtime.*;
+import la.Lexeme;
+
+/* allows methods and variable to be placed directly within the generated parser class */
+parser code {:
+    @Override
+    public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
+        throw new Exception("Syntax error near symbol '" + Lexeme.getLexemeCodingTable().get(cur_token.sym)
+                + "' at position " + cur_token.left);
+    }
+:};
 
 /* Preliminaries to set up and use the scanner.  */
 scan with {: return getScanner().next_token(); :};
