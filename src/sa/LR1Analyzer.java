@@ -542,16 +542,10 @@ public class LR1Analyzer extends java_cup.runtime.lr_parser {
         return getScanner().next_token();
     }
 
-    private MainLab1JFrame frame;
-
     @Override
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
         throw new Exception("Syntax error near symbol '" + Lexeme.getLexemeCodingTable().get(cur_token.sym)
                 + "' at position " + cur_token.left);
-    }
-
-    public void setJFrame(MainLab1JFrame frame) {
-        this.frame = frame;
     }
 
 }
