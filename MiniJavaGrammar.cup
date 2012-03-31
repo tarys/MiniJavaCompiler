@@ -1,0 +1,280 @@
+// CUP specification for a simple expression evaluator (w/ actions)
+
+import java_cup.runtime.*;
+
+/* Preliminaries to set up and use the scanner.  */
+scan with {: return getScanner().next_token(); :};
+
+/* Terminals (tokens returned by the scanner). */
+// Data types
+terminal        INTEGER_TYPE;
+terminal        FLOAT_TYPE;
+terminal        CHAR_TYPE;
+terminal        STRING_TYPE;
+
+// Identifier
+terminal		IDENTIFIER;
+
+// Keywords
+terminal        CLASS_KEYWORD;
+terminal		BOOLEAN_KEYWORD;
+terminal		BYTE_KEYWORD;
+terminal		CHAR_KEYWORD;
+terminal		ELSE_KEYWORD;
+terminal		FALSE_KEYWORD;
+terminal		FLOAT_KEYWORD;
+terminal		IF_KEYWORD;
+terminal		INT_KEYWORD;
+terminal		MAIN_KEYWORD;
+terminal		NEW_KEYWORD;
+terminal		PUBLIC_KEYWORD;
+terminal		RETURN_KEYWORD;
+terminal		STATIC_KEYWORD;
+terminal		STRING_KEYWORD;
+terminal		TRUE_KEYWORD;
+terminal		VOID_KEYWORD;
+terminal		WHILE_KEYWORD;
+
+// Operators
+terminal        STOP;
+terminal        PLUS;
+terminal        MINUS;
+terminal        UNARY_MINUS;
+terminal        TIMES;
+terminal        DIVIDE;
+terminal        LOWER;
+terminal        LOWER_EQUAL;
+terminal		GREATER;
+terminal		GREATER_EQUAL;
+terminal		INSTANCEOF;
+terminal		EQUAL;
+terminal		NOT_EQUAL;
+terminal		EXCLAMATION;
+terminal		AND;
+terminal		OR;
+terminal		ASSIGN;
+terminal		SYSTEM_OUT_PRINTLN;
+terminal		SYSTEM_IN_READ;
+terminal		BREAK;
+
+// Delimiters
+terminal		SEMICOLON;
+terminal        COMMA;
+terminal		LEFT_SQUARE_PARENTHESIS;
+terminal		RIGHT_SQUARE_PARENTHESIS;
+terminal		LEFT_PARENTHESIS;
+terminal		RIGHT_PARENTHESIS;
+terminal		LEFT_FIG_PARENTHESIS;
+terminal		RIGHT_FIG_PARENTHESIS;
+terminal		SPACE;
+terminal		TAB;
+terminal		NEW_LINE;
+
+/* Non-terminals */
+
+non terminal     goal;
+non terminal     compilation_unit;
+non terminal     main_class;
+non terminal     main_class_methods_declaration;
+non terminal     main_method_declaration;
+non terminal     classes_declaration;
+non terminal     class_declaration;
+non terminal     fields_declaration;
+non terminal     field_declaration;
+non terminal     methods_declaration;
+non terminal     method_declaration;
+non terminal     method_params_declaration;
+non terminal     params_list_declaration;
+non terminal     param_declaration;
+non terminal     block;
+non terminal     variables_declaration;
+non terminal     variable_declaration;
+non terminal     statements;
+non terminal     statement;
+non terminal     assignment_statement;
+non terminal     if_statement;
+non terminal     while_statement;
+non terminal     input_statement;
+non terminal     output_statement;
+non terminal     type;
+non terminal     reference_type;
+non terminal     return_statement;
+non terminal     expression;
+non terminal     method_call;
+non terminal     actual_params_list;
+
+/* Precedences */
+precedence left     ASSIGN;
+precedence left     OR;
+precedence left     AND;
+precedence left     EQUAL, NOT_EQUAL;
+precedence left     INSTANCEOF, LOWER,LOWER_EQUAL, GREATER, GREATER_EQUAL;
+precedence left     PLUS, MINUS;
+precedence left     TIMES, DIVIDE;
+precedence right    EXCLAMATION, UNARY_MINUS, NEW_KEYWORD;
+precedence left     STOP;
+precedence left     LEFT_PARENTHESIS, RIGHT_PARENTHESIS;
+
+/* The grammar */
+start with goal;
+
+goal                            ::= compilation_unit;
+
+compilation_unit                ::= main_class
+                                  | main_class classes_declaration
+                                  | classes_declaration main_class
+                                  | classes_declaration main_class classes_declaration;
+
+main_class                      ::= PUBLIC_KEYWORD CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
+                                        fields_declaration
+                                        main_class_methods_declaration
+                                    RIGHT_FIG_PARENTHESIS
+                                  | PUBLIC_KEYWORD CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
+                                        main_class_methods_declaration
+                                    RIGHT_FIG_PARENTHESIS;
+
+main_class_methods_declaration  ::= main_method_declaration
+                                  | main_method_declaration methods_declaration
+                                  | methods_declaration main_method_declaration
+                                  | methods_declaration main_method_declaration methods_declaration;
+
+main_method_declaration         ::= PUBLIC_KEYWORD STATIC_KEYWORD VOID_KEYWORD MAIN_KEYWORD
+                                    LEFT_PARENTHESIS STRING_KEYWORD LEFT_SQUARE_PARENTHESIS RIGHT_SQUARE_PARENTHESIS
+                                    IDENTIFIER RIGHT_PARENTHESIS LEFT_FIG_PARENTHESIS
+                                        block
+                                    RIGHT_FIG_PARENTHESIS;
+
+classes_declaration             ::= classes_declaration class_declaration
+                                  | class_declaration;
+
+class_declaration               ::= CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
+                                        fields_declaration
+                                        methods_declaration
+                                    RIGHT_FIG_PARENTHESIS
+                                  | CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
+                                        fields_declaration
+                                    RIGHT_FIG_PARENTHESIS
+                                  | CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
+                                        methods_declaration
+                                    RIGHT_FIG_PARENTHESIS
+                                  | CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
+                                    RIGHT_FIG_PARENTHESIS;
+
+fields_declaration              ::= fields_declaration field_declaration
+                                  | field_declaration;
+
+field_declaration               ::= PUBLIC_KEYWORD type IDENTIFIER SEMICOLON
+                                  | PUBLIC_KEYWORD type IDENTIFIER ASSIGN expression SEMICOLON;
+
+methods_declaration             ::= methods_declaration method_declaration
+                                  | method_declaration;
+
+method_declaration              ::= PUBLIC_KEYWORD type IDENTIFIER method_params_declaration
+                                    LEFT_FIG_PARENTHESIS
+                                        return_statement
+                                    RIGHT_FIG_PARENTHESIS
+                                  | PUBLIC_KEYWORD type IDENTIFIER method_params_declaration
+                                    LEFT_FIG_PARENTHESIS
+                                        block
+                                        return_statement
+                                    RIGHT_FIG_PARENTHESIS;
+
+method_params_declaration       ::= LEFT_PARENTHESIS RIGHT_PARENTHESIS
+                                  | LEFT_PARENTHESIS params_list_declaration RIGHT_PARENTHESIS;
+
+params_list_declaration         ::= params_list_declaration COMMA param_declaration
+                                  | param_declaration;
+
+param_declaration               ::= type IDENTIFIER;
+
+block                           ::= variables_declaration
+                                  | variables_declaration statements
+                                  | statements;
+
+variables_declaration           ::= variables_declaration variable_declaration
+                                  | variable_declaration;
+
+variable_declaration            ::= type IDENTIFIER SEMICOLON
+                                  | type IDENTIFIER ASSIGN expression SEMICOLON;
+
+statements                      ::= statements statement
+                                  | statement;
+
+statement                       ::= assignment_statement
+                                  | if_statement
+                                  | while_statement
+                                  | input_statement
+                                  | output_statement;
+
+assignment_statement            ::= IDENTIFIER ASSIGN expression SEMICOLON;
+
+if_statement                    ::= IF_KEYWORD LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
+                                    LEFT_FIG_PARENTHESIS
+                                        block
+                                    RIGHT_FIG_PARENTHESIS
+                                  | IF_KEYWORD LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
+                                    LEFT_FIG_PARENTHESIS
+                                        block
+                                    RIGHT_FIG_PARENTHESIS
+                                    ELSE_KEYWORD LEFT_FIG_PARENTHESIS
+                                        block
+                                    RIGHT_FIG_PARENTHESIS;
+
+while_statement                 ::= WHILE_KEYWORD
+                                    LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
+                                    LEFT_FIG_PARENTHESIS
+                                        block
+                                    RIGHT_FIG_PARENTHESIS;
+
+input_statement                 ::= type IDENTIFIER ASSIGN SYSTEM_IN_READ
+                                    LEFT_PARENTHESIS RIGHT_PARENTHESIS SEMICOLON;
+
+output_statement                ::= SYSTEM_OUT_PRINTLN LEFT_PARENTHESIS expression RIGHT_PARENTHESIS SEMICOLON;
+
+type                            ::= BOOLEAN_KEYWORD
+                                  | BYTE_KEYWORD
+                                  | CHAR_KEYWORD
+                                  | FLOAT_KEYWORD
+                                  | INT_KEYWORD
+                                  | STRING_KEYWORD
+                                  | VOID_KEYWORD
+                                  | reference_type;
+
+reference_type                  ::= IDENTIFIER;
+
+return_statement                ::= RETURN_KEYWORD SEMICOLON
+                                  | RETURN_KEYWORD expression SEMICOLON;
+
+expression                      ::= expression STOP method_call
+                                  | expression INSTANCEOF expression
+                                  | EXCLAMATION expression
+                                  | LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
+                                  | expression PLUS expression
+                                  | expression MINUS expression
+                                  | expression TIMES expression
+                                  | expression DIVIDE expression
+                                  | expression LOWER expression
+                                  | expression LOWER_EQUAL expression
+                                  | expression GREATER expression
+                                  | expression GREATER_EQUAL expression
+                                  | expression EQUAL expression
+                                  | expression NOT_EQUAL expression
+                                  | expression AND expression
+                                  | expression OR expression
+                                  | INTEGER_TYPE
+                                  | FLOAT_TYPE
+                                  | TRUE_KEYWORD
+                                  | FALSE_KEYWORD
+                                  | STRING_TYPE
+                                  | CHAR_TYPE
+                                  | IDENTIFIER
+                                  | NEW_KEYWORD IDENTIFIER LEFT_PARENTHESIS RIGHT_PARENTHESIS
+                                  | BREAK
+                                  | MINUS expression
+                                    %prec UNARY_MINUS;
+
+method_call                     ::= IDENTIFIER LEFT_PARENTHESIS  RIGHT_PARENTHESIS
+                                  | IDENTIFIER LEFT_PARENTHESIS actual_params_list  RIGHT_PARENTHESIS;
+
+actual_params_list              ::= actual_params_list COMMA expression
+                                  | expression;

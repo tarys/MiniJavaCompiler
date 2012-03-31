@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="cup">
+	<property name="destdir"  location="src/sa"/>
+	<path id="cupclasspath">
+		<fileset dir="." includes="lib/java-cup-11a.jar"/>
+	</path>
+    <target name="clean" description="clean up" >		
+		<delete dir="${destdir}"/>
+		<mkdir dir="${destdir}"/>
+	</target>
+	<taskdef name="cup" classname="java_cup.anttask.CUPTask" classpathref="cupclasspath" />
+	<target name="cup" depends="clean">
+		<cup srcfile="MiniJavaGrammar.cup"
+			destdir="${destdir}"
+			interface="true"
+            nonterms="true"
+			package="sa"
+			parser="LR1Analyzer"
+			symbols="SymbolsInfo"
+			dump_grammar="false"
+			dump_states="false"
+			dump_tables="false"
+		/>		
+	</target>
+</project>
