@@ -333,7 +333,6 @@ public class MainLab1JFrame extends javax.swing.JFrame {
     private void checkSyntax() {
         lexicalAnalyzer.setSourceCodeText(sourceCodeArea.getText());
         LR1Analyzer syntaxAnalyzer = new LR1Analyzer(lexicalAnalyzer);
-        syntaxAnalyzer.setJFrame(this);
         try {
             syntaxAnalyzer.parse();
             logInfo("The syntax is correct");

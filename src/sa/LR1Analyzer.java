@@ -8,6 +8,7 @@ package sa;
 import gui.MainLab1JFrame;
 import java_cup.runtime.Symbol;
 import la.Lexeme;
+import la.LexicalAnalyzer;
 
 /**
  * CUP v0.11a beta 20060608 generated parser.
@@ -545,16 +546,14 @@ public class LR1Analyzer extends java_cup.runtime.lr_parser {
 
     @Override
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
-        throw new SyntaxException("Syntax error near symbol '" + Lexeme.getLexemeCodingTable().get(cur_token.sym) + "' ", (Lexeme) cur_token);
+        throw new Exception("Syntax error near symbol '" + Lexeme.getLexemeCodingTable().get(cur_token.sym)
+                + "' at position " + cur_token.left);
     }
 
     public void setJFrame(MainLab1JFrame frame) {
         this.frame = frame;
     }
 
-    public MainLab1JFrame getFrame() {
-        return frame;
-    }
 }
 
 /**
