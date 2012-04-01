@@ -16,7 +16,7 @@ parser code {:
 
     @Override
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
-        tthrow new Exception("Syntax error near symbol " + cur_token);
+        throw new Exception("Syntax error near symbol " + cur_token);
     }
 :};
 
@@ -185,11 +185,20 @@ field_declaration               ::= PUBLIC_KEYWORD type IDENTIFIER SEMICOLON
 methods_declaration             ::= methods_declaration method_declaration
                                   | method_declaration;
 
-method_declaration              ::= PUBLIC_KEYWORD type IDENTIFIER method_params_declaration
+method_declaration              ::= PUBLIC_KEYWORD type  IDENTIFIER method_params_declaration
                                     LEFT_FIG_PARENTHESIS
                                         return_statement
                                     RIGHT_FIG_PARENTHESIS
-                                  | PUBLIC_KEYWORD type IDENTIFIER method_params_declaration
+                                  | PUBLIC_KEYWORD type  IDENTIFIER method_params_declaration
+                                    LEFT_FIG_PARENTHESIS
+                                        block
+                                        return_statement
+                                    RIGHT_FIG_PARENTHESIS
+                                  | PUBLIC_KEYWORD VOID_KEYWORD  IDENTIFIER method_params_declaration
+                                    LEFT_FIG_PARENTHESIS
+                                        return_statement
+                                    RIGHT_FIG_PARENTHESIS
+                                  | PUBLIC_KEYWORD VOID_KEYWORD  IDENTIFIER method_params_declaration
                                     LEFT_FIG_PARENTHESIS
                                         block
                                         return_statement
@@ -260,8 +269,6 @@ type                            ::= BOOLEAN_KEYWORD
                                     {: RESULT = SymbolsInfo.INTEGER_TYPE; :}
                                   | STRING_KEYWORD
                                     {: RESULT = SymbolsInfo.STRING_TYPE; :}
-                                  | VOID_KEYWORD
-                                    {: RESULT = SymbolsInfo.VOID_KEYWORD; :}
                                   | reference_type:value
                                     {: RESULT = value; :}
                                   ;
