@@ -13,7 +13,7 @@ public class Lexeme extends Symbol {
         super(lexemeCode, startFrom, startFrom + value.toString().length(), value);
     }
 
-    private LexemeBuilder.Type type;
+    private LexemeType type;
 
 
     @Override
@@ -34,7 +34,7 @@ public class Lexeme extends Symbol {
                 "; right position=" + right + "]";
     }
 
-    public LexemeBuilder.Type getType() {
+    public LexemeType getType() {
         return type;
     }
 
@@ -50,7 +50,7 @@ public class Lexeme extends Symbol {
         return getValue().toString().length();
     }
 
-    public void setType(LexemeBuilder.Type type) {
+    public void setType(LexemeType type) {
         this.type = type;
     }
 }

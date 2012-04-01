@@ -3,7 +3,6 @@ package la;
 import sa.SymbolsInfo;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.TreeMap;
 
 /**
@@ -15,15 +14,15 @@ public class LexemeBuilder {
     static {
         int i = 0;
         LexemeBuilder.lexemeCodingTable = new TreeMap<Integer, String>();
-        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.EOF, LexemeBuilder.Type.EOF.name());
+        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.EOF, la.LexemeType.EOF.name());
 
-        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.INTEGER_TYPE, LexemeBuilder.Type.INTEGER.name());
-        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.FLOAT_TYPE, LexemeBuilder.Type.FLOAT.name());
-        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.CHAR_TYPE, LexemeBuilder.Type.CHAR.name());
-        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.STRING_TYPE, LexemeBuilder.Type.STRING.name());
-        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.BOOLEAN_TYPE, LexemeBuilder.Type.BOOLEAN.name());
+        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.INTEGER_TYPE, la.LexemeType.INTEGER.name());
+        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.FLOAT_TYPE, la.LexemeType.FLOAT.name());
+        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.CHAR_TYPE, la.LexemeType.CHAR.name());
+        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.STRING_TYPE, la.LexemeType.STRING.name());
+        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.BOOLEAN_TYPE, la.LexemeType.BOOLEAN.name());
 
-        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.IDENTIFIER, LexemeBuilder.Type.IDENTIFIER.name());
+        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.IDENTIFIER, la.LexemeType.IDENTIFIER.name());
 
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.BOOLEAN_KEYWORD, "boolean");
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.BYTE_KEYWORD, "byte");
@@ -73,15 +72,15 @@ public class LexemeBuilder {
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.RIGHT_FIG_PARENTHESIS, "}");
     }
 
-    static Lexeme buildLexeme(int startAnalyzePosition, Type lexemeType, String lexemeText)
+    static Lexeme buildLexeme(LexemeType lexemeType, String lexemeText, int lexemeStartPosition)
             throws LexicalAnalyzerException {
-        Lexeme lexeme = new Lexeme(lexemeText, startAnalyzePosition,
+        Lexeme lexeme = new Lexeme(lexemeText, lexemeStartPosition,
                                    getLexemeCode(lexemeText.toString(), lexemeType));
         lexeme.setType(lexemeType);
         return lexeme;
     }
 
-    protected static int getLexemeCode(String lexemeText, Type type) throws LexicalAnalyzerException {
+    protected static int getLexemeCode(String lexemeText, LexemeType type) throws LexicalAnalyzerException {
         Integer result = getLexemeCode(lexemeText);
         if (result == null) {
             /*if no exact matches lexeme trying to find out code by  lexeme type*/
@@ -107,7 +106,7 @@ public class LexemeBuilder {
         return result;
     }
 
-    protected static Integer getLexemeCode(Type lexemeType) {
+    protected static Integer getLexemeCode(LexemeType lexemeType) {
         Integer result = null;
         Iterator<Integer> lexemeTableKeysIterator = getLexemeCodingTable().keySet().iterator();
         while (lexemeTableKeysIterator.hasNext()) {
@@ -125,16 +124,4 @@ public class LexemeBuilder {
         return lexemeCodingTable;
     }
 
-    public enum Type {
-
-        CHAR, DELIMITER, FLOAT, IDENTIFIER, INTEGER, BOOLEAN, KEYWORD, OPERATOR, STRING, EOF;
-
-        public static String[] getValues() {
-            LinkedList<String> result = new LinkedList<String>();
-            for (Type value : Type.values()) {
-                result.add(value.name());
-            }
-            return result.toArray(new String[0]);
-        }
-    }
 }

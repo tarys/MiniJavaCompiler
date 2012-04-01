@@ -12,6 +12,7 @@ package gui;
 
 import la.Lexeme;
 import la.LexemeBuilder;
+import la.LexemeType;
 import la.LexicalAnalyzerException;
 
 import javax.swing.*;
@@ -83,7 +84,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Select lexeme type:");
 
-        lexemeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(LexemeBuilder.Type.getValues()));
+        lexemeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(LexemeType.getValues()));
 
         getLexemeButton.setText("Get lexeme");
         getLexemeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -284,7 +285,8 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         try {
             String sourceCode = sourceCodeArea.getText();
             int currentCaretPosition = sourceCodeArea.getCaretPosition();
-            LexemeBuilder.Type lexemeType = LexemeBuilder.Type.valueOf(lexemeTypeComboBox.getSelectedItem().toString());
+            LexemeType lexemeType = LexemeType.valueOf(
+                    lexemeTypeComboBox.getSelectedItem().toString());
             Lexeme requestedLexeme = lexicalAnalyzer.getLexeme(sourceCode, currentCaretPosition, lexemeType);
             sourceCodeArea.requestFocus();
             int newCaretPosition = sourceCodeArea.getCaretPosition() + requestedLexeme.getLength();

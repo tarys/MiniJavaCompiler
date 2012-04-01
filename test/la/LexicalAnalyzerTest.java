@@ -21,7 +21,7 @@ public class LexicalAnalyzerTest {
     @Test
     public void testGetIdLexeme() throws Exception {
         String codeText = "test id string";
-        Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.IDENTIFIER);
+        Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeType.IDENTIFIER);
         System.out.println("\n === JUnit4 Test: testGetIdLexeme() method ===");
         System.out.println("\nInput: \"" + codeText + "\"");
         System.out.println("Found lexeme: " + lexeme);
@@ -30,7 +30,7 @@ public class LexicalAnalyzerTest {
     @Test
     public void testGetCharLexeme() throws Exception {
         String codeText = "'\u0412'";
-        Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.CHAR);
+        Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeType.CHAR);
         System.out.println("\n === JUnit4 Test: testGetCharLexeme() method ===");
         System.out.println("\nInput: \"" + codeText + "\"");
         System.out.println("Found lexeme: " + lexeme);
@@ -48,7 +48,7 @@ public class LexicalAnalyzerTest {
         System.out.println("\n === JUnit4 Test: testGetDelimiterLexeme() method ===");
         for (String codeText : codeTexts) {
             try {
-                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.DELIMITER);
+                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeType.DELIMITER);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
                 Assert.assertEquals(codeText, lexeme.getValue().toString());
@@ -71,7 +71,7 @@ public class LexicalAnalyzerTest {
                 "3.4028235E+38",};
         for (String codeText : codeTexts) {
             try {
-                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.FLOAT);
+                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeType.FLOAT);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
                 Assert.assertEquals(codeText, lexeme.getValue().toString());
@@ -89,7 +89,7 @@ public class LexicalAnalyzerTest {
                 "2147483647"};
         for (String codeText : codeTexts) {
             try {
-                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.INTEGER);
+                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeType.INTEGER);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
                 Assert.assertEquals(codeText, lexeme.getValue().toString());
@@ -105,7 +105,7 @@ public class LexicalAnalyzerTest {
                 "false"};
         for (String codeText : codeTexts) {
             try {
-                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.BOOLEAN);
+                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeType.BOOLEAN);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
                 Assert.assertEquals(codeText, lexeme.getValue().toString());
@@ -139,7 +139,7 @@ public class LexicalAnalyzerTest {
                 "void",
                 "while"};
         for (String codeText : codeTexts) {
-            Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.KEYWORD);
+            Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeType.KEYWORD);
             System.out.println("\nInput: \"" + codeText + "\"");
             System.out.println("Found lexeme: " + lexeme);
             Assert.assertEquals(codeText, lexeme.getValue().toString());
@@ -171,7 +171,7 @@ public class LexicalAnalyzerTest {
                 ","};
         for (String codeText : codeTexts) {
             try {
-                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.OPERATOR);
+                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeType.OPERATOR);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
                 Assert.assertEquals(codeText, lexeme.getValue().toString());
@@ -186,7 +186,7 @@ public class LexicalAnalyzerTest {
         System.out.println("\n === JUnit4 Test: testGetStringLexeme() method ===");
         String codeText = "\npublic String field1 = \"str\";\n";
         lexicalAnalyzer.sourceCodeText = codeText;
-        Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, 24, LexemeBuilder.Type.STRING);
+        Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, 24, LexemeType.STRING);
         System.out.println("\nInput: \"" + codeText + "\"");
         System.out.println("Found lexeme: " + lexeme);
         Assert.assertEquals("\"str\"", lexeme.getValue().toString());
