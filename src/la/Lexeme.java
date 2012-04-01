@@ -23,6 +23,7 @@ public class Lexeme extends Symbol {
         lexemeCodingTable.put(SymbolsInfo.FLOAT_TYPE,Type.FLOAT.name());
         lexemeCodingTable.put(SymbolsInfo.CHAR_TYPE,Type.CHAR.name());
         lexemeCodingTable.put(SymbolsInfo.STRING_TYPE,Type.STRING.name());
+        lexemeCodingTable.put(SymbolsInfo.BOOLEAN_TYPE,Type.BOOLEAN.name());
 
         lexemeCodingTable.put(SymbolsInfo.IDENTIFIER,Type.IDENTIFIER.name());
 
@@ -31,7 +32,6 @@ public class Lexeme extends Symbol {
         lexemeCodingTable.put(SymbolsInfo.CHAR_KEYWORD,"char");
         lexemeCodingTable.put(SymbolsInfo.CLASS_KEYWORD,"class");
         lexemeCodingTable.put(SymbolsInfo.ELSE_KEYWORD,"else");
-        lexemeCodingTable.put(SymbolsInfo.FALSE_KEYWORD,"false");
         lexemeCodingTable.put(SymbolsInfo.FLOAT_KEYWORD,"float");
         lexemeCodingTable.put(SymbolsInfo.IF_KEYWORD,"if");
         lexemeCodingTable.put(SymbolsInfo.INT_KEYWORD,"int");
@@ -41,7 +41,6 @@ public class Lexeme extends Symbol {
         lexemeCodingTable.put(SymbolsInfo.RETURN_KEYWORD,"return");
         lexemeCodingTable.put(SymbolsInfo.STATIC_KEYWORD,"static");
         lexemeCodingTable.put(SymbolsInfo.STRING_KEYWORD,"String");
-        lexemeCodingTable.put(SymbolsInfo.TRUE_KEYWORD,"true");
         lexemeCodingTable.put(SymbolsInfo.VOID_KEYWORD,"void");
         lexemeCodingTable.put(SymbolsInfo.WHILE_KEYWORD,"while");
 
@@ -74,10 +73,6 @@ public class Lexeme extends Symbol {
         lexemeCodingTable.put(SymbolsInfo.RIGHT_PARENTHESIS,")");
         lexemeCodingTable.put(SymbolsInfo.LEFT_FIG_PARENTHESIS,"{");
         lexemeCodingTable.put(SymbolsInfo.RIGHT_FIG_PARENTHESIS,"}");
-
-        lexemeCodingTable.put(SymbolsInfo.SPACE," ");
-        lexemeCodingTable.put(SymbolsInfo.TAB,"\t");
-        lexemeCodingTable.put(SymbolsInfo.NEW_LINE,"\n");
     }
 
     protected static int getLexemeCode(String lexemeText, Type type) throws LexicalAnalyzerException {
@@ -168,7 +163,7 @@ public class Lexeme extends Symbol {
 
     public enum Type {
 
-        CHAR, DELIMITER, FLOAT, IDENTIFIER, INTEGER, KEYWORD, OPERATOR, STRING, EOF;
+        CHAR, DELIMITER, FLOAT, IDENTIFIER, INTEGER, BOOLEAN, KEYWORD, OPERATOR, STRING, EOF;
 
         public static String[] getValues() {
             LinkedList<String> result = new LinkedList<String>();

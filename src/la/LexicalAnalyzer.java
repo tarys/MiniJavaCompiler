@@ -2,7 +2,6 @@ package la;
 
 import java_cup.runtime.Scanner;
 import java_cup.runtime.Symbol;
-import java_cup.runtime.SymbolFactory;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -16,6 +15,7 @@ public class LexicalAnalyzer implements Scanner {
     public static final String COMMENT_REGEX_STRING = "/\\*(.*|\\s)*\\*/";
     public static final String ID_REGEX = "([a-zA-Z]{1}\\w{0,79})";
     public static final String CHAR_REGEX = "(\\'(.|\\p{ASCII})\\')";
+    public static final String BOOLEAN_REGEX = "(true|false)";
     public static final String DELIMITER_REGEX = "(\\t|\\n|\\[|\\]|[(){};, ])";
     public static final String FLOAT_REGEX = "([-]{0,1}\\d*\\.\\d+([eE][+-]\\d+){0,1})";
     public static final String INTEGER_REGEX = "([-]{0,1}\\d+)";
@@ -25,7 +25,6 @@ public class LexicalAnalyzer implements Scanner {
             + "|char"
             + "|class"
             + "|else"
-            + "|false"
             + "|float"
             + "|if"
             + "|instanceof"
@@ -38,7 +37,6 @@ public class LexicalAnalyzer implements Scanner {
             + "|String"
             + "|System\\.in\\.read"
             + "|System\\.out\\.println"
-            + "|true"
             + "|void"
             + "|while)";
     public static final String OPERATOR_REGEX = "(\\." +
@@ -60,31 +58,10 @@ public class LexicalAnalyzer implements Scanner {
             "|System\\.in\\.read" +
             "|System\\.out\\.println" +
             "|break)";
-    public static final String STRING_REGEX = "(\"(.|\\s)*\")";
 
+    public static final String STRING_REGEX = "(\"(.|\\s)*\")";
     protected String sourceCodeText;
     protected int currentMarkerPosition;
-    protected SymbolFactory symbolFactory = new SymbolFactory() {
-        public Symbol newSymbol(String s, int i, Symbol symbol, Symbol symbol1, Object o) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        public Symbol newSymbol(String s, int i, Symbol symbol, Symbol symbol1) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        public Symbol newSymbol(String s, int i, Object o) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        public Symbol newSymbol(String s, int i) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        public Symbol startSymbol(String s, int i, int i1) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
-        }
-    };
 
     public LexicalAnalyzer() {
         this.currentMarkerPosition = 0;
@@ -96,22 +73,6 @@ public class LexicalAnalyzer implements Scanner {
     }
 
     public Symbol next_token() throws Exception {
-        return getNextLexeme();
-    }
-
-    public String getSourceCodeText() {
-        return sourceCodeText;
-    }
-
-    public int getCurrentMarkerPosition() {
-        return currentMarkerPosition;
-    }
-
-    public void setCurrentMarkerPosition(int currentMarkerPosition) {
-        this.currentMarkerPosition = currentMarkerPosition;
-    }
-
-    public Lexeme getNextLexeme() throws LexicalAnalyzerException {
         Lexeme result;
         Lexeme.Type[] lexemeTypes = Lexeme.Type.values();
         HashMap<Lexeme.Type, Lexeme> resultCandidates = new HashMap<Lexeme.Type, Lexeme>();
@@ -174,6 +135,18 @@ public class LexicalAnalyzer implements Scanner {
         return result;
     }
 
+    public String getSourceCodeText() {
+        return sourceCodeText;
+    }
+
+    public int getCurrentMarkerPosition() {
+        return currentMarkerPosition;
+    }
+
+    public void setCurrentMarkerPosition(int currentMarkerPosition) {
+        this.currentMarkerPosition = currentMarkerPosition;
+    }
+
     public Lexeme getLexeme(final String sourceCodeText, int startAnalyzePosition, Lexeme.Type lexemeType) throws
             LexicalAnalyzerException {
         /* deleting comments */
@@ -189,8 +162,8 @@ public class LexicalAnalyzer implements Scanner {
                 matcher = Pattern.compile(ID_REGEX).matcher(notAnalyzedSourceSubstring);
                 break;
             case CHAR:
-                notAnalyzedSourceSubstring = fetchCharLiteral(notAnalyzedSourceSubstring, sourceCodeText,
-                        startAnalyzePosition);
+                notAnalyzedSourceSubstring = fetchCharLiteral(notAnalyzedSourceSubstring, sourceCodeText
+                );
                 matcher = Pattern.compile(CHAR_REGEX).matcher(notAnalyzedSourceSubstring);
                 break;
             case DELIMITER:
@@ -198,6 +171,9 @@ public class LexicalAnalyzer implements Scanner {
                 break;
             case FLOAT:
                 matcher = Pattern.compile(FLOAT_REGEX).matcher(notAnalyzedSourceSubstring);
+                break;
+            case BOOLEAN:
+                matcher = Pattern.compile(BOOLEAN_REGEX).matcher(notAnalyzedSourceSubstring);
                 break;
             case INTEGER:
                 matcher = Pattern.compile(INTEGER_REGEX).matcher(notAnalyzedSourceSubstring);
@@ -252,8 +228,7 @@ public class LexicalAnalyzer implements Scanner {
         }
     }
 
-    private String fetchCharLiteral(String notAnalyzedSourceSubstring, String sourceCodeText,
-                                    int startAnalyzePosition) throws LexicalAnalyzerException {
+    private String fetchCharLiteral(String notAnalyzedSourceSubstring, String sourceCodeText) throws LexicalAnalyzerException {
         String result;
         int searchStartIndex = sourceCodeText.indexOf(notAnalyzedSourceSubstring);
         int startIndex = sourceCodeText.indexOf("\'", searchStartIndex);

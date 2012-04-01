@@ -98,6 +98,21 @@ public class LexicalAnalyzerTest {
             }
         }
     }
+    @Test
+    public void testGetBooleanLexeme() throws Exception {
+        System.out.println("\n === JUnit4 Test: testGetBooleanLexeme() method ===");
+        String[] codeTexts = {"true",
+                "false"};
+        for (String codeText : codeTexts) {
+            try {
+                Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, Lexeme.Type.BOOLEAN);
+                System.out.println("\nInput: \"" + codeText + "\"");
+                System.out.println("Found lexeme: " + lexeme);
+            } catch (LexicalAnalyzerException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @Test
     public void testGetKeywordLexeme() throws Exception {
@@ -107,7 +122,6 @@ public class LexicalAnalyzerTest {
                 "char",
                 "class",
                 "else",
-                "false",
                 "float",
                 "if",
                 "instanceof",
@@ -121,7 +135,6 @@ public class LexicalAnalyzerTest {
                 "System.in.read",
                 "System.out.println",
                 "break",
-                "true",
                 "void",
                 "while"};
         for (String codeText : codeTexts) {

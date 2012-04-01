@@ -1,7 +1,5 @@
 package nametable;
 
-import sa.LR1Analyzer;
-
 import java.util.List;
 
 /**
@@ -16,5 +14,13 @@ public class NameTableBuilder {
 
     public List<Entry> getNameTable() {
         return nameTable;
+    }
+
+    public void addReferenceType(String name) {
+
+    }
+
+    public void addVariable(Integer typeId, String name) {
+
     }
 }

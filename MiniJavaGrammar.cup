@@ -33,9 +33,10 @@ terminal        INTEGER_TYPE;
 terminal        FLOAT_TYPE;
 terminal        CHAR_TYPE;
 terminal        STRING_TYPE;
+terminal        BOOLEAN_TYPE;
 
 // Identifier
-terminal		IDENTIFIER;
+terminal    String  	IDENTIFIER;
 
 // Keywords
 terminal        CLASS_KEYWORD;
@@ -43,7 +44,6 @@ terminal		BOOLEAN_KEYWORD;
 terminal		BYTE_KEYWORD;
 terminal		CHAR_KEYWORD;
 terminal		ELSE_KEYWORD;
-terminal		FALSE_KEYWORD;
 terminal		FLOAT_KEYWORD;
 terminal		IF_KEYWORD;
 terminal		INT_KEYWORD;
@@ -53,7 +53,6 @@ terminal		PUBLIC_KEYWORD;
 terminal		RETURN_KEYWORD;
 terminal		STATIC_KEYWORD;
 terminal		STRING_KEYWORD;
-terminal		TRUE_KEYWORD;
 terminal		VOID_KEYWORD;
 terminal		WHILE_KEYWORD;
 
@@ -88,42 +87,39 @@ terminal		LEFT_PARENTHESIS;
 terminal		RIGHT_PARENTHESIS;
 terminal		LEFT_FIG_PARENTHESIS;
 terminal		RIGHT_FIG_PARENTHESIS;
-terminal		SPACE;
-terminal		TAB;
-terminal		NEW_LINE;
 
 /* Non-terminals */
 
-non terminal     goal;
-non terminal     compilation_unit;
-non terminal     main_class;
-non terminal     main_class_methods_declaration;
-non terminal     main_method_declaration;
-non terminal     classes_declaration;
-non terminal     class_declaration;
-non terminal     fields_declaration;
-non terminal     field_declaration;
-non terminal     methods_declaration;
-non terminal     method_declaration;
-non terminal     method_params_declaration;
-non terminal     params_list_declaration;
-non terminal     param_declaration;
-non terminal     block;
-non terminal     variables_declaration;
-non terminal     variable_declaration;
-non terminal     statements;
-non terminal     statement;
-non terminal     assignment_statement;
-non terminal     if_statement;
-non terminal     while_statement;
-non terminal     input_statement;
-non terminal     output_statement;
-non terminal     type;
-non terminal     reference_type;
-non terminal     return_statement;
-non terminal     expression;
-non terminal     method_call;
-non terminal     actual_params_list;
+non terminal                goal;
+non terminal                compilation_unit;
+non terminal                main_class;
+non terminal                main_class_methods_declaration;
+non terminal                main_method_declaration;
+non terminal                classes_declaration;
+non terminal                class_declaration;
+non terminal                fields_declaration;
+non terminal                field_declaration;
+non terminal                methods_declaration;
+non terminal                method_declaration;
+non terminal                method_params_declaration;
+non terminal                params_list_declaration;
+non terminal                param_declaration;
+non terminal                block;
+non terminal                variables_declaration;
+non terminal                variable_declaration;
+non terminal                statements;
+non terminal                statement;
+non terminal                assignment_statement;
+non terminal                if_statement;
+non terminal                while_statement;
+non terminal                input_statement;
+non terminal                output_statement;
+non terminal    Integer     type;
+non terminal    Integer     reference_type;
+non terminal                return_statement;
+non terminal                expression;
+non terminal                method_call;
+non terminal                actual_params_list;
 
 /* Precedences */
 precedence left     ASSIGN;
@@ -216,8 +212,9 @@ block                           ::= variables_declaration
 variables_declaration           ::= variables_declaration variable_declaration
                                   | variable_declaration;
 
-variable_declaration            ::= type:typeSymbol IDENTIFIER:identifierSymbol SEMICOLON{:
-                                        parser.getNameTableBuilder().add(typeSymbol, identifierSymbol);
+variable_declaration            ::= type:typeId IDENTIFIER:name SEMICOLON
+                                    {:
+                                        parser.getNameTableBuilder().addVariable(typeId, name);
                                     :}
                                   | type IDENTIFIER ASSIGN expression SEMICOLON;
 
@@ -256,15 +253,28 @@ input_statement                 ::= type IDENTIFIER ASSIGN SYSTEM_IN_READ
 output_statement                ::= SYSTEM_OUT_PRINTLN LEFT_PARENTHESIS expression RIGHT_PARENTHESIS SEMICOLON;
 
 type                            ::= BOOLEAN_KEYWORD
+                                    {: RESULT = SymbolsInfo.BOOLEAN_TYPE; :}
                                   | BYTE_KEYWORD
+                                    {: RESULT = SymbolsInfo.BYTE_KEYWORD; :}
                                   | CHAR_KEYWORD
+                                    {: RESULT = SymbolsInfo.CHAR_TYPE; :}
                                   | FLOAT_KEYWORD
+                                    {: RESULT = SymbolsInfo.FLOAT_TYPE; :}
                                   | INT_KEYWORD
+                                    {: RESULT = SymbolsInfo.INTEGER_TYPE; :}
                                   | STRING_KEYWORD
+                                    {: RESULT = SymbolsInfo.STRING_TYPE; :}
                                   | VOID_KEYWORD
-                                  | reference_type;
+                                    {: RESULT = SymbolsInfo.VOID_KEYWORD; :}
+                                  | reference_type:value
+                                    {: RESULT = value; :}
+                                  ;
 
-reference_type                  ::= IDENTIFIER;
+reference_type                  ::= IDENTIFIER:name
+                                    {:
+                                        parser.getNameTableBuilder().addReferenceType(name);
+                                        RESULT = SymbolsInfo.IDENTIFIER;
+                                    :};
 
 return_statement                ::= RETURN_KEYWORD SEMICOLON
                                   | RETURN_KEYWORD expression SEMICOLON;
@@ -287,8 +297,7 @@ expression                      ::= expression STOP method_call
                                   | expression OR expression
                                   | INTEGER_TYPE
                                   | FLOAT_TYPE
-                                  | TRUE_KEYWORD
-                                  | FALSE_KEYWORD
+                                  | BOOLEAN_TYPE
                                   | STRING_TYPE
                                   | CHAR_TYPE
                                   | IDENTIFIER
