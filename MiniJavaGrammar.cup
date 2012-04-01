@@ -1,10 +1,8 @@
 // CUP specification for a simple expression evaluator (w/ actions)
 
 import java_cup.runtime.*;
-import la.Lexeme;
-import nametable.Entry;
+import nametable.NameTable;
 import nametable.NameTableBuilder;
-import java.util.LinkedList;
 
 /* allows methods and variable to be placed directly within the generated parser class */
 parser code {:
@@ -24,7 +22,7 @@ parser code {:
 scan with {: return getScanner().next_token(); :};
 
 /* Provides code that will be executed by the parser before it asks for the first token */
-init with {: nameTableBuilder =  new NameTableBuilder(new LinkedList<Entry>()); :};
+init with {: nameTableBuilder =  new NameTableBuilder(new NameTable()); :};
 
 /* Terminals (tokens returned by the scanner). */
 // Data types

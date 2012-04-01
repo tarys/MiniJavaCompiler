@@ -8,7 +8,7 @@ import java.util.ListIterator;
  * Contains info about declared entry - class, method, field, local variable etc.
  * Also contains SUB-TABLE for inner entries
  */
-public abstract class Entry {
+public class Entry {
     private String name;
     /**
      * type id from SymbolsInfo interface
@@ -101,4 +101,13 @@ public abstract class Entry {
         this.children = children;
     }
 
+    @Override
+    public String toString() {
+        return "[" +
+               "name='" + name + '\'' +
+               "; typeId=" + type +
+               "; value=" + value +
+               "; declared=" + declared +
+               ']';
+    }
 }
