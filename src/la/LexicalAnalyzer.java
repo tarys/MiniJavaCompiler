@@ -73,6 +73,22 @@ public class LexicalAnalyzer implements Scanner {
     }
 
     public Symbol next_token() throws Exception {
+        return getNextLexeme();
+    }
+
+    public String getSourceCodeText() {
+        return sourceCodeText;
+    }
+
+    public int getCurrentMarkerPosition() {
+        return currentMarkerPosition;
+    }
+
+    public void setCurrentMarkerPosition(int currentMarkerPosition) {
+        this.currentMarkerPosition = currentMarkerPosition;
+    }
+
+    public Lexeme getNextLexeme() throws LexicalAnalyzerException {
         Lexeme result;
         Lexeme.Type[] lexemeTypes = Lexeme.Type.values();
         HashMap<Lexeme.Type, Lexeme> resultCandidates = new HashMap<Lexeme.Type, Lexeme>();
@@ -135,23 +151,11 @@ public class LexicalAnalyzer implements Scanner {
         return result;
     }
 
-    public String getSourceCodeText() {
-        return sourceCodeText;
-    }
-
-    public int getCurrentMarkerPosition() {
-        return currentMarkerPosition;
-    }
-
-    public void setCurrentMarkerPosition(int currentMarkerPosition) {
-        this.currentMarkerPosition = currentMarkerPosition;
-    }
-
     public Lexeme getLexeme(final String sourceCodeText, int startAnalyzePosition, Lexeme.Type lexemeType) throws
             LexicalAnalyzerException {
         /* deleting comments */
         if (startAnalyzePosition == sourceCodeText.length()) {
-            return new Lexeme(Lexeme.Type.EOF, "", startAnalyzePosition);
+            return LexemeBuilder.buildLexeme(startAnalyzePosition, Lexeme.Type.EOF, "");
         }
         String notAnalyzedSourceSubstring = sourceCodeText.replaceAll(COMMENT_REGEX_STRING, "")
                 .substring(startAnalyzePosition);
@@ -219,7 +223,7 @@ public class LexicalAnalyzer implements Scanner {
                             lexemeText);
                 }
             }
-            Lexeme lexeme = new Lexeme(lexemeType, lexemeText, startAnalyzePosition);
+            Lexeme lexeme = LexemeBuilder.buildLexeme(startAnalyzePosition, lexemeType, lexemeText);
             return lexeme;
         } else {
             throw new LexicalAnalyzerException(
