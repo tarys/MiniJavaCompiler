@@ -74,7 +74,7 @@ public class LexicalAnalyzerTest {
                 Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeType.FLOAT);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
-                Assert.assertEquals(codeText, lexeme.getValue().toString());
+                Assert.assertEquals(Float.parseFloat(codeText), lexeme.getValue());
             } catch (LexicalAnalyzerException e) {
                 e.printStackTrace();
             }
@@ -119,7 +119,6 @@ public class LexicalAnalyzerTest {
     public void testGetKeywordLexeme() throws Exception {
         System.out.println("\n === JUnit4 Test: testGetKeywordLexeme() method ===");
         String[] codeTexts = {"boolean",
-                "byte",
                 "char",
                 "class",
                 "else",

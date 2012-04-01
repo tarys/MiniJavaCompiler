@@ -12,7 +12,6 @@ public class LexemeBuilder {
     private static TreeMap<Integer, String> lexemeCodingTable;
 
     static {
-        int i = 0;
         LexemeBuilder.lexemeCodingTable = new TreeMap<Integer, String>();
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.EOF, la.LexemeType.EOF.name());
 
@@ -25,7 +24,6 @@ public class LexemeBuilder {
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.IDENTIFIER, la.LexemeType.IDENTIFIER.name());
 
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.BOOLEAN_KEYWORD, "boolean");
-        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.BYTE_KEYWORD, "byte");
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.CHAR_KEYWORD, "char");
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.CLASS_KEYWORD, "class");
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.ELSE_KEYWORD, "else");
@@ -72,10 +70,10 @@ public class LexemeBuilder {
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.RIGHT_FIG_PARENTHESIS, "}");
     }
 
-    static Lexeme buildLexeme(LexemeType lexemeType, String lexemeText, int lexemeStartPosition)
+    static Lexeme buildLexeme(LexemeType lexemeType, Object lexemeValue, int lexemeStartPosition, int lexemeEndPosition)
             throws LexicalAnalyzerException {
-        Lexeme lexeme = new Lexeme(lexemeText, lexemeStartPosition,
-                                   getLexemeCode(lexemeText.toString(), lexemeType));
+        Lexeme lexeme = new Lexeme(lexemeValue, lexemeStartPosition,lexemeEndPosition,
+                                   getLexemeCode(lexemeValue.toString(), lexemeType));
         lexeme.setType(lexemeType);
         return lexeme;
     }

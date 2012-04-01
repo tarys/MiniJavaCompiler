@@ -8,9 +8,8 @@ import java_cup.runtime.Symbol;
 public class Lexeme extends Symbol {
 
 
-
-    public Lexeme(Object value, int startFrom, int lexemeCode) throws LexicalAnalyzerException {
-        super(lexemeCode, startFrom, startFrom + value.toString().length(), value);
+    public Lexeme(Object value, int startFrom, int endAt, int lexemeCode) throws LexicalAnalyzerException {
+        super(lexemeCode, startFrom, endAt, value);
     }
 
     private LexemeType type;
@@ -29,9 +28,9 @@ public class Lexeme extends Symbol {
             printableValue = ((String) printableValue).replace("\"", "");
         }
         return "[type=" + getType().toString().toUpperCase() + "; code=" + getCode() + "; value=\""
-                + printableValue + "\"" +
-                "; left position=" + left +
-                "; right position=" + right + "]";
+               + printableValue + "\"" +
+               "; left position=" + left +
+               "; right position=" + right + "]";
     }
 
     public LexemeType getType() {
@@ -47,7 +46,7 @@ public class Lexeme extends Symbol {
     }
 
     public int getLength() {
-        return getValue().toString().length();
+        return right - left;
     }
 
     public void setType(LexemeType type) {

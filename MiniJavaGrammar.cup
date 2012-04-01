@@ -16,8 +16,7 @@ parser code {:
 
     @Override
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
-        throw new Exception("Syntax error near symbol '" + Lexeme.getLexemeCodingTable().get(cur_token.sym)
-                + "' at position " + cur_token.left);
+        tthrow new Exception("Syntax error near symbol " + cur_token);
     }
 :};
 
@@ -41,7 +40,6 @@ terminal    String  	IDENTIFIER;
 // Keywords
 terminal        CLASS_KEYWORD;
 terminal		BOOLEAN_KEYWORD;
-terminal		BYTE_KEYWORD;
 terminal		CHAR_KEYWORD;
 terminal		ELSE_KEYWORD;
 terminal		FLOAT_KEYWORD;
@@ -254,8 +252,6 @@ output_statement                ::= SYSTEM_OUT_PRINTLN LEFT_PARENTHESIS expressi
 
 type                            ::= BOOLEAN_KEYWORD
                                     {: RESULT = SymbolsInfo.BOOLEAN_TYPE; :}
-                                  | BYTE_KEYWORD
-                                    {: RESULT = SymbolsInfo.BYTE_KEYWORD; :}
                                   | CHAR_KEYWORD
                                     {: RESULT = SymbolsInfo.CHAR_TYPE; :}
                                   | FLOAT_KEYWORD

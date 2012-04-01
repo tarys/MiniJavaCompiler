@@ -11,6 +11,7 @@ public class LexicalAnalyzerException extends Exception {
     public static final String OUT_OF_FLOAT_RANGE = "Out of float range";
     public static final String OUT_OF_INTEGER_RANGE = "Out of integer range";
     public static final String ILLEGAL_INPUT_CHARACTER = "Illegal input character";
+    public static final String INCORRECT_BOOLEAN_VALUE = "Incorrect boolean value";
 
     public LexicalAnalyzerException(String s) {
          super(s);
