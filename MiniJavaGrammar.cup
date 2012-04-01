@@ -2,9 +2,14 @@
 
 import java_cup.runtime.*;
 import la.Lexeme;
+import nametable.Entry;
+import java.util.List;
+import java.util.LinkedList;
 
 /* allows methods and variable to be placed directly within the generated parser class */
 parser code {:
+    private List<Entry> nameTable;
+
     @Override
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
         throw new Exception("Syntax error near symbol '" + Lexeme.getLexemeCodingTable().get(cur_token.sym)
@@ -14,6 +19,9 @@ parser code {:
 
 /* Preliminaries to set up and use the scanner.  */
 scan with {: return getScanner().next_token(); :};
+
+/* Provides code that will be executed by the parser before it asks for the first token */
+init with {: nameTable =  new LinkedList<Entry>(); :};
 
 /* Terminals (tokens returned by the scanner). */
 // Data types
