@@ -10,12 +10,9 @@
  */
 package gui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import la.Lexeme;
+import la.LexemeBuilder;
 import la.LexicalAnalyzerException;
-import la.LexicalAnalyzer;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -86,7 +83,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Select lexeme type:");
 
-        lexemeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(Lexeme.Type.getValues()));
+        lexemeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(LexemeBuilder.Type.getValues()));
 
         getLexemeButton.setText("Get lexeme");
         getLexemeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -287,7 +284,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         try {
             String sourceCode = sourceCodeArea.getText();
             int currentCaretPosition = sourceCodeArea.getCaretPosition();
-            Lexeme.Type lexemeType = Lexeme.Type.valueOf(lexemeTypeComboBox.getSelectedItem().toString());
+            LexemeBuilder.Type lexemeType = LexemeBuilder.Type.valueOf(lexemeTypeComboBox.getSelectedItem().toString());
             Lexeme requestedLexeme = lexicalAnalyzer.getLexeme(sourceCode, currentCaretPosition, lexemeType);
             sourceCodeArea.requestFocus();
             int newCaretPosition = sourceCodeArea.getCaretPosition() + requestedLexeme.getLength();

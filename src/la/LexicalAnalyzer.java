@@ -90,12 +90,12 @@ public class LexicalAnalyzer implements Scanner {
 
     public Lexeme getNextLexeme() throws LexicalAnalyzerException {
         Lexeme result;
-        Lexeme.Type[] lexemeTypes = Lexeme.Type.values();
-        HashMap<Lexeme.Type, Lexeme> resultCandidates = new HashMap<Lexeme.Type, Lexeme>();
+        LexemeBuilder.Type[] lexemeTypes = LexemeBuilder.Type.values();
+        HashMap<LexemeBuilder.Type, Lexeme> resultCandidates = new HashMap<LexemeBuilder.Type, Lexeme>();
         skipWhitespaces();
-        for (Lexeme.Type lexemeType : lexemeTypes) {
+        for (LexemeBuilder.Type lexemeType : lexemeTypes) {
             try {
-                if (lexemeType.equals(Lexeme.Type.EOF)
+                if (lexemeType.equals(LexemeBuilder.Type.EOF)
                         && (getCurrentMarkerPosition() != getSourceCodeText().length())) {
                     continue;
                 }
@@ -118,11 +118,11 @@ public class LexicalAnalyzer implements Scanner {
             throw new LexicalAnalyzerException(
                     LexicalAnalyzerException.ILLEGAL_INPUT_CHARACTER + " near position " + getCurrentMarkerPosition());
         }
-        if (resultCandidates.containsKey(Lexeme.Type.OPERATOR)) {
-            result = resultCandidates.get(Lexeme.Type.OPERATOR);
-        } else if (resultCandidates.containsKey(Lexeme.Type.KEYWORD)) {
-            Lexeme identifier = resultCandidates.get(Lexeme.Type.IDENTIFIER);
-            Lexeme keyword = resultCandidates.get(Lexeme.Type.KEYWORD);
+        if (resultCandidates.containsKey(LexemeBuilder.Type.OPERATOR)) {
+            result = resultCandidates.get(LexemeBuilder.Type.OPERATOR);
+        } else if (resultCandidates.containsKey(LexemeBuilder.Type.KEYWORD)) {
+            Lexeme identifier = resultCandidates.get(LexemeBuilder.Type.IDENTIFIER);
+            Lexeme keyword = resultCandidates.get(LexemeBuilder.Type.KEYWORD);
             if (identifier != null) {
                 /*
                     if lexeme starts with substring that is keyword
@@ -135,8 +135,8 @@ public class LexicalAnalyzer implements Scanner {
             } else {
                 result = keyword;
             }
-        } else if (resultCandidates.containsKey(Lexeme.Type.FLOAT)) {
-            result = resultCandidates.get(Lexeme.Type.FLOAT);
+        } else if (resultCandidates.containsKey(LexemeBuilder.Type.FLOAT)) {
+            result = resultCandidates.get(LexemeBuilder.Type.FLOAT);
         } else {
             // fetching first and unique lexeme
             result = resultCandidates.get(resultCandidates.keySet().iterator().next());
@@ -151,11 +151,11 @@ public class LexicalAnalyzer implements Scanner {
         return result;
     }
 
-    public Lexeme getLexeme(final String sourceCodeText, int startAnalyzePosition, Lexeme.Type lexemeType) throws
+    public Lexeme getLexeme(final String sourceCodeText, int startAnalyzePosition, LexemeBuilder.Type lexemeType) throws
             LexicalAnalyzerException {
         /* deleting comments */
         if (startAnalyzePosition == sourceCodeText.length()) {
-            return LexemeBuilder.buildLexeme(startAnalyzePosition, Lexeme.Type.EOF, "");
+            return LexemeBuilder.buildLexeme(startAnalyzePosition, LexemeBuilder.Type.EOF, "");
         }
         String notAnalyzedSourceSubstring = sourceCodeText.replaceAll(COMMENT_REGEX_STRING, "")
                 .substring(startAnalyzePosition);
@@ -199,11 +199,11 @@ public class LexicalAnalyzer implements Scanner {
         /* fetching pattern from text*/
         if (matcher.lookingAt()) {
             String lexemeText = matcher.group(1);
-            if (!lexemeType.equals(Lexeme.Type.KEYWORD) && !lexemeType.equals(Lexeme.Type.OPERATOR)
+            if (!lexemeType.equals(LexemeBuilder.Type.KEYWORD) && !lexemeType.equals(LexemeBuilder.Type.OPERATOR)
                     && isKeyword(lexemeText)) {
                 throw new LexicalAnalyzerException("\"" + lexemeText + "\" is a keyword");
             }
-            if (lexemeType.equals(Lexeme.Type.INTEGER)) {
+            if (lexemeType.equals(LexemeBuilder.Type.INTEGER)) {
                 try {
                     Integer.parseInt(lexemeText);
                 } catch (NumberFormatException e) {
@@ -211,7 +211,7 @@ public class LexicalAnalyzer implements Scanner {
                             lexemeText);
                 }
             }
-            if (lexemeType.equals(Lexeme.Type.FLOAT)) {
+            if (lexemeType.equals(LexemeBuilder.Type.FLOAT)) {
                 try {
                     float f = Float.parseFloat(lexemeText);
                     if ((f <= Float.NEGATIVE_INFINITY) || (f >= Float.POSITIVE_INFINITY)) {

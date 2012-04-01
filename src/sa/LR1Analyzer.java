@@ -7,7 +7,7 @@
 package sa;
 
 import java_cup.runtime.*;
-import la.Lexeme;
+import la.LexemeBuilder;
 import nametable.Entry;
 import nametable.NameTableBuilder;
 import java.util.LinkedList;
@@ -497,7 +497,7 @@ public class LR1Analyzer extends java_cup.runtime.lr_parser {
 
     @Override
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
-        throw new Exception("Syntax error near symbol '" + Lexeme.getLexemeCodingTable().get(cur_token.sym)
+        throw new Exception("Syntax error near symbol '" + LexemeBuilder.getLexemeCodingTable().get(cur_token.sym)
                 + "' at position " + cur_token.left);
     }
 
