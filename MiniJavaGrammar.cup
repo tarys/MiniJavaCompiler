@@ -3,12 +3,16 @@
 import java_cup.runtime.*;
 import la.Lexeme;
 import nametable.Entry;
-import java.util.List;
+import nametable.NameTableBuilder;
 import java.util.LinkedList;
 
 /* allows methods and variable to be placed directly within the generated parser class */
 parser code {:
-    private List<Entry> nameTable;
+    private NameTableBuilder nameTableBuilder;
+
+    public NameTableBuilder getNameTableBuilder(){
+        return this.nameTableBuilder;
+    }
 
     @Override
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
@@ -21,7 +25,7 @@ parser code {:
 scan with {: return getScanner().next_token(); :};
 
 /* Provides code that will be executed by the parser before it asks for the first token */
-init with {: nameTable =  new LinkedList<Entry>(); :};
+init with {: nameTableBuilder =  new NameTableBuilder(new LinkedList<Entry>()); :};
 
 /* Terminals (tokens returned by the scanner). */
 // Data types
@@ -212,7 +216,9 @@ block                           ::= variables_declaration
 variables_declaration           ::= variables_declaration variable_declaration
                                   | variable_declaration;
 
-variable_declaration            ::= type IDENTIFIER SEMICOLON
+variable_declaration            ::= type:typeSymbol IDENTIFIER:identifierSymbol SEMICOLON{:
+                                        parser.getNameTableBuilder().add(typeSymbol, identifierSymbol);
+                                    :}
                                   | type IDENTIFIER ASSIGN expression SEMICOLON;
 
 statements                      ::= statements statement
