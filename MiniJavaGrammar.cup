@@ -221,8 +221,10 @@ variable_declaration            ::= type:typeId IDENTIFIER:name SEMICOLON
                                     {:
                                         parser.getNameTableBuilder().addVariable(typeId, name);
                                     :}
-                                  | type IDENTIFIER ASSIGN expression SEMICOLON;
-
+                                  | type:typeId IDENTIFIER:name ASSIGN expression:value SEMICOLON;
+                                    {:
+                                        parser.getNameTableBuilder().addVariable(typeId, name, value);
+                                    :}
 statements                      ::= statements statement
                                   | statement;
 
