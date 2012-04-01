@@ -75,7 +75,10 @@ public class LexemeBuilder {
 
     static Lexeme buildLexeme(int startAnalyzePosition, Type lexemeType, String lexemeText)
             throws LexicalAnalyzerException {
-        return new Lexeme(lexemeType, lexemeText, startAnalyzePosition);
+        Lexeme lexeme = new Lexeme(lexemeText, startAnalyzePosition,
+                                   getLexemeCode(lexemeText.toString(), lexemeType));
+        lexeme.setType(lexemeType);
+        return lexeme;
     }
 
     protected static int getLexemeCode(String lexemeText, Type type) throws LexicalAnalyzerException {

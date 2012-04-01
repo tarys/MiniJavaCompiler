@@ -1,9 +1,6 @@
 package la;
 
 import java_cup.runtime.Symbol;
-import sa.SymbolsInfo;
-
-import java.util.TreeMap;
 
 /**
  * @author Taras Slipets
@@ -12,12 +9,11 @@ public class Lexeme extends Symbol {
 
 
 
-    public Lexeme(LexemeBuilder.Type lexemeType, Object value, int startFrom) throws LexicalAnalyzerException {
-        super(LexemeBuilder.getLexemeCode(value.toString(), lexemeType), startFrom, startFrom + value.toString().length(), value);
-        this.type = lexemeType;
+    public Lexeme(Object value, int startFrom, int lexemeCode) throws LexicalAnalyzerException {
+        super(lexemeCode, startFrom, startFrom + value.toString().length(), value);
     }
 
-    protected LexemeBuilder.Type type;
+    private LexemeBuilder.Type type;
 
 
     @Override
@@ -54,4 +50,7 @@ public class Lexeme extends Symbol {
         return getValue().toString().length();
     }
 
+    public void setType(LexemeBuilder.Type type) {
+        this.type = type;
+    }
 }

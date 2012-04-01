@@ -44,10 +44,8 @@ public class LexicalAnalyzer implements Scanner {
             "|\\/" +
             "|\\+" +
             "|\\-" +
-            "|<" +
-            "|<=" +
-            "|>" +
-            "|>=" +
+            "|<(\\=){0,1}" +
+            "|>(\\=){0,1}" +
             "|instanceof" +
             "|==" +
             "|!=" +

@@ -38,15 +38,12 @@ public class LexicalAnalyzerTest {
 
     @Test
     public void testGetDelimiterLexeme() throws Exception {
-        String[] codeTexts = {"\t",
-                "(",
+        String[] codeTexts = {"(",
                 ")",
                 "{",
                 "}",
                 ";",
-                ",",
-                " ",
-                "\n"
+                ","
         };
         System.out.println("\n === JUnit4 Test: testGetDelimiterLexeme() method ===");
         for (String codeText : codeTexts) {
@@ -54,6 +51,7 @@ public class LexicalAnalyzerTest {
                 Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.DELIMITER);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
+                Assert.assertEquals(codeText, lexeme.getValue().toString());
             } catch (LexicalAnalyzerException e) {
                 e.printStackTrace();
             }
@@ -76,6 +74,7 @@ public class LexicalAnalyzerTest {
                 Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.FLOAT);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
+                Assert.assertEquals(codeText, lexeme.getValue().toString());
             } catch (LexicalAnalyzerException e) {
                 e.printStackTrace();
             }
@@ -93,6 +92,7 @@ public class LexicalAnalyzerTest {
                 Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.INTEGER);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
+                Assert.assertEquals(codeText, lexeme.getValue().toString());
             } catch (LexicalAnalyzerException e) {
                 e.printStackTrace();
             }
@@ -108,6 +108,7 @@ public class LexicalAnalyzerTest {
                 Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.BOOLEAN);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
+                Assert.assertEquals(codeText, lexeme.getValue().toString());
             } catch (LexicalAnalyzerException e) {
                 e.printStackTrace();
             }
@@ -141,6 +142,7 @@ public class LexicalAnalyzerTest {
             Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.KEYWORD);
             System.out.println("\nInput: \"" + codeText + "\"");
             System.out.println("Found lexeme: " + lexeme);
+            Assert.assertEquals(codeText, lexeme.getValue().toString());
         }
     }
 
@@ -164,7 +166,7 @@ public class LexicalAnalyzerTest {
                 "||",
                 "=",
                 "System.out.println",
-                "System.in.readln",
+                "System.in.read",
                 "break",
                 ","};
         for (String codeText : codeTexts) {
@@ -172,6 +174,7 @@ public class LexicalAnalyzerTest {
                 Lexeme lexeme = lexicalAnalyzer.getLexeme(codeText, START_ANALYZE_POSITION, LexemeBuilder.Type.OPERATOR);
                 System.out.println("\nInput: \"" + codeText + "\"");
                 System.out.println("Found lexeme: " + lexeme);
+                Assert.assertEquals(codeText, lexeme.getValue().toString());
             } catch (LexicalAnalyzerException e) {
                 e.printStackTrace();
             }
