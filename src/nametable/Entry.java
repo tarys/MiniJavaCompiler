@@ -2,7 +2,6 @@ package nametable;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Contains info about declared entry - class, method, field, local variable etc.
@@ -24,7 +23,7 @@ public class Entry {
     private Entry parentEntry;
     private List<Entry> children;
 
-    protected Entry(String name, int type, Object value, Entry parentEntry) {
+    public Entry(String name, int type, Object value, Entry parentEntry) {
         this.name = name;
         this.type = type;
         this.value = value;
@@ -36,7 +35,7 @@ public class Entry {
         return parentEntry;
     }
 
-    public void setParentEntry(Entry parentEntry) {
+    public void setParent(Entry parentEntry) {
         this.parentEntry = parentEntry;
     }
 
@@ -94,10 +93,14 @@ public class Entry {
     }
 
     public void addChild(Entry child) {
+        child.setParent(this);
         this.getChildren().add(child);
     }
 
     public void setChildren(List<Entry> children) {
+        for (Entry child : children) {
+            child.setParent(this);
+        }
         this.children = children;
     }
 

@@ -34,6 +34,7 @@ public class LR1AnalyzerTest {
                                                                  "   public static void main (String[] args){" +
                                                                  "       int c = -15;" +
                                                                  "       System.out.println(\"Hello, world!\");" +
+                                                                         "" +
                                                                  "   }" +
                                                                  "}" +
                                                                  "class ClassAfter1{" +

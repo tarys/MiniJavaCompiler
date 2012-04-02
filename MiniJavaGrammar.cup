@@ -3,10 +3,15 @@
 import java_cup.runtime.*;
 import nametable.NameTable;
 import nametable.NameTableBuilder;
+import nametable.Entry;
+import java.util.List;
+import java.util.LinkedList;
+
 
 /* allows methods and variable to be placed directly within the generated parser class */
 parser code {:
     private NameTableBuilder nameTableBuilder;
+
 
     public NameTableBuilder getNameTableBuilder(){
         return this.nameTableBuilder;
@@ -22,7 +27,9 @@ parser code {:
 scan with {: return getScanner().next_token(); :};
 
 /* Provides code that will be executed by the parser before it asks for the first token */
-init with {: nameTableBuilder =  new NameTableBuilder(new NameTable()); :};
+init with {:
+            nameTableBuilder =  new NameTableBuilder(new NameTable());
+           :};
 
 /* Terminals (tokens returned by the scanner). */
 // Data types
@@ -88,31 +95,31 @@ terminal		RIGHT_FIG_PARENTHESIS;
 
 non terminal                goal;
 non terminal                compilation_unit;
-non terminal                main_class;
-non terminal                main_class_methods_declaration;
-non terminal                main_method_declaration;
-non terminal                classes_declaration;
-non terminal                class_declaration;
-non terminal                fields_declaration;
-non terminal                field_declaration;
-non terminal                methods_declaration;
-non terminal                method_declaration;
-non terminal                method_params_declaration;
-non terminal                params_list_declaration;
-non terminal                param_declaration;
-non terminal                block;
-non terminal                variables_declaration;
-non terminal                variable_declaration;
+non terminal    Entry       main_class;
+non terminal    List<Entry> main_class_methods_declaration;
+non terminal    Entry       main_method_declaration;
+non terminal    List<Entry> classes_declaration;
+non terminal    Entry       class_declaration;
+non terminal    List<Entry> fields_declaration;
+non terminal    Entry       field_declaration;
+non terminal    List<Entry> methods_declaration;
+non terminal    Entry       method_declaration;
+non terminal    List<Entry> method_params_declaration;
+non terminal    List<Entry> params_list_declaration;
+non terminal    Entry       param_declaration;
+non terminal    Entry       block;
+non terminal    List<Entry> variables_declaration;
+non terminal    Entry       variable_declaration;
 non terminal                statements;
 non terminal                statement;
 non terminal                assignment_statement;
 non terminal                if_statement;
 non terminal                while_statement;
+non terminal                method_call_statement;
 non terminal                input_statement;
 non terminal                output_statement;
 non terminal    Integer     type;
 non terminal    Integer     reference_type;
-non terminal                return_statement;
 non terminal                expression;
 non terminal                method_call;
 non terminal                actual_params_list;
@@ -155,8 +162,12 @@ main_class_methods_declaration  ::= main_method_declaration
 main_method_declaration         ::= PUBLIC_KEYWORD STATIC_KEYWORD VOID_KEYWORD MAIN_KEYWORD
                                     LEFT_PARENTHESIS STRING_KEYWORD LEFT_SQUARE_PARENTHESIS RIGHT_SQUARE_PARENTHESIS
                                     IDENTIFIER RIGHT_PARENTHESIS LEFT_FIG_PARENTHESIS
-                                        block
-                                    RIGHT_FIG_PARENTHESIS;
+                                        block:innerBlock
+                                    RIGHT_FIG_PARENTHESIS
+                                    {:
+                                        parser.getNameTableBuilder().declareMainMethod(innerBlock);
+                                    :}
+                                   ;
 
 classes_declaration             ::= classes_declaration class_declaration
                                   | class_declaration;
@@ -183,54 +194,100 @@ field_declaration               ::= PUBLIC_KEYWORD type IDENTIFIER SEMICOLON
 methods_declaration             ::= methods_declaration method_declaration
                                   | method_declaration;
 
-method_declaration              ::= PUBLIC_KEYWORD type  IDENTIFIER method_params_declaration
+method_declaration              ::= PUBLIC_KEYWORD type:returnTypeId IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
-                                        return_statement
+                                        RETURN_KEYWORD expression SEMICOLON
                                     RIGHT_FIG_PARENTHESIS
-                                  | PUBLIC_KEYWORD type  IDENTIFIER method_params_declaration
+                                   {:
+                                        parser.getNameTableBuilder().declareMethod(name, paramsList, returnTypeId);
+                                   :}
+                                  | PUBLIC_KEYWORD type:returnTypeId IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
-                                        block
-                                        return_statement
+                                        block:innerBlock
+                                        RETURN_KEYWORD expression SEMICOLON
                                     RIGHT_FIG_PARENTHESIS
-                                  | PUBLIC_KEYWORD VOID_KEYWORD  IDENTIFIER method_params_declaration
+                                   {:
+                                        parser.getNameTableBuilder().declareMethod(name, paramsList, returnTypeId, innerBlock);
+                                   :}
+                                  | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
-                                        return_statement
                                     RIGHT_FIG_PARENTHESIS
-                                  | PUBLIC_KEYWORD VOID_KEYWORD  IDENTIFIER method_params_declaration
+                                   {:
+                                        parser.getNameTableBuilder().declareMethod(name, paramsList, SymbolsInfo.VOID_KEYWORD);
+                                   :}
+                                  | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
-                                        block
-                                        return_statement
-                                    RIGHT_FIG_PARENTHESIS;
+                                        block:innerBlock
+                                    RIGHT_FIG_PARENTHESIS
+                                   {:
+                                        parser.getNameTableBuilder().declareMethod(name, paramsList, SymbolsInfo.VOID_KEYWORD, innerBlock);
+                                   :}
+                                    ;
 
 method_params_declaration       ::= LEFT_PARENTHESIS RIGHT_PARENTHESIS
-                                  | LEFT_PARENTHESIS params_list_declaration RIGHT_PARENTHESIS;
+                                  | LEFT_PARENTHESIS params_list_declaration:paramsList RIGHT_PARENTHESIS
+                                    {:
+                                        RESULT = paramsList;
+                                    :}
+                                  ;
 
-params_list_declaration         ::= params_list_declaration COMMA param_declaration
-                                  | param_declaration;
+params_list_declaration         ::= params_list_declaration:paramsList COMMA param_declaration:param
+                                    {:
+                                        paramsList.add(param);
+                                        RESULT = paramsList;
+                                    :}
+                                  | param_declaration:param
+                                    {:
+                                        RESULT = new LinkedList<Entry>();
+                                        RESULT.add(param);
+                                    :}
+                                  ;
 
-param_declaration               ::= type IDENTIFIER;
+param_declaration               ::= type:typeId IDENTIFIER:name
+                                     {:
+                                           RESULT = parser.getNameTableBuilder().declareEntity(SymbolsInfo.param_declaration, name, typeId);
+                                     :}
+                                    ;
 
-block                           ::= variables_declaration
-                                  | variables_declaration statements
-                                  | statements;
+block                           ::= variables_declaration:variablesEntriesList
+                                   {:
+                                       RESULT = parser.getNameTableBuilder().declareBlock(variablesEntriesList);
+                                   :}
+                                  | variables_declaration:variablesEntriesList statements
+                                   {:
+                                       RESULT = parser.getNameTableBuilder().declareBlock(variablesEntriesList);
+                                   :}
+                                  | statements
+                                  ;
 
-variables_declaration           ::= variables_declaration variable_declaration
-                                  | variable_declaration;
+variables_declaration           ::= variables_declaration:variablesEntriesList variable_declaration:variableEntry
+                                    {:
+                                        variablesEntriesList.add(variableEntry);
+                                        RESULT = variablesEntriesList;
+                                    :}
+                                  | variable_declaration:variableEntry
+                                  {:
+                                        RESULT = new LinkedList<Entry>();
+                                        RESULT.add(variableEntry);
+                                  :}
+                                  ;
 
 variable_declaration            ::= type:typeId IDENTIFIER:name SEMICOLON
                                     {:
-                                        parser.getNameTableBuilder().addVariable(typeId, name);
+                                        RESULT = parser.getNameTableBuilder().declareEntity(typeId, name);
                                     :}
-                                  | type:typeId IDENTIFIER:name ASSIGN expression:value SEMICOLON;
+                                  | type:typeId IDENTIFIER:name ASSIGN expression:value SEMICOLON
                                     {:
-                                        parser.getNameTableBuilder().addVariable(typeId, name, value);
+                                        RESULT = parser.getNameTableBuilder().declareEntity(typeId, name, value);
                                     :}
+                                  ;
 statements                      ::= statements statement
                                   | statement;
 
 statement                       ::= assignment_statement
                                   | if_statement
                                   | while_statement
+                                  | method_call_statement
                                   | input_statement
                                   | output_statement;
 
@@ -253,6 +310,8 @@ while_statement                 ::= WHILE_KEYWORD
                                     LEFT_FIG_PARENTHESIS
                                         block
                                     RIGHT_FIG_PARENTHESIS;
+
+method_call_statement           ::= expression SEMICOLON;
 
 input_statement                 ::= type IDENTIFIER ASSIGN SYSTEM_IN_READ
                                     LEFT_PARENTHESIS RIGHT_PARENTHESIS SEMICOLON;
@@ -279,10 +338,8 @@ reference_type                  ::= IDENTIFIER:name
                                         RESULT = SymbolsInfo.IDENTIFIER;
                                     :};
 
-return_statement                ::= RETURN_KEYWORD SEMICOLON
-                                  | RETURN_KEYWORD expression SEMICOLON;
-
 expression                      ::= expression STOP method_call
+                                  | method_call
                                   | expression INSTANCEOF expression
                                   | EXCLAMATION expression
                                   | LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
@@ -298,11 +355,26 @@ expression                      ::= expression STOP method_call
                                   | expression NOT_EQUAL expression
                                   | expression AND expression
                                   | expression OR expression
-                                  | INTEGER_TYPE
-                                  | FLOAT_TYPE
-                                  | BOOLEAN_TYPE
-                                  | STRING_TYPE
-                                  | CHAR_TYPE
+                                  | INTEGER_TYPE:value
+                                  {:
+                                        RESULT = value;
+                                  :}
+                                  | FLOAT_TYPE:value
+                                  {:
+                                        RESULT = value;
+                                  :}
+                                  | BOOLEAN_TYPE:value
+                                  {:
+                                        RESULT = value;
+                                  :}
+                                  | STRING_TYPE:value
+                                  {:
+                                        RESULT = value;
+                                  :}
+                                  | CHAR_TYPE:value
+                                  {:
+                                        RESULT = value;
+                                  :}
                                   | IDENTIFIER
                                   | NEW_KEYWORD IDENTIFIER LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   | BREAK
