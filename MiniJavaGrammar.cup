@@ -115,11 +115,11 @@ non terminal    Entry       param_declaration;
 non terminal    Entry       block;
 non terminal    List<Entry> variables_declaration;
 non terminal    Entry       variable_declaration;
-non terminal                statements;
-non terminal                statement;
+non terminal    List<Entry> statements;
+non terminal    Entry       statement;
 non terminal                assignment_statement;
-non terminal                if_statement;
-non terminal                while_statement;
+non terminal    Entry       if_statement;
+non terminal    Entry       while_statement;
 non terminal                method_call_statement;
 non terminal                input_statement;
 non terminal                output_statement;
@@ -351,13 +351,13 @@ block                           ::= variables_declaration:variablesEntriesList
                                    {:
                                        RESULT = parser.getNameTableBuilder().declareBlock(variablesEntriesList);
                                    :}
-                                  | variables_declaration:variablesEntriesList statements
+                                  | variables_declaration:variablesEntriesList statements:statements
                                    {:
-                                       RESULT = parser.getNameTableBuilder().declareBlock(variablesEntriesList);
+                                       RESULT = parser.getNameTableBuilder().declareBlock(variablesEntriesList, statements);
                                    :}
-                                  | statements
+                                  | statements:statements
                                    {:
-                                       RESULT = parser.getNameTableBuilder().declareBlock();
+                                       RESULT = parser.getNameTableBuilder().declareBlock(null, statements);
                                    :}
                                   ;
 
@@ -382,8 +382,17 @@ variable_declaration            ::= type:type IDENTIFIER:name SEMICOLON
                                         RESULT = parser.getNameTableBuilder().declareVariable(name, type, value);
                                     :}
                                   ;
-statements                      ::= statements statement
-                                  | statement;
+statements                      ::= statements:statements statement:statement
+                                   {:
+                                        statements.add(statement);
+                                        RESULT = statements;
+                                   :}
+                                  | statement:statement
+                                   {:
+                                        RESULT = new LinkedList<Entry>();
+                                        RESULT.add(statement);
+                                   :}
+                                  ;
 
 statement                       ::= assignment_statement
                                   | if_statement
@@ -396,21 +405,32 @@ assignment_statement            ::= IDENTIFIER ASSIGN expression SEMICOLON;
 
 if_statement                    ::= IF_KEYWORD LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
                                     LEFT_FIG_PARENTHESIS
-                                        block
+                                        block:thenBlock
                                     RIGHT_FIG_PARENTHESIS
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareIfStatement(thenBlock);
+                                   :}
                                   | IF_KEYWORD LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
                                     LEFT_FIG_PARENTHESIS
-                                        block
+                                        block:thenBlock
                                     RIGHT_FIG_PARENTHESIS
                                     ELSE_KEYWORD LEFT_FIG_PARENTHESIS
-                                        block
-                                    RIGHT_FIG_PARENTHESIS;
+                                        block:elseBlock
+                                    RIGHT_FIG_PARENTHESIS
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareIfStatement(thenBlock, elseBlock);
+                                   :}
+                                  ;
 
 while_statement                 ::= WHILE_KEYWORD
                                     LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
                                     LEFT_FIG_PARENTHESIS
-                                        block
-                                    RIGHT_FIG_PARENTHESIS;
+                                        block:innerBlock
+                                    RIGHT_FIG_PARENTHESIS
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareWhileStatement(innerBlock);
+                                   :}
+                                  ;
 
 method_call_statement           ::= expression SEMICOLON;
 

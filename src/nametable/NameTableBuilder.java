@@ -105,19 +105,24 @@ public class NameTableBuilder {
         return declaredMethodParameter;
     }
 
-    public Entry declareBlock(List<? extends Entry> variablesEntriesList) throws NameTableException {
+    public Entry declareBlock(List<? extends Entry> variablesEntriesList, List<? extends Entry> statements) throws NameTableException {
         Entry declaredBlock = new BlockEntry();
         addTopLevelEntry(declaredBlock);
-        declaredBlock.addChildren(variablesEntriesList);
-        removeFromTopLevel(variablesEntriesList);
+        if (variablesEntriesList != null && !variablesEntriesList.isEmpty()) {
+            declaredBlock.addChildren(variablesEntriesList);
+            removeFromTopLevel(variablesEntriesList);
+        }
+        if (statements != null && !statements.isEmpty()) {
+            declaredBlock.addChildren(statements);
+            removeFromTopLevel(statements);
+        }
 
         return declaredBlock;
     }
 
-    public Entry declareBlock() throws NameTableException {
-        return declareBlock(null);
+    public Entry declareBlock(List<? extends Entry> variablesEntriesList) throws NameTableException {
+        return declareBlock(variablesEntriesList, null);
     }
-
 
     public Entry declareVariable(String name, String type, Object value) throws NameTableException {
         Entry declaredVariable = new VariableEntry(name, type, value);
@@ -127,6 +132,22 @@ public class NameTableBuilder {
 
     public Entry declareVariable(String name, String type) throws NameTableException {
         return declareVariable(name, type, null);
+    }
+
+    public Entry declareWhileStatement(Entry innerBlock) {
+        Entry whileEntry = new BlockEntry();
+        whileEntry.addChild(innerBlock);
+        removeFromTopLevel(innerBlock);
+
+        return whileEntry;
+    }
+
+    public Entry declareIfStatement(Entry thenBlock, Entry elseBlock) {
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public Entry declareIfStatement(Entry thenBlock) {
+        return declareIfStatement(thenBlock, null);
     }
 
     private List<Entry> getTopLevelEntries() {

@@ -34,7 +34,6 @@ public class MethodEntry extends Entry {
         MethodEntry that = (MethodEntry) o;
 
         if (!getName().equals(that.getName())) return false;
-        if (!returnType.equals(that.returnType)) return false;
         if (!getParameters().equals(that.getParameters())) return false;
 
         return true;

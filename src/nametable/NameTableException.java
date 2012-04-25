@@ -27,6 +27,6 @@ public class NameTableException extends Exception {
 
     @Override
     public String getMessage() {
-        return "Enrty \"" + conflictEntry.getName() + "\" already defined";    //To change body of overridden methods use File | Settings | File Templates.
+        return conflictEntry.getClass().getSimpleName().replaceAll("Entry","") + " \"" + conflictEntry.getName() + "\" already defined";
     }
 }

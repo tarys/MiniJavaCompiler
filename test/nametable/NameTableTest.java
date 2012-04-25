@@ -14,27 +14,42 @@ public class NameTableTest {
     @Test
     public void testPositiveParse() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
-                "class BeforeClass{" +
-                "   public int f1 = 3;" +
-                "   public boolean b2 = true;" +
-                "   public void m1(){" +
-                "       float var1 = 31.52;" +
+                "class ClassBefore{" +
+                "   public String field1 = \"str\";" +
+                "   public int method1(byte b, char c, String str){" +
+                "       b = 'c';" +
+                "       if (true){" +
+                "           String str2 = \"\";" +
+                "           int i = System.in.read();" +
+                "       } else {" +
+                "           System.out.println('s');" +
+                "       }" +
+                "       System.out.println(1);" +
+                "       return b;" +
                 "   }" +
                 "}" +
                 "public class MainClass{" +
-                "   public int field1 = 15;" +
-                "   public String field2 = \"str\";" +
+                "   public boolean f1 = -3.4028235E+38;" +
+                "   public String f2 = true||false;" +
                 "   public static void main (String[] args){" +
-                "       int c = 10;" +
-                "       int c;" +
-                "       print(\"Hello, World!\");" +
+                "       int c = -15;" +
+                "       System.out.println(\"Hello, world!\");" +
                 "   }" +
-                "   public int print(String str){" +
-                "       getValue();" +
-                "       return 1;" +
-                "   }" +
-                "   public void doNothing(){" +
-                "       int c = 5;" +
+                "}" +
+                "class ClassAfter1{" +
+                "   public boolean field1 = true;" +
+                "}" +
+                "class ClassAfter2{" +
+                "   public void method2(ClassAfter2 arg){" +
+                "       String str;" +
+                "       boolean b2 = 1;" +
+                "       int i = System.in.read();" +
+                "       while(1>0){" +
+                "           char c = -2147483647;" +
+                "           if((true && false) || false){" +
+                "               System.out.println(\"Hello, world!\");" +
+                "           }" +
+                "       }" +
                 "   }" +
                 "}"));
         parser.parse();

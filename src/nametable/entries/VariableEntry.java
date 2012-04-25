@@ -35,8 +35,6 @@ public class VariableEntry extends Entry{
         VariableEntry that = (VariableEntry) o;
 
         if (!getName().equals(that.getName())) return false;
-        if (!type.equals(that.type)) return false;
-
         return true;
     }
 

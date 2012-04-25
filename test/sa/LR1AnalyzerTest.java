@@ -30,7 +30,7 @@ public class LR1AnalyzerTest {
                 "}" +
                 "public class MainClass{" +
                 "   public boolean f1 = -3.4028235E+38;" +
-                "   public String f1 = true||false;" +
+                "   public String f2 = true||false;" +
                 "   public static void main (String[] args){" +
                 "       int c = -15;" +
                 "       System.out.println(\"Hello, world!\");" +
@@ -52,7 +52,7 @@ public class LR1AnalyzerTest {
                 "       }" +
                 "   }" +
                 "}"));
-        Symbol parseTree = parser.parse();
+        parser.parse();
         System.out.println("Parsing finished successfully!");
     }
 
