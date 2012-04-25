@@ -1,6 +1,6 @@
 package nametable;
 
-import sa.SymbolsInfo;
+import nametable.entries.*;
 
 import java.util.List;
 
@@ -9,15 +9,9 @@ import java.util.List;
  */
 public class NameTableBuilder {
     private NameTable nameTable;
-    private int blockCounter;
 
     public NameTableBuilder(NameTable nameTable) {
         this.setNameTable(nameTable);
-        this.blockCounter = 0;
-    }
-
-    public void addReferenceType(String name) {
-
     }
 
     public NameTable getNameTable() {
@@ -28,41 +22,21 @@ public class NameTableBuilder {
         this.nameTable = nameTable;
     }
 
-    public Entry declareEntity(String name, Integer valueType) throws NameTableException {
-        return declareEntity(name, valueType, null);
-    }
 
-    public Entry declareEntity(String name, Integer valueType, Object value) throws NameTableException {
-        if (!getNameTable().containsAtTopLevel(name)) {
-            Entry newEntry = new Entry(name, valueType, value, null);
-            getNameTable().addTopLevelEntry(newEntry);
-            return newEntry;
-        } else {
-            throw new NameTableException(getNameTable().getTopLevelEntry(name));
-        }
-    }
-
-    public Entry declareBlock(List<Entry> variablesEntriesList) throws NameTableException {
-        // declaring new block
-        Entry declaredBlock = declareEntity("block#" + ++blockCounter, SymbolsInfo.block);
-        declaredBlock.setChildren(variablesEntriesList);
-        getNameTable().removeFromTopLevel(variablesEntriesList);
-
-        return declaredBlock;
-    }
-
-    public Entry declareMainMethod(Entry innerBlockName) throws NameTableException {
-        Entry mainMethodEntry = declareEntity("main", SymbolsInfo.main_method_declaration);
-        mainMethodEntry.addChild(innerBlockName);
-        getNameTable().removeFromTopLevel(innerBlockName);
+    public Entry declareMainMethod(Entry innerBlock) throws NameTableException {
+        Entry mainMethodEntry = new MainMethodEntry();
+        getNameTable().addTopLevelEntry(mainMethodEntry);
+        mainMethodEntry.addChild(innerBlock);
+        getNameTable().removeFromTopLevel(innerBlock);
 
         return mainMethodEntry;
     }
 
-    public Entry declareMethod(String name, List<Entry> paramsList, Integer returnTypeId, Entry innerBlock) throws NameTableException {
-        Entry declaredMethod = declareEntity(name, SymbolsInfo.method_declaration, returnTypeId);
+    public Entry declareMethod(String name, String returnType, List<? extends Entry> paramsList, Entry innerBlock) throws NameTableException {
+        Entry declaredMethod = new MethodEntry(name, returnType);
+        getNameTable().addTopLevelEntry(declaredMethod);
         if (paramsList != null) {
-            declaredMethod.setChildren(paramsList);
+            declaredMethod.addChildren(paramsList);
             getNameTable().removeFromTopLevel(paramsList);
         }
         if (innerBlock != null) {
@@ -73,7 +47,36 @@ public class NameTableBuilder {
         return declaredMethod;
     }
 
-    public Entry declareMethod(String name, List<Entry> paramsList, Integer returnTypeId) throws NameTableException {
-        return declareMethod(name, paramsList, returnTypeId, null);
+    public Entry declareMethod(String name, String returnType, List<? extends Entry> paramsList) throws NameTableException {
+        return declareMethod(name, returnType, paramsList, null);
+    }
+
+    public Entry declareMethodParameter(String name, String type) {
+        Entry declaredMethodParameter = new MethodParameterEntry(name, type);
+        getNameTable().addTopLevelEntry(declaredMethodParameter);
+        return declaredMethodParameter;
+    }
+
+    public Entry declareBlock(List<? extends Entry> variablesEntriesList) throws NameTableException {
+        Entry declaredBlock = new BlockEntry();
+        getNameTable().addTopLevelEntry(declaredBlock);
+        declaredBlock.addChildren(variablesEntriesList);
+        getNameTable().removeFromTopLevel(variablesEntriesList);
+
+        return declaredBlock;
+    }
+
+    public Entry declareBlock() throws NameTableException {
+        return declareBlock(null);
+    }
+
+    public Entry declareVariable(String name, String type, Object value) {
+        Entry declaredVariable = new VariableEntry(name, type, value);
+        getNameTable().addTopLevelEntry(declaredVariable);
+        return declaredVariable;
+    }
+
+    public Entry declareVariable(String name, String type) {
+        return declareVariable(name, type, null);
     }
 }

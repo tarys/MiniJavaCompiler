@@ -3,7 +3,7 @@
 import java_cup.runtime.*;
 import nametable.NameTable;
 import nametable.NameTableBuilder;
-import nametable.Entry;
+import nametable.entries.Entry;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -118,8 +118,8 @@ non terminal                while_statement;
 non terminal                method_call_statement;
 non terminal                input_statement;
 non terminal                output_statement;
-non terminal    Integer     type;
-non terminal    Integer     reference_type;
+non terminal    String      type;
+non terminal    String      reference_type;
 non terminal                expression;
 non terminal                method_call;
 non terminal                actual_params_list;
@@ -191,36 +191,45 @@ fields_declaration              ::= fields_declaration field_declaration
 field_declaration               ::= PUBLIC_KEYWORD type IDENTIFIER SEMICOLON
                                   | PUBLIC_KEYWORD type IDENTIFIER ASSIGN expression SEMICOLON;
 
-methods_declaration             ::= methods_declaration method_declaration
-                                  | method_declaration;
+methods_declaration             ::= methods_declaration:methods_list method_declaration:method
+                                   {:
+                                        methods_list.add(method);
+                                        RESULT = methods_list;
+                                   :}
+                                  | method_declaration:method
+                                   {:
+                                        RESULT = new LinkedList<Entry>();
+                                        RESULT.add(method);
+                                   :}
+                                  ;
 
-method_declaration              ::= PUBLIC_KEYWORD type:returnTypeId IDENTIFIER:name method_params_declaration:paramsList
-                                    LEFT_FIG_PARENTHESIS
-                                        RETURN_KEYWORD expression SEMICOLON
-                                    RIGHT_FIG_PARENTHESIS
-                                   {:
-                                        parser.getNameTableBuilder().declareMethod(name, paramsList, returnTypeId);
-                                   :}
-                                  | PUBLIC_KEYWORD type:returnTypeId IDENTIFIER:name method_params_declaration:paramsList
+method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
                                         block:innerBlock
                                         RETURN_KEYWORD expression SEMICOLON
                                     RIGHT_FIG_PARENTHESIS
                                    {:
-                                        parser.getNameTableBuilder().declareMethod(name, paramsList, returnTypeId, innerBlock);
+                                        RESULT = parser.getNameTableBuilder().declareMethod(name, returnType, paramsList, innerBlock);
                                    :}
-                                  | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
+                                  | PUBLIC_KEYWORD type:returnType IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
+                                        RETURN_KEYWORD expression SEMICOLON
                                     RIGHT_FIG_PARENTHESIS
                                    {:
-                                        parser.getNameTableBuilder().declareMethod(name, paramsList, SymbolsInfo.VOID_KEYWORD);
+                                        RESULT = parser.getNameTableBuilder().declareMethod(name, returnType, paramsList);
                                    :}
                                   | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
                                         block:innerBlock
                                     RIGHT_FIG_PARENTHESIS
                                    {:
-                                        parser.getNameTableBuilder().declareMethod(name, paramsList, SymbolsInfo.VOID_KEYWORD, innerBlock);
+                                        RESULT = parser.getNameTableBuilder().declareMethod(name, "void", paramsList, innerBlock);
+                                   :}
+                                  | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
+                                    LEFT_FIG_PARENTHESIS
+                                    RIGHT_FIG_PARENTHESIS
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareMethod(name, "void", paramsList);
                                    :}
                                     ;
 
@@ -243,9 +252,9 @@ params_list_declaration         ::= params_list_declaration:paramsList COMMA par
                                     :}
                                   ;
 
-param_declaration               ::= type:valueType IDENTIFIER:name
+param_declaration               ::= type:type IDENTIFIER:name
                                      {:
-                                           RESULT = parser.getNameTableBuilder().declareEntity(name, SymbolsInfo.param_declaration, valueType);
+                                           RESULT = parser.getNameTableBuilder().declareMethodParameter(name, type);
                                      :}
                                     ;
 
@@ -258,6 +267,9 @@ block                           ::= variables_declaration:variablesEntriesList
                                        RESULT = parser.getNameTableBuilder().declareBlock(variablesEntriesList);
                                    :}
                                   | statements
+                                   {:
+                                       RESULT = parser.getNameTableBuilder().declareBlock();
+                                   :}
                                   ;
 
 variables_declaration           ::= variables_declaration:variablesEntriesList variable_declaration:variableEntry
@@ -272,13 +284,13 @@ variables_declaration           ::= variables_declaration:variablesEntriesList v
                                   :}
                                   ;
 
-variable_declaration            ::= type:valueType IDENTIFIER:name SEMICOLON
+variable_declaration            ::= type:type IDENTIFIER:name SEMICOLON
                                     {:
-                                        RESULT = parser.getNameTableBuilder().declareEntity(name, valueType);
+                                        RESULT = parser.getNameTableBuilder().declareVariable(name, type);
                                     :}
-                                  | type:valueType IDENTIFIER:name ASSIGN expression:value SEMICOLON
+                                  | type:type IDENTIFIER:name ASSIGN expression:value SEMICOLON
                                     {:
-                                        RESULT = parser.getNameTableBuilder().declareEntity(name, valueType, value);
+                                        RESULT = parser.getNameTableBuilder().declareVariable(name, type, value);
                                     :}
                                   ;
 statements                      ::= statements statement
@@ -319,22 +331,22 @@ input_statement                 ::= type IDENTIFIER ASSIGN SYSTEM_IN_READ
 output_statement                ::= SYSTEM_OUT_PRINTLN LEFT_PARENTHESIS expression RIGHT_PARENTHESIS SEMICOLON;
 
 type                            ::= BOOLEAN_KEYWORD
-                                    {: RESULT = SymbolsInfo.BOOLEAN_TYPE; :}
+                                    {: RESULT = "boolean"; :}
                                   | CHAR_KEYWORD
-                                    {: RESULT = SymbolsInfo.CHAR_TYPE; :}
+                                    {: RESULT = "char"; :}
                                   | FLOAT_KEYWORD
-                                    {: RESULT = SymbolsInfo.FLOAT_TYPE; :}
+                                    {: RESULT = "float"; :}
                                   | INT_KEYWORD
-                                    {: RESULT = SymbolsInfo.INTEGER_TYPE; :}
+                                    {: RESULT = "int"; :}
                                   | STRING_KEYWORD
-                                    {: RESULT = SymbolsInfo.STRING_TYPE; :}
+                                    {: RESULT = "String"; :}
                                   | reference_type:value
                                     {: RESULT = value; :}
                                   ;
 
-reference_type                  ::= IDENTIFIER
+reference_type                  ::= IDENTIFIER:name
                                     {:
-                                        RESULT = SymbolsInfo.reference_type;
+                                        RESULT = name;
                                     :};
 
 expression                      ::= expression STOP method_call

@@ -12,11 +12,15 @@ public class NameTableTest {
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
                 "       int c = 10;" +
-                "       int d;" +
+                "       int c;" +
                 "       print(\"Hello, World!\");" +
                 "   }" +
                 "   public int print(String str){" +
+                "       getValue();" +
                 "       return 1;" +
+                "   }" +
+                "   public void doNothing(){" +
+                "       int c = 5;" +
                 "   }" +
                 "}"));
         parser.parse();

@@ -1,6 +1,8 @@
 package nametable;
 
 
+import nametable.entries.Entry;
+
 public class NameTableException extends Exception {
     private Entry conflictEntry;
 

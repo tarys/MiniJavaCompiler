@@ -1,5 +1,7 @@
 package nametable;
 
+import nametable.entries.Entry;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -14,10 +16,6 @@ public class NameTable {
 
     public List<Entry> getTopLevelEntries() {
         return topLevelEntries;
-    }
-
-    public void setTopLevelEntries(List<Entry> topLevelEntries) {
-        this.topLevelEntries = topLevelEntries;
     }
 
     public void addTopLevelEntry(Entry entry) {
@@ -43,11 +41,15 @@ public class NameTable {
     }
 
     public void removeFromTopLevel(Entry entry) {
-        getTopLevelEntries().remove(entry);
+        if (entry != null) {
+            getTopLevelEntries().remove(entry);
+        }
     }
 
-    public void removeFromTopLevel(List<Entry> entries) {
-        getTopLevelEntries().removeAll(entries);
+    public void removeFromTopLevel(List<? extends Entry> entries) {
+        if (entries != null) {
+            getTopLevelEntries().removeAll(entries);
+        }
     }
 
     @Override
