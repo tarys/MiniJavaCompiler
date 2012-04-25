@@ -36,7 +36,6 @@ public class VariableEntry extends Entry{
 
         if (!getName().equals(that.getName())) return false;
         if (!type.equals(that.type)) return false;
-        if (value != null ? !value.equals(that.value) : that.value != null) return false;
 
         return true;
     }
@@ -45,7 +44,7 @@ public class VariableEntry extends Entry{
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + type.hashCode();
-        result = 31 * result + (value != null ? value.hashCode() : 0);
+
         return result;
     }
 }

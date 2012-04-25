@@ -24,8 +24,7 @@ public class NameTableBuilder {
         this.nameTable = nameTable;
     }
 
-
-    public void declareProgram(List<Entry> classes) {
+    public void declareProgram(List<Entry> classes) throws NameTableException {
         Entry program = new ProgramEntry();
         addTopLevelEntry(program);
         program.addChildren(classes);
@@ -33,7 +32,7 @@ public class NameTableBuilder {
         setNameTable(program);
     }
 
-    public Entry declareMainClass(String name, List<? extends Entry> fieldsList, List<? extends Entry> methodsList) {
+    public Entry declareMainClass(String name, List<? extends Entry> fieldsList, List<? extends Entry> methodsList) throws NameTableException {
         Entry declaredMainClass = new MainClassEntry(name);
         addTopLevelEntry(declaredMainClass);
         if (fieldsList != null) {
@@ -56,7 +55,7 @@ public class NameTableBuilder {
         return mainMethodEntry;
     }
 
-    public Entry declareClass(String name, List<? extends Entry> fieldsList, List<? extends Entry> methodsList) {
+    public Entry declareClass(String name, List<? extends Entry> fieldsList, List<? extends Entry> methodsList) throws NameTableException {
         Entry declaredClass = new ClassEntry(name);
         addTopLevelEntry(declaredClass);
         if (fieldsList != null) {
@@ -70,14 +69,14 @@ public class NameTableBuilder {
         return declaredClass;
     }
 
-    public Entry declareField(String name, String type, Object value) {
+    public Entry declareField(String name, String type, Object value) throws NameTableException {
 
         Entry declaredField = new FieldEntry(name, type, value);
         addTopLevelEntry(declaredField);
         return declaredField;
     }
 
-    public Entry declareField(String name, String type) {
+    public Entry declareField(String name, String type) throws NameTableException {
         return declareField(name, type, null);
     }
 
@@ -100,7 +99,7 @@ public class NameTableBuilder {
         return declareMethod(name, returnType, paramsList, null);
     }
 
-    public Entry declareMethodParameter(String name, String type) {
+    public Entry declareMethodParameter(String name, String type) throws NameTableException {
         Entry declaredMethodParameter = new MethodParameterEntry(name, type);
         addTopLevelEntry(declaredMethodParameter);
         return declaredMethodParameter;
@@ -120,13 +119,13 @@ public class NameTableBuilder {
     }
 
 
-    public Entry declareVariable(String name, String type, Object value) {
+    public Entry declareVariable(String name, String type, Object value) throws NameTableException {
         Entry declaredVariable = new VariableEntry(name, type, value);
         addTopLevelEntry(declaredVariable);
         return declaredVariable;
     }
 
-    public Entry declareVariable(String name, String type) {
+    public Entry declareVariable(String name, String type) throws NameTableException {
         return declareVariable(name, type, null);
     }
 
@@ -134,8 +133,14 @@ public class NameTableBuilder {
         return topLevelEntries;
     }
 
-    private void addTopLevelEntry(Entry entry) {
-        getTopLevelEntries().add(entry);
+    private void addTopLevelEntry(Entry entry) throws NameTableException {
+        List<Entry> topEntries = getTopLevelEntries();
+        for (Entry topEntry : topEntries) {
+            if (topEntry.equals(entry)) {
+                throw new NameTableException(entry);
+            }
+        }
+        topEntries.add(entry);
     }
 
     private void removeFromTopLevel(Entry entry) {
