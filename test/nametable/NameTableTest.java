@@ -22,8 +22,6 @@ public class NameTableTest {
         parser.parse();
         NameTable nameTable = parser.getNameTableBuilder().getNameTable();
         Assert.assertTrue(nameTable.containsAtTopLevel("main"));
-        for (Entry entry : nameTable.getTopLevelEntries()) {
-            System.out.println(entry);
-        }
+        System.out.println(nameTable);
     }
 }

@@ -2,6 +2,7 @@ package nametable;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 
 public class NameTable {
@@ -47,5 +48,30 @@ public class NameTable {
 
     public void removeFromTopLevel(List<Entry> entries) {
         getTopLevelEntries().removeAll(entries);
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer resultBuffer = new StringBuffer();
+        ListIterator<Entry> iterator = getTopLevelEntries().listIterator();
+        while (iterator.hasNext()) {
+            Entry currEntry = iterator.next();
+            int indentLevel = 0;
+            buildString(currEntry, indentLevel, resultBuffer);
+        }
+        return resultBuffer.toString();
+    }
+
+    private void buildString(Entry entry, int indentLevel, StringBuffer resultBuffer) {
+        for (int i = 0; i < indentLevel; i++) {
+            resultBuffer.append("\t");
+        }
+        resultBuffer.append(entry.toString());
+        resultBuffer.append("\n");
+        ListIterator<Entry> childrenEntriesListIterator = entry.getChildren().listIterator();
+        while (childrenEntriesListIterator.hasNext()) {
+            Entry child = childrenEntriesListIterator.next();
+            buildString(child, indentLevel + 1, resultBuffer);
+        }
     }
 }
