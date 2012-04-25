@@ -143,7 +143,14 @@ public class NameTableBuilder {
     }
 
     public Entry declareIfStatement(Entry thenBlock, Entry elseBlock) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+        Entry ifEntry = new BlockEntry();
+        ifEntry.addChild(thenBlock);
+        removeFromTopLevel(thenBlock);
+        if (elseBlock != null) {
+            ifEntry.addChild(elseBlock);
+            removeFromTopLevel(elseBlock);
+        }
+        return ifEntry;
     }
 
     public Entry declareIfStatement(Entry thenBlock) {

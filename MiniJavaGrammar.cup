@@ -384,19 +384,29 @@ variable_declaration            ::= type:type IDENTIFIER:name SEMICOLON
                                   ;
 statements                      ::= statements:statements statement:statement
                                    {:
-                                        statements.add(statement);
+                                        if (statement != null){
+                                            statements.add(statement);
+                                        }
                                         RESULT = statements;
                                    :}
                                   | statement:statement
                                    {:
                                         RESULT = new LinkedList<Entry>();
-                                        RESULT.add(statement);
+                                        if (statement != null){
+                                            RESULT.add(statement);
+                                        }
                                    :}
                                   ;
 
 statement                       ::= assignment_statement
-                                  | if_statement
-                                  | while_statement
+                                  | if_statement:statement
+                                   {:
+                                        RESULT = statement;
+                                   :}
+                                  | while_statement:statement
+                                   {:
+                                        RESULT = statement;
+                                   :}
                                   | method_call_statement
                                   | input_statement
                                   | output_statement;
