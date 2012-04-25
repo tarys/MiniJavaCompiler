@@ -9,19 +9,18 @@ import java.util.List;
  * responsible for correct building of name table
  */
 public class NameTableBuilder {
-    private NameTable nameTable;
+    private Entry nameTable;
     private List<Entry> topLevelEntries;
 
     public NameTableBuilder() {
-        this.nameTable = new NameTable();
         this.topLevelEntries = new LinkedList<Entry>();
     }
 
-    public NameTable getNameTable() {
+    public Entry getNameTable() {
         return nameTable;
     }
 
-    public void setNameTable(NameTable nameTable) {
+    public void setNameTable(Entry nameTable) {
         this.nameTable = nameTable;
     }
 
@@ -31,7 +30,7 @@ public class NameTableBuilder {
         addTopLevelEntry(program);
         program.addChildren(classes);
         removeFromTopLevel(classes);
-        getNameTable().setRoot(program);
+        setNameTable(program);
     }
 
     public Entry declareMainClass(String name, List<? extends Entry> fieldsList, List<? extends Entry> methodsList) {
