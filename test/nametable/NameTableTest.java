@@ -1,9 +1,14 @@
 package nametable;
 
 import la.LexicalAnalyzer;
+import nametable.entries.Entry;
+import nametable.entries.ProgramEntry;
 import org.junit.Assert;
 import org.junit.Test;
 import sa.LR1Analyzer;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class NameTableTest {
     @Test
@@ -33,7 +38,23 @@ public class NameTableTest {
                 "   }" +
                 "}"));
         parser.parse();
-        NameTable nameTable = parser.getNameTable();
-        System.out.println(nameTable);
+        Entry nameTable = parser.getNameTable();
+        Entry resultEntry = nameTable.lookUpGlobal(new ProgramEntry());
+        Assert.assertNotNull(resultEntry);
+        nameTable.printEntriesTree();
+    }
+
+    @Test
+    public void testListContains() throws Exception {
+        List<Integer> list = new LinkedList<Integer>();
+        Integer i1 = new Integer(1);
+        list.add(i1);
+        list.add(new Integer(2));
+        Integer i2 = new Integer(1);
+
+        Assert.assertFalse(i1 == i2);
+        Assert.assertTrue(i1.equals(i2));
+        Assert.assertTrue(list.contains(i2));
+
     }
 }
