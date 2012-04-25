@@ -1,11 +1,11 @@
 // CUP specification for a simple expression evaluator (w/ actions)
 
-import java_cup.runtime.*;
-import nametable.NameTable;
+import java_cup.runtime.Symbol;
 import nametable.NameTableBuilder;
 import nametable.entries.Entry;
-import java.util.List;
+
 import java.util.LinkedList;
+import java.util.List;
 
 
 /* allows methods and variable to be placed directly within the generated parser class */
