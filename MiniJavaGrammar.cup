@@ -17,7 +17,7 @@ parser code {:
         return this.nameTableBuilder;
     }
 
-    public NameTable getNameTable(){
+    public Entry getNameTable(){
         return this.nameTableBuilder.getNameTable();
     }
 
