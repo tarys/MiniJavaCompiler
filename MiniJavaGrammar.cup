@@ -13,9 +13,14 @@ parser code {:
     private NameTableBuilder nameTableBuilder;
 
 
-    public NameTableBuilder getNameTableBuilder(){
+    protected NameTableBuilder getNameTableBuilder(){
         return this.nameTableBuilder;
     }
+
+    public NameTable getNameTable(){
+        return this.nameTableBuilder.getNameTable();
+    }
+
 
     @Override
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
@@ -28,8 +33,8 @@ scan with {: return getScanner().next_token(); :};
 
 /* Provides code that will be executed by the parser before it asks for the first token */
 init with {:
-            nameTableBuilder =  new NameTableBuilder(new NameTable());
-           :};
+            nameTableBuilder =  new NameTableBuilder();
+:};
 
 /* Terminals (tokens returned by the scanner). */
 // Data types
@@ -141,10 +146,31 @@ start with goal;
 
 goal                            ::= compilation_unit;
 
-compilation_unit                ::= main_class
-                                  | main_class classes_declaration
-                                  | classes_declaration main_class
-                                  | classes_declaration main_class classes_declaration;
+compilation_unit                ::= main_class:mainClass
+                                   {:
+                                        List<Entry> classes = new LinkedList<Entry>();
+                                        classes.add(mainClass);
+                                        parser.getNameTableBuilder().declareProgram(classes);
+                                   :}
+                                  | main_class:mainClass classes_declaration:classes
+                                   {:
+                                        classes.add(mainClass);
+                                        parser.getNameTableBuilder().declareProgram(classes);
+                                   :}
+                                  | classes_declaration:classes main_class:mainClass
+                                   {:
+                                        classes.add(mainClass);
+                                        parser.getNameTableBuilder().declareProgram(classes);
+
+                                   :}
+                                  | classes_declaration:classesListBefore main_class:mainClass classes_declaration:classesListAfter
+                                   {:
+                                        List<Entry> classes = classesListBefore;
+                                        classes.add(mainClass);
+                                        classes.addAll(classesListAfter);
+                                        parser.getNameTableBuilder().declareProgram(classes);
+                                   :}
+                                  ;
 
 main_class                      ::= PUBLIC_KEYWORD CLASS_KEYWORD IDENTIFIER:name LEFT_FIG_PARENTHESIS
                                         fields_declaration:fieldsList

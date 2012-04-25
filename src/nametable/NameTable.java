@@ -8,59 +8,24 @@ import java.util.ListIterator;
 
 
 public class NameTable {
-    private List<Entry> topLevelEntries;
+    private Entry root;
 
     public NameTable() {
-        this.topLevelEntries = new LinkedList<Entry>();
     }
 
-    public List<Entry> getTopLevelEntries() {
-        return topLevelEntries;
+    public void setRoot(Entry root) {
+        this.root = root;
     }
 
-    public void addTopLevelEntry(Entry entry) {
-        getTopLevelEntries().add(entry);
-    }
-
-    public boolean containsAtTopLevel(String entryName) {
-        for (Entry entry : getTopLevelEntries()) {
-            if (entry.getName().equals(entryName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Entry getTopLevelEntry(String name) {
-        for (Entry entry : getTopLevelEntries()) {
-            if (entry.getName().equals(name)) {
-                return entry;
-            }
-        }
-        return null;
-    }
-
-    public void removeFromTopLevel(Entry entry) {
-        if (entry != null) {
-            getTopLevelEntries().remove(entry);
-        }
-    }
-
-    public void removeFromTopLevel(List<? extends Entry> entries) {
-        if (entries != null) {
-            getTopLevelEntries().removeAll(entries);
-        }
+    public Entry getRoot() {
+        return root;
     }
 
     @Override
     public String toString() {
         StringBuffer resultBuffer = new StringBuffer();
-        ListIterator<Entry> iterator = getTopLevelEntries().listIterator();
-        while (iterator.hasNext()) {
-            Entry currEntry = iterator.next();
-            int indentLevel = 0;
-            buildString(currEntry, indentLevel, resultBuffer);
-        }
+        int indentLevel = 0;
+            buildString(getRoot(), indentLevel, resultBuffer);
         return resultBuffer.toString();
     }
 

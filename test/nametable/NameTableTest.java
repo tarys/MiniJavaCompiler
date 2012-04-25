@@ -33,8 +33,7 @@ public class NameTableTest {
                 "   }" +
                 "}"));
         parser.parse();
-        NameTable nameTable = parser.getNameTableBuilder().getNameTable();
-        Assert.assertTrue(nameTable.containsAtTopLevel("MainClass"));
+        NameTable nameTable = parser.getNameTable();
         System.out.println(nameTable);
     }
 }
