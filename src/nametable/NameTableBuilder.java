@@ -23,6 +23,17 @@ public class NameTableBuilder {
     }
 
 
+    public Entry declareField(String name, String type, Object value) {
+
+        Entry declaredField = new FieldEntry(name, type, value);
+        getNameTable().addTopLevelEntry(declaredField);
+        return declaredField;
+    }
+
+    public Entry declareField(String name, String type) {
+        return declareField(name, type, null);
+    }
+
     public Entry declareMainMethod(Entry innerBlock) throws NameTableException {
         Entry mainMethodEntry = new MainMethodEntry();
         getNameTable().addTopLevelEntry(mainMethodEntry);

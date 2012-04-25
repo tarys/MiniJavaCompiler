@@ -10,6 +10,8 @@ public class NameTableTest {
     public void testPositiveParse() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
                 "public class MainClass{" +
+                "   public int flield1 = 15;" +
+                "   public String flield2 = \"str\";" +
                 "   public static void main (String[] args){" +
                 "       int c = 10;" +
                 "       int c;" +

@@ -185,11 +185,27 @@ class_declaration               ::= CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESI
                                   | CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
                                     RIGHT_FIG_PARENTHESIS;
 
-fields_declaration              ::= fields_declaration field_declaration
-                                  | field_declaration;
+fields_declaration              ::= fields_declaration:fields_list field_declaration:field
+                                   {:
+                                        fields_list.add(field);
+                                        RESULT = fields_list;
+                                   :}
+                                  | field_declaration:field
+                                   {:
+                                        RESULT = new LinkedList<Entry>();
+                                        RESULT.add(field);
+                                   :}
+                                  ;
 
-field_declaration               ::= PUBLIC_KEYWORD type IDENTIFIER SEMICOLON
-                                  | PUBLIC_KEYWORD type IDENTIFIER ASSIGN expression SEMICOLON;
+field_declaration               ::= PUBLIC_KEYWORD type:type IDENTIFIER:name ASSIGN expression:value SEMICOLON
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareField(name, type, value);
+                                   :}
+                                  | PUBLIC_KEYWORD type:type IDENTIFIER:name SEMICOLON
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareField(name, type);
+                                    :}
+                                  ;
 
 methods_declaration             ::= methods_declaration:methods_list method_declaration:method
                                    {:
