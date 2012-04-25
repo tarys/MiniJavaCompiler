@@ -1,5 +1,7 @@
 package nametable;
 
+import sa.SymbolsInfo;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,18 +16,17 @@ public class Entry {
      *
      * @see sa.SymbolsInfo
      */
-    private int type;
+    private int valueType;
     /**
      * contains value of Entry. For instance, variable value.
      */
     private Object value;
-    private boolean declared;
     private Entry parentEntry;
     private List<Entry> children;
 
-    public Entry(String name, int type, Object value, Entry parentEntry) {
+    public Entry(String name, int valueType, Object value, Entry parentEntry) {
         this.name = name;
-        this.type = type;
+        this.valueType = valueType;
         this.value = value;
         this.parentEntry = parentEntry;
         this.children = new LinkedList<Entry>();
@@ -37,14 +38,6 @@ public class Entry {
 
     public void setParent(Entry parentEntry) {
         this.parentEntry = parentEntry;
-    }
-
-    public boolean isDeclared() {
-        return declared;
-    }
-
-    public void setDeclared(boolean declared) {
-        this.declared = declared;
     }
 
     public String getName() {
@@ -68,8 +61,8 @@ public class Entry {
      *
      * @see sa.SymbolsInfo
      */
-    public int getType() {
-        return type;
+    public int getValueType() {
+        return valueType;
     }
 
     public List<Entry> getChildren() {
@@ -84,7 +77,7 @@ public class Entry {
     public List<Entry> getChildren(int typeIdFilter) {
         List<Entry> filteredEntries = new LinkedList<Entry>();
         for (Entry child : getChildren()) {
-            if (child.getType() == typeIdFilter) {
+            if (child.getValueType() == typeIdFilter) {
                 filteredEntries.add(child);
             }
         }
@@ -106,11 +99,39 @@ public class Entry {
 
     @Override
     public String toString() {
-        return "[" +
-               "name='" + name + '\'' +
-               "; typeId=" + type +
-               "; value=" + value +
-               "; declared=" + declared +
-               ']';
+        StringBuffer resultBuffer = new StringBuffer();
+        resultBuffer.append("[name='");
+        resultBuffer.append(getName());
+        resultBuffer.append("'; type=");
+        switch (valueType) {
+           case SymbolsInfo.BOOLEAN_TYPE:
+               resultBuffer.append("boolean variable");
+               break;
+           case SymbolsInfo.CHAR_TYPE:
+               resultBuffer.append("char variable");
+               break;
+           case SymbolsInfo.FLOAT_TYPE:
+               resultBuffer.append("float variable");
+               break;
+           case SymbolsInfo.INTEGER_TYPE:
+               resultBuffer.append("int variable");
+               break;
+           case SymbolsInfo.STRING_TYPE:
+               resultBuffer.append("String variable");
+               break;
+            case SymbolsInfo.reference_type:
+                resultBuffer.append("reference type");
+                break;
+            case SymbolsInfo.block:
+                resultBuffer.append("block declaration");
+                break;
+            default:
+                resultBuffer.append("unknown");
+        }
+        resultBuffer.append("; value=");
+        resultBuffer.append(value);
+        resultBuffer.append("]");
+
+        return resultBuffer.toString();
     }
 }

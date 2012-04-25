@@ -243,9 +243,9 @@ params_list_declaration         ::= params_list_declaration:paramsList COMMA par
                                     :}
                                   ;
 
-param_declaration               ::= type:typeId IDENTIFIER:name
+param_declaration               ::= type:valueType IDENTIFIER:name
                                      {:
-                                           RESULT = parser.getNameTableBuilder().declareEntity(SymbolsInfo.param_declaration, name, typeId);
+                                           RESULT = parser.getNameTableBuilder().declareEntity(name, SymbolsInfo.param_declaration, valueType);
                                      :}
                                     ;
 
@@ -272,13 +272,13 @@ variables_declaration           ::= variables_declaration:variablesEntriesList v
                                   :}
                                   ;
 
-variable_declaration            ::= type:typeId IDENTIFIER:name SEMICOLON
+variable_declaration            ::= type:valueType IDENTIFIER:name SEMICOLON
                                     {:
-                                        RESULT = parser.getNameTableBuilder().declareEntity(typeId, name);
+                                        RESULT = parser.getNameTableBuilder().declareEntity(name, valueType);
                                     :}
-                                  | type:typeId IDENTIFIER:name ASSIGN expression:value SEMICOLON
+                                  | type:valueType IDENTIFIER:name ASSIGN expression:value SEMICOLON
                                     {:
-                                        RESULT = parser.getNameTableBuilder().declareEntity(typeId, name, value);
+                                        RESULT = parser.getNameTableBuilder().declareEntity(name, valueType, value);
                                     :}
                                   ;
 statements                      ::= statements statement
@@ -332,10 +332,9 @@ type                            ::= BOOLEAN_KEYWORD
                                     {: RESULT = value; :}
                                   ;
 
-reference_type                  ::= IDENTIFIER:name
+reference_type                  ::= IDENTIFIER
                                     {:
-                                        parser.getNameTableBuilder().addReferenceType(name);
-                                        RESULT = SymbolsInfo.IDENTIFIER;
+                                        RESULT = SymbolsInfo.reference_type;
                                     :};
 
 expression                      ::= expression STOP method_call

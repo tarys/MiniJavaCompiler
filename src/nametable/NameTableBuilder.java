@@ -2,7 +2,6 @@ package nametable;
 
 import sa.SymbolsInfo;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,19 +24,17 @@ public class NameTableBuilder {
         return nameTable;
     }
 
-
-    public Entry declareEntity(Integer typeId, String name) throws NameTableException {
-        return declareEntity(typeId, name, null);
-    }
-
     public void setNameTable(NameTable nameTable) {
         this.nameTable = nameTable;
     }
 
-    public Entry declareEntity(Integer typeId, String name, Object value) throws NameTableException {
+    public Entry declareEntity(String name, Integer valueType) throws NameTableException {
+        return declareEntity(name, valueType, null);
+    }
+
+    public Entry declareEntity(String name, Integer valueType, Object value) throws NameTableException {
         if (!getNameTable().containsAtTopLevel(name)) {
-            Entry newEntry = new Entry(name, typeId, value, null);
-            newEntry.setDeclared(true);
+            Entry newEntry = new Entry(name, valueType, value, null);
             getNameTable().addTopLevelEntry(newEntry);
             return newEntry;
         } else {
@@ -47,7 +44,7 @@ public class NameTableBuilder {
 
     public Entry declareBlock(List<Entry> variablesEntriesList) throws NameTableException {
         // declaring new block
-        Entry declaredBlock = declareEntity(SymbolsInfo.block, "block#" + ++blockCounter);
+        Entry declaredBlock = declareEntity("block#" + ++blockCounter, SymbolsInfo.block);
         declaredBlock.setChildren(variablesEntriesList);
         getNameTable().removeFromTopLevel(variablesEntriesList);
 
@@ -55,7 +52,7 @@ public class NameTableBuilder {
     }
 
     public Entry declareMainMethod(Entry innerBlockName) throws NameTableException {
-        Entry mainMethodEntry = declareEntity(SymbolsInfo.main_method_declaration, "main");
+        Entry mainMethodEntry = declareEntity("main", SymbolsInfo.main_method_declaration);
         mainMethodEntry.addChild(innerBlockName);
         getNameTable().removeFromTopLevel(innerBlockName);
 
@@ -63,7 +60,7 @@ public class NameTableBuilder {
     }
 
     public Entry declareMethod(String name, List<Entry> paramsList, Integer returnTypeId, Entry innerBlock) throws NameTableException {
-        Entry declaredMethod = declareEntity(SymbolsInfo.method_declaration, name, returnTypeId);
+        Entry declaredMethod = declareEntity(name, SymbolsInfo.method_declaration, returnTypeId);
         if (paramsList != null) {
             declaredMethod.setChildren(paramsList);
             getNameTable().removeFromTopLevel(paramsList);
