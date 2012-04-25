@@ -23,15 +23,18 @@ public class NameTableBuilder {
     }
 
 
-    public Entry declareField(String name, String type, Object value) {
-
-        Entry declaredField = new FieldEntry(name, type, value);
-        getNameTable().addTopLevelEntry(declaredField);
-        return declaredField;
-    }
-
-    public Entry declareField(String name, String type) {
-        return declareField(name, type, null);
+    public Entry declareMainClass(String name, List<? extends Entry> fieldsList, List<? extends Entry> methodsList) {
+        Entry declaredMainClass = new MainClassEntry(name);
+        getNameTable().addTopLevelEntry(declaredMainClass);
+        if (fieldsList != null) {
+            declaredMainClass.addChildren(fieldsList);
+            getNameTable().removeFromTopLevel(fieldsList);
+        }
+        if (methodsList != null) {
+            declaredMainClass.addChildren(methodsList);
+            getNameTable().removeFromTopLevel(methodsList);
+        }
+        return declaredMainClass;
     }
 
     public Entry declareMainMethod(Entry innerBlock) throws NameTableException {
@@ -41,6 +44,31 @@ public class NameTableBuilder {
         getNameTable().removeFromTopLevel(innerBlock);
 
         return mainMethodEntry;
+    }
+
+    public Entry declareClass(String name, List<? extends Entry> fieldsList, List<? extends Entry> methodsList) {
+        Entry declaredClass = new ClassEntry(name);
+        getNameTable().addTopLevelEntry(declaredClass);
+        if (fieldsList != null) {
+            declaredClass.addChildren(fieldsList);
+            getNameTable().removeFromTopLevel(fieldsList);
+        }
+        if (methodsList != null) {
+            declaredClass.addChildren(methodsList);
+            getNameTable().removeFromTopLevel(methodsList);
+        }
+        return declaredClass;
+    }
+
+    public Entry declareField(String name, String type, Object value) {
+
+        Entry declaredField = new FieldEntry(name, type, value);
+        getNameTable().addTopLevelEntry(declaredField);
+        return declaredField;
+    }
+
+    public Entry declareField(String name, String type) {
+        return declareField(name, type, null);
     }
 
     public Entry declareMethod(String name, String returnType, List<? extends Entry> paramsList, Entry innerBlock) throws NameTableException {
@@ -86,6 +114,7 @@ public class NameTableBuilder {
         getNameTable().addTopLevelEntry(declaredVariable);
         return declaredVariable;
     }
+
 
     public Entry declareVariable(String name, String type) {
         return declareVariable(name, type, null);

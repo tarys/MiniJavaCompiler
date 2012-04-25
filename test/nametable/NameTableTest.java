@@ -9,9 +9,16 @@ public class NameTableTest {
     @Test
     public void testPositiveParse() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "class BeforeClass{" +
+                "   public int f1 = 3;" +
+                "   public boolean b2 = true;" +
+                "   public void m1(){" +
+                "       float var1 = 31.52;" +
+                "   }" +
+                "}" +
                 "public class MainClass{" +
-                "   public int flield1 = 15;" +
-                "   public String flield2 = \"str\";" +
+                "   public int field1 = 15;" +
+                "   public String field2 = \"str\";" +
                 "   public static void main (String[] args){" +
                 "       int c = 10;" +
                 "       int c;" +
@@ -27,7 +34,7 @@ public class NameTableTest {
                 "}"));
         parser.parse();
         NameTable nameTable = parser.getNameTableBuilder().getNameTable();
-        Assert.assertTrue(nameTable.containsAtTopLevel("main"));
+        Assert.assertTrue(nameTable.containsAtTopLevel("MainClass"));
         System.out.println(nameTable);
     }
 }

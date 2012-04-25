@@ -146,18 +146,43 @@ compilation_unit                ::= main_class
                                   | classes_declaration main_class
                                   | classes_declaration main_class classes_declaration;
 
-main_class                      ::= PUBLIC_KEYWORD CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
-                                        fields_declaration
-                                        main_class_methods_declaration
+main_class                      ::= PUBLIC_KEYWORD CLASS_KEYWORD IDENTIFIER:name LEFT_FIG_PARENTHESIS
+                                        fields_declaration:fieldsList
+                                        main_class_methods_declaration:methodsList
                                     RIGHT_FIG_PARENTHESIS
-                                  | PUBLIC_KEYWORD CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
-                                        main_class_methods_declaration
-                                    RIGHT_FIG_PARENTHESIS;
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareMainClass(name, fieldsList, methodsList);
+                                   :}
+                                  | PUBLIC_KEYWORD CLASS_KEYWORD IDENTIFIER:name LEFT_FIG_PARENTHESIS
+                                        main_class_methods_declaration:methodsList
+                                    RIGHT_FIG_PARENTHESIS
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareMainClass(name, null, methodsList);
+                                   :}
+                                    ;
 
-main_class_methods_declaration  ::= main_method_declaration
-                                  | main_method_declaration methods_declaration
-                                  | methods_declaration main_method_declaration
-                                  | methods_declaration main_method_declaration methods_declaration;
+main_class_methods_declaration  ::= main_method_declaration:mainMethod
+                                   {:
+                                        RESULT = new LinkedList<Entry>();
+                                        RESULT.add(mainMethod);
+                                   :}
+                                  | main_method_declaration:mainMethod methods_declaration:methodsList
+                                   {:
+                                        RESULT = methodsList;
+                                        RESULT.add(mainMethod);
+                                   :}
+                                  | methods_declaration:methodsList main_method_declaration:mainMethod
+                                   {:
+                                        RESULT = methodsList;
+                                        RESULT.add(mainMethod);
+                                   :}
+                                  | methods_declaration:methodsListBefore main_method_declaration:mainMethod methods_declaration:methodsListAfter
+                                   {:
+                                        RESULT = methodsListBefore;
+                                        RESULT.add(mainMethod);
+                                        RESULT.addAll(methodsListAfter);
+                                   :}
+                                  ;
 
 main_method_declaration         ::= PUBLIC_KEYWORD STATIC_KEYWORD VOID_KEYWORD MAIN_KEYWORD
                                     LEFT_PARENTHESIS STRING_KEYWORD LEFT_SQUARE_PARENTHESIS RIGHT_SQUARE_PARENTHESIS
@@ -165,30 +190,52 @@ main_method_declaration         ::= PUBLIC_KEYWORD STATIC_KEYWORD VOID_KEYWORD M
                                         block:innerBlock
                                     RIGHT_FIG_PARENTHESIS
                                     {:
-                                        parser.getNameTableBuilder().declareMainMethod(innerBlock);
+                                        RESULT = parser.getNameTableBuilder().declareMainMethod(innerBlock);
                                     :}
                                    ;
 
-classes_declaration             ::= classes_declaration class_declaration
-                                  | class_declaration;
-
-class_declaration               ::= CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
-                                        fields_declaration
-                                        methods_declaration
-                                    RIGHT_FIG_PARENTHESIS
-                                  | CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
-                                        fields_declaration
-                                    RIGHT_FIG_PARENTHESIS
-                                  | CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
-                                        methods_declaration
-                                    RIGHT_FIG_PARENTHESIS
-                                  | CLASS_KEYWORD IDENTIFIER LEFT_FIG_PARENTHESIS
-                                    RIGHT_FIG_PARENTHESIS;
-
-fields_declaration              ::= fields_declaration:fields_list field_declaration:field
+classes_declaration             ::= classes_declaration:classesList class_declaration:classDeclaration
                                    {:
-                                        fields_list.add(field);
-                                        RESULT = fields_list;
+                                        classesList.add(classDeclaration);
+                                        RESULT = classesList;
+                                   :}
+                                  | class_declaration:classDeclaration
+                                   {:
+                                        RESULT = new LinkedList<Entry>();
+                                        RESULT.add(classDeclaration);
+                                   :}
+                                  ;
+
+class_declaration               ::= CLASS_KEYWORD IDENTIFIER:name LEFT_FIG_PARENTHESIS
+                                        fields_declaration:fieldsList
+                                        methods_declaration:methodsList
+                                    RIGHT_FIG_PARENTHESIS
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareClass(name, fieldsList, methodsList);
+                                   :}
+                                  | CLASS_KEYWORD IDENTIFIER:name LEFT_FIG_PARENTHESIS
+                                        fields_declaration:fieldsList
+                                    RIGHT_FIG_PARENTHESIS
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareClass(name, fieldsList, null);
+                                   :}
+                                  | CLASS_KEYWORD IDENTIFIER:name LEFT_FIG_PARENTHESIS
+                                        methods_declaration:methodsList
+                                    RIGHT_FIG_PARENTHESIS
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareClass(name, null, methodsList);
+                                   :}
+                                  | CLASS_KEYWORD IDENTIFIER:name LEFT_FIG_PARENTHESIS
+                                    RIGHT_FIG_PARENTHESIS
+                                   {:
+                                        RESULT = parser.getNameTableBuilder().declareClass(name, null, null);
+                                   :}
+                                  ;
+
+fields_declaration              ::= fields_declaration:fieldsList field_declaration:field
+                                   {:
+                                        fieldsList.add(field);
+                                        RESULT = fieldsList;
                                    :}
                                   | field_declaration:field
                                    {:
@@ -204,13 +251,13 @@ field_declaration               ::= PUBLIC_KEYWORD type:type IDENTIFIER:name ASS
                                   | PUBLIC_KEYWORD type:type IDENTIFIER:name SEMICOLON
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareField(name, type);
-                                    :}
+                                   :}
                                   ;
 
-methods_declaration             ::= methods_declaration:methods_list method_declaration:method
+methods_declaration             ::= methods_declaration:methodsList method_declaration:method
                                    {:
-                                        methods_list.add(method);
-                                        RESULT = methods_list;
+                                        methodsList.add(method);
+                                        RESULT = methodsList;
                                    :}
                                   | method_declaration:method
                                    {:
