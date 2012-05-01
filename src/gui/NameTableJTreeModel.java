@@ -20,7 +20,7 @@ public class NameTableJTreeModel implements TreeModel {
     private Vector<TreeModelListener> treeModelListeners = new Vector<TreeModelListener>();
     private Entry rootEntry;
 
-    public NameTableJTreeModel(ProgramEntry rootEntry) {
+    public NameTableJTreeModel(Entry rootEntry) {
         this.rootEntry = rootEntry;
     }
 

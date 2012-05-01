@@ -19,6 +19,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import nametable.entries.Entry;
 
 import sa.LR1Analyzer;
 
@@ -58,7 +59,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         cursorPositionLabel = new javax.swing.JLabel();
         syntaxAnalysButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
+        programTree = new javax.swing.JTree(new NameTableJTreeModel(null));
         mainMenuBar = new javax.swing.JMenuBar();
         mainMenu = new javax.swing.JMenu();
         getLexemeMenuItem = new javax.swing.JMenuItem();
@@ -76,7 +77,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         sourceCodeArea.setLineWrap(true);
         sourceCodeArea.setRows(5);
         sourceCodeArea.setTabSize(4);
-        sourceCodeArea.setText("class ClassBefore{\n   public String field1 = \"str\";\n   public int method1(byte b, char c, String str){\n       b = 'c';\n       if (true){\n           String str = \"\";\n           int i = System.in.read();\n       }\n       System.out.println(1);\n       return b;\n   }\n}\npublic class MainClass{\n   public boolean f1 = -3.4028235E+38;\n   public String f1 = true||false;\n   public static void main (String[] args){\n       int c = -15;\n       System.out.println(\"Hello, world!\");\n   }\n}\nclass ClassAfter1{\n   public boolean field1 = true;\n}\nclass ClassAfter2{\n   public void method1(ClassAfter2 arg){\n       String str;\n       boolean b2 = 1;\n       int i = System.in.read();\n       while(1>0){\n           char c = -2147483647;\n           if((true && false) || false){\n               System.out.println(\"Hello, world!\");\n           }\n       }\n       return;\n   }\n}");
+        sourceCodeArea.setText("class ClassBefore{\n   public String field1 = \"str\";\n   public int method1(byte b, char c, String str){\n       b = 'c';\n       if (true){\n           String str = \"\";\n           int i = System.in.read();\n       }\n       System.out.println(1);\n       return b;\n   }\n}\npublic class MainClass{\n   public boolean f1 = -3.4028235E+38;\n   public String f2 = true||false;\n   public static void main (String[] args){\n       int c = -15;\n       System.out.println(\"Hello, world!\");\n   }\n}\nclass ClassAfter1{\n   public boolean field1 = true;\n}\nclass ClassAfter2{\n   public void method1(ClassAfter2 arg){\n       String str;\n       boolean b2 = 1;\n       int i = System.in.read();\n       while(1>0){\n           char c = -2147483647;\n           if((true && false) || false){\n               System.out.println(\"Hello, world!\");\n           }\n       }\n   }\n}");
         sourceCodeArea.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 sourceCodeAreaCaretUpdate(evt);
@@ -171,7 +172,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
                     .addContainerGap()))
         );
 
-        jScrollPane2.setViewportView(jTree1);
+        jScrollPane2.setViewportView(programTree);
 
         mainMenu.setText("Menu");
 
@@ -217,9 +218,9 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -341,6 +342,8 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         LR1Analyzer syntaxAnalyzer = new LR1Analyzer(lexicalAnalyzer);
         try {
             syntaxAnalyzer.parse();
+            Entry rootEntry = syntaxAnalyzer.getNameTable();
+            programTree.setModel(new NameTableJTreeModel(rootEntry));
             logInfo("The syntax is correct");
         } catch (Exception ex) {
             logError(ex.getMessage());
@@ -396,7 +399,6 @@ public class MainLab1JFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JTree jTree1;
     private javax.swing.JComboBox lexemeTypeComboBox;
     private la.LexicalAnalyzer lexicalAnalyzer;
     private javax.swing.JFileChooser loadFileChooser;
@@ -404,6 +406,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
     private javax.swing.JTextPane logPane;
     private javax.swing.JMenu mainMenu;
     private javax.swing.JMenuBar mainMenuBar;
+    private javax.swing.JTree programTree;
     private javax.swing.JTextArea sourceCodeArea;
     private javax.swing.JButton syntaxAnalysButton;
     // End of variables declaration//GEN-END:variables

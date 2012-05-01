@@ -57,10 +57,10 @@ public abstract class Entry {
     @Override
     public String toString() {
         StringBuffer resultBuffer = new StringBuffer();
-        resultBuffer.append("[name='");
-        resultBuffer.append(getName());
-        resultBuffer.append("'; type='");
+        resultBuffer.append("[ type='");
         resultBuffer.append(getClass().getSimpleName().replaceAll("Entry", ""));
+        resultBuffer.append("'; name='");
+        resultBuffer.append(getName());
         resultBuffer.append("']");
 
         return resultBuffer.toString();

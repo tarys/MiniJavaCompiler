@@ -12,7 +12,7 @@ class ClassBefore{
 }
 public class MainClass{
    public boolean f1 = -3.4028235E+38;
-   public String f1 = true||false;
+   public String f2 = true||false;
    public static void main (String[] args){
        int c = -15;
        System.out.println("Hello, world!");
@@ -32,6 +32,5 @@ class ClassAfter2{
                System.out.println("Hello, world!");
            }
        }
-       return;
    }
 }

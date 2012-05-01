@@ -27,6 +27,21 @@ public class VariableEntry extends Entry {
     }
 
     @Override
+    public String toString() {
+        String superString = super.toString();
+        StringBuffer result = new StringBuffer(superString);
+        result.insert(result.indexOf("]") - 1, "; value type = '");
+        result.insert(result.indexOf("]") - 1, getType());
+        result.insert(result.indexOf("]") - 1, "'");
+        if (getValue() != null) {
+            result.insert(result.indexOf("]") - 1, "; value = '");
+            result.insert(result.indexOf("]") - 1, value);
+            result.insert(result.indexOf("]") - 1, "'");
+        }
+        return result.toString();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof VariableEntry)) return false;
