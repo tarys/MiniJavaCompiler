@@ -49,8 +49,6 @@ public class NameTableTest {
                 "           if((true && false) || false){" +
                 "               MyClass ms;" +
                 "               System.out.println(\"Hello, world!\");" +
-                "           } else {" +
-                "               MyClass ms2;" +
                 "           }" +
                 "       }" +
                 "   }" +
