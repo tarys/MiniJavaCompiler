@@ -464,24 +464,78 @@ reference_type                  ::= IDENTIFIER:name
                                         RESULT = name;
                                     :};
 
-expression                      ::= expression STOP method_call
+expression                      ::= expression:exp STOP method_call
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | method_call
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression INSTANCEOF expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | SYSTEM_IN_READ LEFT_PARENTHESIS RIGHT_PARENTHESIS
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | EXCLAMATION expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression PLUS expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression MINUS expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression TIMES expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression DIVIDE expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression LOWER expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression LOWER_EQUAL expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression GREATER expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression GREATER_EQUAL expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression EQUAL expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression NOT_EQUAL expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression AND expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | expression OR expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | INTEGER_TYPE:value
                                   {:
                                         RESULT = value;
@@ -503,9 +557,28 @@ expression                      ::= expression STOP method_call
                                         RESULT = value;
                                   :}
                                   | IDENTIFIER
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | NEW_KEYWORD IDENTIFIER LEFT_PARENTHESIS RIGHT_PARENTHESIS
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
                                   | BREAK
-                                  | MINUS expression
+                                  {:
+                                        RESULT = "Need to be calculated";
+                                  :}
+                                  | MINUS expression:value
+                                  {:
+                                        if(value instanceof Integer){
+                                            RESULT = -((Integer)value);
+                                        }else if(value instanceof Float){
+                                            RESULT = -((Float)value);
+                                        } else {
+                                            RESULT = "-" + value;
+                                        }
+
+                                  :}
                                     %prec UNARY_MINUS;
 
 method_call                     ::= IDENTIFIER LEFT_PARENTHESIS  RIGHT_PARENTHESIS
