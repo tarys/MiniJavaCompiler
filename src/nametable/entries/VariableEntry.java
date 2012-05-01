@@ -1,6 +1,6 @@
 package nametable.entries;
 
-public class VariableEntry extends Entry{
+public class VariableEntry extends Entry {
     private String type;
     private Object value;
 
@@ -45,4 +45,5 @@ public class VariableEntry extends Entry{
 
         return result;
     }
+
 }

@@ -135,7 +135,7 @@ public class NameTableBuilder {
     }
 
     public Entry declareWhileStatement(Entry innerBlock) {
-        Entry whileEntry = new BlockEntry();
+        Entry whileEntry = new WhileEntry();
         whileEntry.addChild(innerBlock);
         removeFromTopLevel(innerBlock);
 
@@ -143,11 +143,11 @@ public class NameTableBuilder {
     }
 
     public Entry declareIfStatement(Entry thenBlock, Entry elseBlock) {
-        Entry ifEntry = new BlockEntry();
-        ifEntry.addChild(thenBlock);
+        IfEntry ifEntry = new IfEntry();
+        ifEntry.setThenBlock((BlockEntry) thenBlock);
         removeFromTopLevel(thenBlock);
         if (elseBlock != null) {
-            ifEntry.addChild(elseBlock);
+            ifEntry.setTElseBlock((BlockEntry) elseBlock);
             removeFromTopLevel(elseBlock);
         }
         return ifEntry;

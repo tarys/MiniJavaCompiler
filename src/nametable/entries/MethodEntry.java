@@ -2,7 +2,6 @@ package nametable.entries;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 public class MethodEntry extends Entry {
     private String returnType;

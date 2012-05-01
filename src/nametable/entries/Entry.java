@@ -138,4 +138,5 @@ public abstract class Entry {
             buildString(child, indentLevel + 1, resultBuffer);
         }
     }
+
 }

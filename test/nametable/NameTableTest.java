@@ -47,7 +47,10 @@ public class NameTableTest {
                 "       while(1>0){" +
                 "           char c = -2147483647;" +
                 "           if((true && false) || false){" +
+                "               MyClass ms;" +
                 "               System.out.println(\"Hello, world!\");" +
+                "           } else {" +
+                "               MyClass ms2;" +
                 "           }" +
                 "       }" +
                 "   }" +

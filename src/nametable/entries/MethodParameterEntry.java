@@ -1,6 +1,6 @@
 package nametable.entries;
 
-public class MethodParameterEntry extends Entry{
+public class MethodParameterEntry extends Entry {
     private String type;
 
     public MethodParameterEntry(String name, String type) {
@@ -32,4 +32,5 @@ public class MethodParameterEntry extends Entry{
         result = 31 * result + type.hashCode();
         return result;
     }
+
 }
