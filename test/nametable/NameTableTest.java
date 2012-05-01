@@ -15,12 +15,13 @@ public class NameTableTest {
     public void testPositiveParse() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
                 "class ClassBefore{" +
-                "   public String field1 = \"str\";" +
+                "   public String f1 = \"str\";" +
                 "   public int method1(byte b, char c, String str){" +
                 "       b = 'c';" +
                 "       if (true){" +
-                "           String str2 = \"\";" +
+                "           String a;" +
                 "           int i = System.in.read();" +
+                "           int g;" +
                 "       } else {" +
                 "           System.out.println('s');" +
                 "       }" +
@@ -33,6 +34,7 @@ public class NameTableTest {
                 "   public String f2 = true||false;" +
                 "   public static void main (String[] args){" +
                 "       int c = -15;" +
+                "       String s;" +
                 "       System.out.println(\"Hello, world!\");" +
                 "   }" +
                 "}" +

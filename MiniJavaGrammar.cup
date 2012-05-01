@@ -121,7 +121,6 @@ non terminal                assignment_statement;
 non terminal    Entry       if_statement;
 non terminal    Entry       while_statement;
 non terminal                method_call_statement;
-non terminal                input_statement;
 non terminal                output_statement;
 non terminal    String      type;
 non terminal    String      reference_type;
@@ -408,7 +407,6 @@ statement                       ::= assignment_statement
                                         RESULT = statement;
                                    :}
                                   | method_call_statement
-                                  | input_statement
                                   | output_statement;
 
 assignment_statement            ::= IDENTIFIER ASSIGN expression SEMICOLON;
@@ -444,8 +442,6 @@ while_statement                 ::= WHILE_KEYWORD
 
 method_call_statement           ::= expression SEMICOLON;
 
-input_statement                 ::= type IDENTIFIER ASSIGN SYSTEM_IN_READ
-                                    LEFT_PARENTHESIS RIGHT_PARENTHESIS SEMICOLON;
 
 output_statement                ::= SYSTEM_OUT_PRINTLN LEFT_PARENTHESIS expression RIGHT_PARENTHESIS SEMICOLON;
 
@@ -471,6 +467,7 @@ reference_type                  ::= IDENTIFIER:name
 expression                      ::= expression STOP method_call
                                   | method_call
                                   | expression INSTANCEOF expression
+                                  | SYSTEM_IN_READ LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   | EXCLAMATION expression
                                   | LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
                                   | expression PLUS expression
