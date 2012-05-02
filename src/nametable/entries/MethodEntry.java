@@ -25,6 +25,16 @@ public class MethodEntry extends Entry {
     }
 
     @Override
+    public String toString() {
+        String superString = super.toString();
+        StringBuffer result = new StringBuffer(superString);
+        result.insert(result.indexOf("]") - 1, "; return type = '");
+        result.insert(result.indexOf("]") - 1, getReturnType());
+
+        return result.toString();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof MethodEntry)) return false;
@@ -43,5 +53,9 @@ public class MethodEntry extends Entry {
         int result = super.hashCode();
         result = 31 * result + returnType.hashCode();
         return result;
+    }
+
+    public String getReturnType() {
+        return returnType;
     }
 }
