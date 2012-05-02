@@ -67,6 +67,117 @@ public class NameTableTest {
     }
 
     @Test
+    public void testDuplicateClasses() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public boolean f1 = -3.4028235E+38;" +
+                "   public String f2 = true||false;" +
+                "   public static void main (String[] args){" +
+                "       int c = -15;" +
+                "       String s;" +
+                "       q = System.in.read();" +
+                "       System.out.println(\"Hello, world!\");" +
+                "   }" +
+                "}" +
+                "class ClassAfter1{" +
+                "   public boolean field1 = true;" +
+                "}" +
+                "class ClassAfter1{" +
+                "}"));
+        try {
+            parser.parse();
+        } catch (NameTableException e) {
+            Assert.assertTrue(e.getMessage().equals("Class \"ClassAfter1\" already defined"));
+        }
+    }
+
+    @Test
+    public void testDuplicateMethods() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public boolean f1 = -3.4028235E+38;" +
+                "   public String f2 = true||false;" +
+                "   public static void main (String[] args){" +
+                "       int c = -15;" +
+                "       String s;" +
+                "       q = System.in.read();" +
+                "       System.out.println(\"Hello, world!\");" +
+                "   }" +
+                "   public int method1(){" +
+                "       return 1;" +
+                "   }" +
+                "   public void method1(){" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+        } catch (NameTableException e) {
+            Assert.assertTrue(e.getMessage().equals("Method \"method1\" already defined"));
+        }
+    }
+
+    @Test
+    public void testDuplicateMethodParameters() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public boolean f1 = -3.4028235E+38;" +
+                "   public String f2 = true||false;" +
+                "   public static void main (String[] args){" +
+                "       int c = -15;" +
+                "       String s;" +
+                "       q = System.in.read();" +
+                "       System.out.println(\"Hello, world!\");" +
+                "   }" +
+                "   public int method1(int arg1, int arg1){" +
+                "       return 1;" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+        } catch (NameTableException e) {
+            Assert.assertTrue(e.getMessage().equals("MethodParameter \"arg1\" already defined"));
+        }
+    }
+
+    @Test
+    public void testDuplicateFields() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public boolean f1 = -3.4028235E+38;" +
+                "   public String f1 = true||false;" +
+                "   public static void main (String[] args){" +
+                "       int c = -15;" +
+                "       String s;" +
+                "       q = System.in.read();" +
+                "       System.out.println(\"Hello, world!\");" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+        } catch (NameTableException e) {
+            Assert.assertTrue(e.getMessage().equals("Field \"f1\" already defined"));
+        }
+    }
+    @Test
+    public void testDuplicateVariables() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public boolean f1 = -3.4028235E+38;" +
+                "   public String f2 = true||false;" +
+                "   public static void main (String[] args){" +
+                "       int s = -15;" +
+                "       String s;" +
+                "       q = System.in.read();" +
+                "       System.out.println(\"Hello, world!\");" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+        } catch (NameTableException e) {
+            Assert.assertTrue(e.getMessage().equals("Variable \"s\" already defined"));
+        }
+    }
+    @Test
     public void testListContains() throws Exception {
         List<Integer> list = new LinkedList<Integer>();
         Integer i1 = new Integer(1);
