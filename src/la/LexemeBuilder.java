@@ -58,6 +58,7 @@ public class LexemeBuilder {
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.ASSIGN, "=");
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.SYSTEM_OUT_PRINTLN, "System.out.println");
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.SYSTEM_IN_READ, "System.in.read");
+        LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.BREAK, "break");
 
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.SEMICOLON, ";");
         LexemeBuilder.lexemeCodingTable.put(SymbolsInfo.COMMA, ",");
