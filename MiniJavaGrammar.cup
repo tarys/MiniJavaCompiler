@@ -3,6 +3,7 @@
 import java_cup.runtime.Symbol;
 import nametable.NameTableBuilder;
 import nametable.entries.Entry;
+import semantic.SemanticAnalyzer;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,10 +12,15 @@ import java.util.List;
 /* allows methods and variable to be placed directly within the generated parser class */
 parser code {:
     private NameTableBuilder nameTableBuilder;
+    private SemanticAnalyzer semanticAnalyzer;
 
 
     protected NameTableBuilder getNameTableBuilder(){
         return this.nameTableBuilder;
+    }
+
+    protected SemanticAnalyzer getSemanticAnalyzer(){
+        return this.semanticAnalyzer;
     }
 
     public Entry getNameTable(){
@@ -34,6 +40,7 @@ scan with {: return getScanner().next_token(); :};
 /* Provides code that will be executed by the parser before it asks for the first token */
 init with {:
             nameTableBuilder =  new NameTableBuilder();
+            semanticAnalyzer = new SemanticAnalyzer(nameTableBuilder);
 :};
 
 /* Terminals (tokens returned by the scanner). */
@@ -84,7 +91,6 @@ terminal		OR;
 terminal		ASSIGN;
 terminal		SYSTEM_OUT_PRINTLN;
 terminal		SYSTEM_IN_READ;
-terminal		BREAK;
 
 // Delimiters
 terminal		SEMICOLON;
@@ -125,8 +131,7 @@ non terminal                output_statement;
 non terminal    String      type;
 non terminal    String      reference_type;
 non terminal                expression;
-non terminal                method_call;
-non terminal                actual_params_list;
+non terminal    List<Object> actual_params_list;
 
 /* Precedences */
 precedence left     ASSIGN;
@@ -464,81 +469,85 @@ reference_type                  ::= IDENTIFIER:name
                                         RESULT = name;
                                     :};
 
-expression                      ::= expression:exp STOP method_call
+expression                      ::= expression:expressionValue STOP IDENTIFIER:methodName LEFT_PARENTHESIS actual_params_list:actualParams RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
                                   :}
-                                  | method_call
+                                  | expression:expressionValue STOP IDENTIFIER:methodName LEFT_PARENTHESIS RIGHT_PARENTHESIS
+                                   {:
+                                   :}
+                                  | IDENTIFIER LEFT_PARENTHESIS actual_params_list:actualParams RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
+                                  :}
+                                  | IDENTIFIER LEFT_PARENTHESIS RIGHT_PARENTHESIS
+                                  {:
                                   :}
                                   | expression INSTANCEOF expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | SYSTEM_IN_READ LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | EXCLAMATION expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression PLUS expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression MINUS expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression TIMES expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression DIVIDE expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression LOWER expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression LOWER_EQUAL expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression GREATER expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression GREATER_EQUAL expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression EQUAL expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression NOT_EQUAL expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression AND expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | expression OR expression
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = null;
                                   :}
                                   | INTEGER_TYPE:value
                                   {:
-                                        RESULT = value;
+                                        RESULT = null;
                                   :}
                                   | FLOAT_TYPE:value
                                   {:
@@ -556,33 +565,28 @@ expression                      ::= expression:exp STOP method_call
                                   {:
                                         RESULT = value;
                                   :}
-                                  | IDENTIFIER
+                                  | IDENTIFIER:value
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = value;
                                   :}
-                                  | NEW_KEYWORD IDENTIFIER LEFT_PARENTHESIS RIGHT_PARENTHESIS
+                                  | NEW_KEYWORD IDENTIFIER:value LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
-                                  :}
-                                  | BREAK
-                                  {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = value;
                                   :}
                                   | MINUS expression:value
                                   {:
-                                        if(value instanceof Integer){
-                                            RESULT = -((Integer)value);
-                                        }else if(value instanceof Float){
-                                            RESULT = -((Float)value);
-                                        } else {
-                                            RESULT = "-" + value;
-                                        }
-
+                                        RESULT = value;
                                   :}
                                     %prec UNARY_MINUS;
 
-method_call                     ::= IDENTIFIER LEFT_PARENTHESIS  RIGHT_PARENTHESIS
-                                  | IDENTIFIER LEFT_PARENTHESIS actual_params_list  RIGHT_PARENTHESIS;
-
-actual_params_list              ::= actual_params_list COMMA expression
-                                  | expression;
+actual_params_list              ::= actual_params_list:actualParamsList COMMA expression:param
+                                  {:
+                                        actualParamsList.add(param);
+                                        RESULT = actualParamsList;
+                                  :}
+                                  | expression:param
+                                  {:
+                                        RESULT = new LinkedList<Object>();
+                                        RESULT.add(param);
+                                  :}
+                                  ;

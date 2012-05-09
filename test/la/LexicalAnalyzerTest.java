@@ -134,7 +134,6 @@ public class LexicalAnalyzerTest {
                 "String",
                 "System.in.read",
                 "System.out.println",
-                "break",
                 "void",
                 "while"};
         for (String codeText : codeTexts) {
