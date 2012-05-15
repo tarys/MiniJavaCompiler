@@ -11,10 +11,14 @@ import java.util.List;
 /* allows methods and variable to be placed directly within the generated parser class */
 parser code {:
     private NameTableBuilder nameTableBuilder;
+    private SemanticAnalyzer semanticAnalyzer;
 
 
     protected NameTableBuilder getNameTableBuilder(){
         return this.nameTableBuilder;
+    }
+    protected SemanticAnalyzer getSemanticAnalyzer(){
+        return this.semanticAnalyzer;
     }
 
     public Entry getNameTable(){
@@ -34,6 +38,7 @@ scan with {: return getScanner().next_token(); :};
 /* Provides code that will be executed by the parser before it asks for the first token */
 init with {:
             nameTableBuilder =  new NameTableBuilder();
+            semanticAnalyzer = new  SemanticAnalyzer(nameTableBuilder);
 :};
 
 /* Terminals (tokens returned by the scanner). */
