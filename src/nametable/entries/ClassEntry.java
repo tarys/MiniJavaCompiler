@@ -60,7 +60,7 @@ public class ClassEntry extends Entry {
             }
         }
         if (result == null) {
-            throw new SemanticException(SemanticException.NO_SUCH_METHOD + this.getName() + "#" + name);
+            throw new SemanticException(SemanticException.NO_SUCH_METHOD_IN_CLASS + this.getName() + "#" + name);
         }
 
         return result;

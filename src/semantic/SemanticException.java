@@ -3,7 +3,7 @@ package semantic;
 public class SemanticException extends Exception {
     public static final String BREAK_USED_BUT_CYCLE_NOT_DECLARED = "\"break\" used but cycle not declared";
     public static final String NOT_BOOLEAN_EXPRESSION = "Not boolean expression";
-    public static final String INCOMPATIBLE_TYPES = "Incompatible types";
+    public static final String INCOMPATIBLE_TYPES = "Incompatible types: ";
     public static final String NEITHER_INTEGER_NOR_FLOAT_TYPE = "Neither integer nor float type";
     public static final String NOT_DECLARED_CLASS = "Class not declared: ";
     public static final String NO_SUCH_FIELD_IN_CLASS = "No such field in class: ";

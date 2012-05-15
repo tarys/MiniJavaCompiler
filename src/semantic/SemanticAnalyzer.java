@@ -227,35 +227,41 @@ public class SemanticAnalyzer {
             throw new SemanticException(SemanticException.NOT_DECLARED_BUT_USED_VARIABLE_FIELD_OR_METHOD_PARAMETER + name);
         }
         boolean assignSuccess = false;
+        String expectedType = "";
         for (Entry assignCandidate : assignCandidates) {
             if (assignCandidate instanceof ClassEntry) {
                 ClassEntry candidate = (ClassEntry) assignCandidate;
-                if (candidate.getName().equals(expressionType)) {
+                expectedType = candidate.getName();
+                if (expectedType.equals(expressionType)) {
                     assignSuccess = true;
                     break;
                 }
             } else if (assignCandidate instanceof FieldEntry) {
                 FieldEntry candidate = (FieldEntry) assignCandidate;
-                if (candidate.getValueType().equals(expressionType)) {
+                expectedType = candidate.getValueType();
+                if (expectedType.equals(expressionType)) {
                     assignSuccess = true;
                     break;
                 }
             } else if (assignCandidate instanceof MethodParameterEntry) {
                 MethodParameterEntry candidate = (MethodParameterEntry) assignCandidate;
-                if (candidate.getValueType().equals(expressionType)) {
+                expectedType = candidate.getValueType();
+                if (expectedType.equals(expressionType)) {
                     assignSuccess = true;
                     break;
                 }
             } else if (assignCandidate instanceof VariableEntry) {
                 VariableEntry candidate = (VariableEntry) assignCandidate;
-                if (candidate.getValueType().equals(expressionType)) {
+                expectedType = candidate.getValueType();
+                if (expectedType.equals(expressionType)) {
                     assignSuccess = true;
                     break;
                 }
             }
         }
         if (!assignSuccess) {
-            throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES);
+            throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES+ "expected '" + expectedType +"' but was '"
+                    + expressionType + "'");
         }
     }
 
@@ -280,7 +286,7 @@ public class SemanticAnalyzer {
             }
         }
         if (declaredClass == null) {
-            throw new SemanticException(SemanticException.CLASS_NOT_DECLARED + className);
+            throw new SemanticException(SemanticException.NOT_DECLARED_CLASS + className);
         }
 
         return declaredClass;
