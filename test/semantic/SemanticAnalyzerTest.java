@@ -79,7 +79,9 @@ public class SemanticAnalyzerTest {
             System.out.println(e.getMessage());
             Assert.assertTrue(e.getMessage().startsWith(SemanticException.NO_SUCH_METHOD_IN_CLASS));
         }
-    }    @Test
+    }
+
+    @Test
     public void testWrongMethodParams() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
                 "class MyClass{" +
@@ -103,6 +105,29 @@ public class SemanticAnalyzerTest {
     }
 
     @Test
+    public void testWrongMethodReturn() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "class MyClass{" +
+                "       public void d(int a){" +
+                "           int l = 3;" +
+                "       }" +
+                "}" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       MyClass s;" +
+                "       boolean b = s.d(3);" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+            Assert.fail();
+        } catch (SemanticException e) {
+            System.out.println(e.getMessage());
+            Assert.assertTrue(e.getMessage().startsWith(SemanticException.INCOMPATIBLE_TYPES));
+        }
+    }
+
+    @Test
     public void testIncompatibleAssignment() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
                 "public class MainClass{" +
@@ -120,6 +145,7 @@ public class SemanticAnalyzerTest {
             Assert.assertTrue(e.getMessage().startsWith(SemanticException.INCOMPATIBLE_TYPES));
         }
     }
+
     @Test
     public void testNotBooleanIfCondition() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
@@ -138,6 +164,7 @@ public class SemanticAnalyzerTest {
             Assert.assertTrue(e.getMessage().startsWith(SemanticException.NOT_BOOLEAN_EXPRESSION));
         }
     }
+
     @Test
     public void testNotBooleanWhileCondition() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
@@ -156,6 +183,7 @@ public class SemanticAnalyzerTest {
             Assert.assertTrue(e.getMessage().startsWith(SemanticException.NOT_BOOLEAN_EXPRESSION));
         }
     }
+
     @Test
     public void testBreakWithoutWhile() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
