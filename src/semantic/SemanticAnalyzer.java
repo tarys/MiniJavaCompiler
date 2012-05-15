@@ -3,6 +3,7 @@ package semantic;
 import nametable.NameTableBuilder;
 import nametable.entries.*;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class SemanticAnalyzer {
@@ -44,6 +45,12 @@ public class SemanticAnalyzer {
     }
 
     public String isVariableOrMethodParameterOrFieldInCurrentClassDeclared(String name) throws SemanticException {
+        // due to some unexpected SyntaxAnalyzer behaviour checking such situation
+        if (name.equals("true") || name.equals("false")) {
+            return BOOLEAN_TYPE;
+        }
+
+        // normal execution
         List<Entry> candidates = getNameTableBuilder().lookUp(name);
         String resultType = null;
         for (Entry candidate : candidates) {
@@ -195,10 +202,10 @@ public class SemanticAnalyzer {
     }
 
     public String methodCallExpression(String className, String methodName) throws SemanticException {
-        ClassEntry declaredClass = lookUpDeclaredClass(className);
-        MethodEntry callMethod = declaredClass.getMethod(methodName);
-
-        return callMethod.getReturnType();
+        /* checking actual parameters' types
+           because there are no actual parameters we create empty list
+        */
+        return this.methodCallExpression(className, methodName, new LinkedList<String>());
     }
 
     public String fieldCallExpression(String className, String fieldName) throws SemanticException {

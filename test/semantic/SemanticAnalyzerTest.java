@@ -65,7 +65,6 @@ public class SemanticAnalyzerTest {
     public void testNotDeclaredMethod() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
                 "class MyClass{" +
-                "" +
                 "}" +
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
@@ -79,6 +78,27 @@ public class SemanticAnalyzerTest {
         } catch (SemanticException e) {
             System.out.println(e.getMessage());
             Assert.assertTrue(e.getMessage().startsWith(SemanticException.NO_SUCH_METHOD_IN_CLASS));
+        }
+    }    @Test
+    public void testWrongMethodParams() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "class MyClass{" +
+                "       public void d(int a){" +
+                "           int l = 3;" +
+                "       }" +
+                "}" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       MyClass s;" +
+                "       s.d();" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+            Assert.fail();
+        } catch (SemanticException e) {
+            System.out.println(e.getMessage());
+            Assert.assertTrue(e.getMessage().startsWith(SemanticException.WRONG_METHOD_PARAMETERS_AMOUNT));
         }
     }
 
