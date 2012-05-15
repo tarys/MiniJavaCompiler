@@ -60,7 +60,7 @@ public class NameTableTest {
                 "   }" +
                 "}"));
         parser.parse();
-        Entry nameTable = parser.getNameTable();
+        Entry nameTable = parser.getNameTable().get(0);
         Entry resultEntry = nameTable.lookUpGlobal(new ProgramEntry());
         Assert.assertNotNull(resultEntry);
         nameTable.printEntriesTree();

@@ -22,7 +22,7 @@ parser code {:
         return this.semanticAnalyzer;
     }
 
-    public Entry getNameTable(){
+    public List<Entry> getNameTable(){
         return this.nameTableBuilder.getNameTable();
     }
 
@@ -130,12 +130,9 @@ non terminal                    method_call_statement;
 non terminal                    output_statement;
 non terminal    String          type;
 non terminal    String          reference_type;
-/* as we actually neither call method nor calculating expressions we just store String representation of result type
-    BUT IF expression is CONSTANT OF INTEGER, BOOLEAN, FLOAT, CHAR OR STRING TYPE we store it as Object
- */
-non terminal    Object          expression;
-non terminal    Object          method_call;
-non terminal    List<Object>    actual_params_list;
+/* as we actually neither call method nor calculating expressions we just store String representation of result type */
+non terminal    String          expression;
+non terminal    List<String>    actual_params_list;
 
 /* Precedences */
 precedence left     ASSIGN;
@@ -278,9 +275,10 @@ fields_declaration              ::= fields_declaration:fieldsList field_declarat
                                    :}
                                   ;
 
-field_declaration               ::= PUBLIC_KEYWORD type:type IDENTIFIER:name ASSIGN expression:value SEMICOLON
+field_declaration               ::= PUBLIC_KEYWORD type:type IDENTIFIER:name ASSIGN expression:expression SEMICOLON
                                    {:
-                                        RESULT = parser.getNameTableBuilder().declareField(name, type, value);
+                                        RESULT = parser.getNameTableBuilder().declareField(name, type);
+                                        parser.getSemanticAnalyzer().assignmentStatement(name, expression);
                                    :}
                                   | PUBLIC_KEYWORD type:type IDENTIFIER:name SEMICOLON
                                    {:
@@ -389,9 +387,10 @@ variable_declaration            ::= type:type IDENTIFIER:name SEMICOLON
                                     {:
                                         RESULT = parser.getNameTableBuilder().declareVariable(name, type);
                                     :}
-                                  | type:type IDENTIFIER:name ASSIGN expression:value SEMICOLON
+                                  | type:type IDENTIFIER:name ASSIGN expression:expression SEMICOLON
                                     {:
                                         RESULT = parser.getNameTableBuilder().declareVariable(name, type);
+                                        parser.getSemanticAnalyzer().assignmentStatement(name, expression);
                                     :}
                                   ;
 statements                      ::= statements:statements statement:statement
@@ -422,16 +421,21 @@ statement                       ::= assignment_statement
                                   | method_call_statement
                                   | output_statement;
 
-assignment_statement            ::= IDENTIFIER ASSIGN expression SEMICOLON;
+assignment_statement            ::= IDENTIFIER:name ASSIGN expression:expression SEMICOLON
+                                   {:
+                                        parser.getSemanticAnalyzer().assignmentStatement(name, expression);
+                                   :}
+                                  ;
 
-if_statement                    ::= IF_KEYWORD LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
+if_statement                    ::= IF_KEYWORD LEFT_PARENTHESIS expression:conditionExpression RIGHT_PARENTHESIS
                                     LEFT_FIG_PARENTHESIS
                                         block:thenBlock
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareIfStatement(thenBlock);
+                                        parser.getSemanticAnalyzer().ifStatement(conditionExpression);
                                    :}
-                                  | IF_KEYWORD LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
+                                  | IF_KEYWORD LEFT_PARENTHESIS expression:conditionExpression RIGHT_PARENTHESIS
                                     LEFT_FIG_PARENTHESIS
                                         block:thenBlock
                                     RIGHT_FIG_PARENTHESIS
@@ -440,17 +444,18 @@ if_statement                    ::= IF_KEYWORD LEFT_PARENTHESIS expression RIGHT
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareIfStatement(thenBlock, elseBlock);
+                                        parser.getSemanticAnalyzer().ifStatement(conditionExpression);
                                    :}
                                   ;
 
 while_statement                 ::= WHILE_KEYWORD
-                                    LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
+                                    LEFT_PARENTHESIS expression:conditionExpression RIGHT_PARENTHESIS
                                     LEFT_FIG_PARENTHESIS
                                         block:innerBlock
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareWhileStatement(innerBlock);
-                                        parser.getSemanticAnalyzer().setBreakFlag(false);
+                                        parser.getSemanticAnalyzer().whileStatement(conditionExpression);
                                    :}
                                   ;
 
@@ -475,10 +480,14 @@ type                            ::= BOOLEAN_KEYWORD
 
 reference_type                  ::= IDENTIFIER:name
                                     {:
-                                        RESULT = name;
+                                        RESULT = parser.getSemanticAnalyzer().isClassDeclared(name);
                                     :};
 
-expression                      ::= expression:className STOP IDENTIFIER:methodName LEFT_PARENTHESIS  RIGHT_PARENTHESIS
+expression                      ::= expression:className STOP IDENTIFIER:fieldName
+                                  {:
+                                       RESULT = parser.getSemanticAnalyzer().fieldCallExpression(className, fieldName);
+                                  :}
+                                  | expression:className STOP IDENTIFIER:methodName LEFT_PARENTHESIS  RIGHT_PARENTHESIS
                                   {:
                                         RESULT = parser.getSemanticAnalyzer().methodCallExpression(className, methodName);
                                   :}
@@ -500,7 +509,7 @@ expression                      ::= expression:className STOP IDENTIFIER:methodN
                                   :}
                                   | SYSTEM_IN_READ LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = parser.getSemanticAnalyzer().systemReadInExpression(arg1, arg2);
+                                        RESULT = parser.getSemanticAnalyzer().systemReadInExpression();
                                   :}
                                   | EXCLAMATION expression:arg
                                   {:
@@ -560,27 +569,27 @@ expression                      ::= expression:className STOP IDENTIFIER:methodN
                                   :}
                                   | INTEGER_TYPE:value
                                   {:
-                                        RESULT = value;
+                                        RESULT = SemanticAnalyzer.INTEGER_TYPE;
                                   :}
                                   | FLOAT_TYPE:value
                                   {:
-                                        RESULT = value;
+                                        RESULT = SemanticAnalyzer.FLOAT_TYPE;
                                   :}
                                   | BOOLEAN_TYPE:value
                                   {:
-                                        RESULT = value;
+                                        RESULT = SemanticAnalyzer.BOOLEAN_TYPE;
                                   :}
                                   | STRING_TYPE:value
                                   {:
-                                        RESULT = value;
+                                        RESULT = SemanticAnalyzer.STRING_TYPE;
                                   :}
                                   | CHAR_TYPE:value
                                   {:
-                                        RESULT = value;
+                                        RESULT = SemanticAnalyzer.CHAR_TYPE;
                                   :}
                                   | IDENTIFIER:name
                                   {:
-                                        RESULT = parser.getSemanticAnalyzer().isVariableOrFieldDeclared(name);
+                                        RESULT = parser.getSemanticAnalyzer().isVariableOrMethodParameterOrFieldInCurrentClassDeclared(name);
                                   :}
                                   | NEW_KEYWORD IDENTIFIER:className LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   {:
@@ -588,7 +597,7 @@ expression                      ::= expression:className STOP IDENTIFIER:methodN
                                   :}
                                   | BREAK
                                   {:
-                                       parser.getSemanticAnalyzer().setBreakFlag(true);
+                                       parser.getSemanticAnalyzer().breakExpression();
                                   :}
                                   | MINUS expression:arg
                                   {:
@@ -596,14 +605,14 @@ expression                      ::= expression:className STOP IDENTIFIER:methodN
                                   :}
                                     %prec UNARY_MINUS;
 
-actual_params_list              ::= actual_params_list:list COMMA expression:exp
+actual_params_list              ::= actual_params_list:list COMMA expression:expression
                                   {:
                                        RESULT = list;
-                                       RESULT.add(exp);
+                                       RESULT.add(expression);
                                   :}
-                                  | expression
+                                  | expression:expression
                                   {:
-                                       RESULT = new LinkedList<Object>();
-                                       RESULT.add(exp);
+                                       RESULT = new LinkedList<String>();
+                                       RESULT.add(expression);
                                   :}
                                   ;

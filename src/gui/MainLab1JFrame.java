@@ -342,7 +342,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         LR1Analyzer syntaxAnalyzer = new LR1Analyzer(lexicalAnalyzer);
         try {
             syntaxAnalyzer.parse();
-            Entry rootEntry = syntaxAnalyzer.getNameTable();
+            Entry rootEntry = syntaxAnalyzer.getNameTable().get(0);
             programTree.setModel(new NameTableJTreeModel(rootEntry));
             logInfo("The syntax is correct");
         } catch (Exception ex) {

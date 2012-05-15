@@ -9,19 +9,15 @@ import java.util.List;
  * responsible for correct building of name table
  */
 public class NameTableBuilder {
-    private Entry nameTable;
+    private List<Entry> nameTable;
     private List<Entry> topLevelEntries;
 
     public NameTableBuilder() {
         this.topLevelEntries = new LinkedList<Entry>();
     }
 
-    public Entry getNameTable() {
-        return nameTable;
-    }
-
-    public void setNameTable(Entry nameTable) {
-        this.nameTable = nameTable;
+    public List<Entry> getNameTable() {
+        return topLevelEntries;
     }
 
     public void declareProgram(List<Entry> classes) throws NameTableException {
@@ -29,7 +25,6 @@ public class NameTableBuilder {
         program.addChildren(classes);
         removeFromTopLevel(classes);
         addTopLevelEntry(program);
-        setNameTable(program);
     }
 
     public Entry declareMainClass(String name, List<? extends Entry> fieldsList, List<? extends Entry> methodsList) throws NameTableException {
@@ -71,15 +66,11 @@ public class NameTableBuilder {
         return declaredClass;
     }
 
-    public Entry declareField(String name, String type, Object value) throws NameTableException {
-        Entry declaredField = new FieldEntry(name, type, value);
+    public Entry declareField(String name, String type) throws NameTableException {
+        Entry declaredField = new FieldEntry(name, type);
         addTopLevelEntry(declaredField);
 
         return declaredField;
-    }
-
-    public Entry declareField(String name, String type) throws NameTableException {
-        return declareField(name, type, null);
     }
 
     public Entry declareMethod(String name, String returnType, List<? extends Entry> paramsList, Entry innerBlock) throws NameTableException {
@@ -156,6 +147,21 @@ public class NameTableBuilder {
 
     public Entry declareIfStatement(Entry thenBlock) {
         return declareIfStatement(thenBlock, null);
+    }
+
+    /**
+     *
+     * @param entryName
+     * @return
+     */
+    public List<Entry> lookUp(String entryName) {
+        List<Entry> result = new LinkedList<Entry>();
+        for (Entry topLevelEntry : topLevelEntries) {
+            if (topLevelEntry.getName().equals(entryName)) {
+                result.add(topLevelEntry);
+            }
+        }
+        return result;
     }
 
     private List<Entry> getTopLevelEntries() {

@@ -1,19 +1,19 @@
 package nametable.entries;
 
 public class VariableEntry extends Entry {
-    private String type;
+    private String valueType;
 
-    public VariableEntry(String name, String type) {
+    public VariableEntry(String name, String valueType) {
         super(name);
-        this.type = type;
+        this.valueType = valueType;
     }
 
-    public String getType() {
-        return type;
+    public String getValueType() {
+        return valueType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class VariableEntry extends Entry {
         String superString = super.toString();
         StringBuffer result = new StringBuffer(superString);
         result.insert(result.indexOf("]") - 1, "; value type = '");
-        result.insert(result.indexOf("]") - 1, getType());
+        result.insert(result.indexOf("]") - 1, getValueType());
         result.insert(result.indexOf("]") - 1, "'");
 
         return result.toString();
@@ -42,7 +42,7 @@ public class VariableEntry extends Entry {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + type.hashCode();
+        result = 31 * result + valueType.hashCode();
 
         return result;
     }

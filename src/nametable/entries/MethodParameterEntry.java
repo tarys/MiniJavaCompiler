@@ -1,18 +1,12 @@
 package nametable.entries;
 
-public class MethodParameterEntry extends Entry {
-    private String type;
+public class MethodParameterEntry extends VariableEntry {
 
-    public MethodParameterEntry(String name, String type) {
-        super(name);
-        this.type = type;
+    public MethodParameterEntry(String name, String valueType) {
+        super(name, valueType);
     }
 
-    public String getType() {
-        return type;
-    }
-
-    @Override
+   @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof MethodParameterEntry)) return false;
@@ -20,17 +14,8 @@ public class MethodParameterEntry extends Entry {
 
         MethodParameterEntry that = (MethodParameterEntry) o;
 
-        if (!type.equals(that.type)) return false;
         if (!getName().equals(that.getName())) return false;
 
         return true;
     }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + type.hashCode();
-        return result;
-    }
-
 }

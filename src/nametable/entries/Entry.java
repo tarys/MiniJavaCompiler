@@ -58,12 +58,16 @@ public abstract class Entry {
     public String toString() {
         StringBuffer resultBuffer = new StringBuffer();
         resultBuffer.append("[ type='");
-        resultBuffer.append(getClass().getSimpleName().replaceAll("Entry", ""));
+        resultBuffer.append(getType());
         resultBuffer.append("'; name='");
         resultBuffer.append(getName());
         resultBuffer.append("']");
 
         return resultBuffer.toString();
+    }
+
+    public String getType() {
+        return getClass().getSimpleName().replaceAll("Entry", "");
     }
 
     public void printEntriesTree() {
