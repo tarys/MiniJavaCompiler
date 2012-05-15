@@ -104,35 +104,38 @@ terminal		RIGHT_FIG_PARENTHESIS;
 
 /* Non-terminals */
 
-non terminal                goal;
-non terminal                compilation_unit;
-non terminal    Entry       main_class;
-non terminal    List<Entry> main_class_methods_declaration;
-non terminal    Entry       main_method_declaration;
-non terminal    List<Entry> classes_declaration;
-non terminal    Entry       class_declaration;
-non terminal    List<Entry> fields_declaration;
-non terminal    Entry       field_declaration;
-non terminal    List<Entry> methods_declaration;
-non terminal    Entry       method_declaration;
-non terminal    List<Entry> method_params_declaration;
-non terminal    List<Entry> params_list_declaration;
-non terminal    Entry       param_declaration;
-non terminal    Entry       block;
-non terminal    List<Entry> variables_declaration;
-non terminal    Entry       variable_declaration;
-non terminal    List<Entry> statements;
-non terminal    Entry       statement;
-non terminal                assignment_statement;
-non terminal    Entry       if_statement;
-non terminal    Entry       while_statement;
-non terminal                method_call_statement;
-non terminal                output_statement;
-non terminal    String      type;
-non terminal    String      reference_type;
-non terminal                expression;
-non terminal                method_call;
-non terminal                actual_params_list;
+non terminal                    goal;
+non terminal                    compilation_unit;
+non terminal    Entry           main_class;
+non terminal    List<Entry>     main_class_methods_declaration;
+non terminal    Entry           main_method_declaration;
+non terminal    List<Entry>     classes_declaration;
+non terminal    Entry           class_declaration;
+non terminal    List<Entry>     fields_declaration;
+non terminal    Entry           field_declaration;
+non terminal    List<Entry>     methods_declaration;
+non terminal    Entry           method_declaration;
+non terminal    List<Entry>     method_params_declaration;
+non terminal    List<Entry>     params_list_declaration;
+non terminal    Entry           param_declaration;
+non terminal    Entry           block;
+non terminal    List<Entry>     variables_declaration;
+non terminal    Entry           variable_declaration;
+non terminal    List<Entry>     statements;
+non terminal    Entry           statement;
+non terminal                    assignment_statement;
+non terminal    Entry           if_statement;
+non terminal    Entry           while_statement;
+non terminal                    method_call_statement;
+non terminal                    output_statement;
+non terminal    String          type;
+non terminal    String          reference_type;
+/* as we actually neither call method nor calculating expressions we just store String representation of result type
+    BUT IF expression is CONSTANT OF INTEGER, BOOLEAN, FLOAT, CHAR OR STRING TYPE we store it as Object
+ */
+non terminal    Object          expression;
+non terminal    Object          method_call;
+non terminal    List<Object>    actual_params_list;
 
 /* Precedences */
 precedence left     ASSIGN;
@@ -312,6 +315,7 @@ method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:na
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, returnType, paramsList);
+                                        parser.getSemanticAnalyzer().checkNotUsedBreak();
                                    :}
                                   | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
@@ -319,12 +323,14 @@ method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:na
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, "void", paramsList, innerBlock);
+                                        parser.getSemanticAnalyzer().checkNotUsedBreak();
                                    :}
                                   | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, "void", paramsList);
+                                        parser.getSemanticAnalyzer().checkNotUsedBreak();
                                    :}
                                     ;
 
@@ -385,7 +391,7 @@ variable_declaration            ::= type:type IDENTIFIER:name SEMICOLON
                                     :}
                                   | type:type IDENTIFIER:name ASSIGN expression:value SEMICOLON
                                     {:
-                                        RESULT = parser.getNameTableBuilder().declareVariable(name, type, value);
+                                        RESULT = parser.getNameTableBuilder().declareVariable(name, type);
                                     :}
                                   ;
 statements                      ::= statements:statements statement:statement
@@ -472,77 +478,85 @@ reference_type                  ::= IDENTIFIER:name
                                         RESULT = name;
                                     :};
 
-expression                      ::= expression:exp STOP method_call
+expression                      ::= expression:className STOP IDENTIFIER:methodName LEFT_PARENTHESIS  RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().methodCallExpression(className, methodName);
                                   :}
-                                  | method_call
+                                  | expression:className STOP IDENTIFIER:methodName LEFT_PARENTHESIS actual_params_list:actualParameters  RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().methodCallExpression(className, methodName, actualParameters);
                                   :}
-                                  | expression INSTANCEOF expression
+                                  | IDENTIFIER:methodName LEFT_PARENTHESIS  RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().methodCallExpression(methodName);
+                                  :}
+                                  | IDENTIFIER:methodName LEFT_PARENTHESIS actual_params_list:actualParameters  RIGHT_PARENTHESIS
+                                  {:
+                                        RESULT = parser.getSemanticAnalyzer().methodCallExpression(methodName, actualParameters);
+                                  :}
+                                  | expression:arg1 INSTANCEOF expression:arg2
+                                  {:
+                                        RESULT = parser.getSemanticAnalyzer().instanceofExpression(arg1, arg2);
                                   :}
                                   | SYSTEM_IN_READ LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().systemReadInExpression(arg1, arg2);
                                   :}
-                                  | EXCLAMATION expression
+                                  | EXCLAMATION expression:arg
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().exclamationExpression(arg);
                                   :}
-                                  | LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
+                                  | LEFT_PARENTHESIS expression:arg RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().parenthesisExpression(arg);
                                   :}
-                                  | expression PLUS expression
+                                  | expression:arg1 PLUS expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().plusExpression(arg1, arg2);
                                   :}
-                                  | expression MINUS expression
+                                  | expression:arg1 MINUS expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().minusExpression(arg1, arg2);
                                   :}
-                                  | expression TIMES expression
+                                  | expression:arg1 TIMES expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().timesExpression(arg1, arg2);
                                   :}
-                                  | expression DIVIDE expression
+                                  | expression:arg1 DIVIDE expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().divideExpression(arg1, arg2);
                                   :}
-                                  | expression LOWER expression
+                                  | expression:arg1 LOWER expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().lowerExpression(arg1, arg2);
                                   :}
-                                  | expression LOWER_EQUAL expression
+                                  | expression:arg1 LOWER_EQUAL expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().lowerEqualExpression(arg1, arg2);
                                   :}
-                                  | expression GREATER expression
+                                  | expression:arg1 GREATER expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().greaterExpression(arg1, arg2);
                                   :}
-                                  | expression GREATER_EQUAL expression
+                                  | expression:arg1 GREATER_EQUAL expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().greaterEqualExpression(arg1, arg2);
                                   :}
-                                  | expression EQUAL expression
+                                  | expression:arg1 EQUAL expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().equalExpression(arg1, arg2);
                                   :}
-                                  | expression NOT_EQUAL expression
+                                  | expression:arg1 NOT_EQUAL expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().notEqualExpression(arg1, arg2);
                                   :}
-                                  | expression AND expression
+                                  | expression:arg1 AND expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                       RESULT = parser.getSemanticAnalyzer().andExpression(arg1, arg2);
                                   :}
-                                  | expression OR expression
+                                  | expression:arg1 OR expression:arg2
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().orExpression(arg1, arg2);
                                   :}
                                   | INTEGER_TYPE:value
                                   {:
@@ -564,33 +578,32 @@ expression                      ::= expression:exp STOP method_call
                                   {:
                                         RESULT = value;
                                   :}
-                                  | IDENTIFIER
+                                  | IDENTIFIER:name
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().isVariableOrFieldDeclared(name);
                                   :}
-                                  | NEW_KEYWORD IDENTIFIER LEFT_PARENTHESIS RIGHT_PARENTHESIS
+                                  | NEW_KEYWORD IDENTIFIER:className LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = "Need to be calculated";
+                                        RESULT = parser.getSemanticAnalyzer().isClassDeclared(className);
                                   :}
                                   | BREAK
                                   {:
                                        parser.getSemanticAnalyzer().setBreakFlag(true);
                                   :}
-                                  | MINUS expression:value
+                                  | MINUS expression:arg
                                   {:
-                                        if(value instanceof Integer){
-                                            RESULT = -((Integer)value);
-                                        }else if(value instanceof Float){
-                                            RESULT = -((Float)value);
-                                        } else {
-                                            RESULT = "-" + value;
-                                        }
-
+                                        RESULT = parser.getSemanticAnalyzer().unaryMinus(arg);
                                   :}
                                     %prec UNARY_MINUS;
 
-method_call                     ::= IDENTIFIER LEFT_PARENTHESIS  RIGHT_PARENTHESIS
-                                  | IDENTIFIER LEFT_PARENTHESIS actual_params_list  RIGHT_PARENTHESIS;
-
-actual_params_list              ::= actual_params_list COMMA expression
-                                  | expression;
+actual_params_list              ::= actual_params_list:list COMMA expression:exp
+                                  {:
+                                       RESULT = list;
+                                       RESULT.add(exp);
+                                  :}
+                                  | expression
+                                  {:
+                                       RESULT = new LinkedList<Object>();
+                                       RESULT.add(exp);
+                                  :}
+                                  ;

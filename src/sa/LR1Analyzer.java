@@ -1207,7 +1207,7 @@ class CUP$LR1Analyzer$actions {
 		int valueright = ((java_cup.runtime.Symbol)CUP$LR1Analyzer$stack.elementAt(CUP$LR1Analyzer$top-1)).right;
 		Object value = (Object)((java_cup.runtime.Symbol) CUP$LR1Analyzer$stack.elementAt(CUP$LR1Analyzer$top-1)).value;
 		
-                                        RESULT = parser.getNameTableBuilder().declareVariable(name, type, value);
+                                        RESULT = parser.getNameTableBuilder().declareVariable(name, type);
                                     
               CUP$LR1Analyzer$result = parser.getSymbolFactory().newSymbol("variable_declaration",16, ((java_cup.runtime.Symbol)CUP$LR1Analyzer$stack.elementAt(CUP$LR1Analyzer$top-4)), ((java_cup.runtime.Symbol)CUP$LR1Analyzer$stack.peek()), RESULT);
             }

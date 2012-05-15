@@ -127,15 +127,11 @@ public class NameTableBuilder {
         return declareBlock(variablesEntriesList, null);
     }
 
-    public Entry declareVariable(String name, String type, Object value) throws NameTableException {
-        Entry declaredVariable = new VariableEntry(name, type, value);
+    public Entry declareVariable(String name, String type) throws NameTableException {
+        Entry declaredVariable = new VariableEntry(name, type);
         addTopLevelEntry(declaredVariable);
 
-        return declaredVariable;
-    }
-
-    public Entry declareVariable(String name, String type) throws NameTableException {
-        return declareVariable(name, type, null);
+        return declareVariable(name, type);
     }
 
     public Entry declareWhileStatement(Entry innerBlock) {
