@@ -3,6 +3,7 @@
 import java_cup.runtime.Symbol;
 import nametable.NameTableBuilder;
 import nametable.entries.Entry;
+import semantic.SemanticAnalyzer;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -303,6 +304,7 @@ method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:na
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, returnType, paramsList, innerBlock);
+                                        parser.getSemanticAnalyzer().checkNotUsedBreak();
                                    :}
                                   | PUBLIC_KEYWORD type:returnType IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
@@ -442,6 +444,7 @@ while_statement                 ::= WHILE_KEYWORD
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareWhileStatement(innerBlock);
+                                        parser.getSemanticAnalyzer().setBreakFlag(false);
                                    :}
                                   ;
 
@@ -571,7 +574,7 @@ expression                      ::= expression:exp STOP method_call
                                   :}
                                   | BREAK
                                   {:
-                                        RESULT = "Need to be calculated";
+                                       parser.getSemanticAnalyzer().setBreakFlag(true);
                                   :}
                                   | MINUS expression:value
                                   {:
