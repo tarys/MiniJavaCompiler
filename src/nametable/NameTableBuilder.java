@@ -122,7 +122,7 @@ public class NameTableBuilder {
         Entry declaredVariable = new VariableEntry(name, type);
         addTopLevelEntry(declaredVariable);
 
-        return declareVariable(name, type);
+        return declaredVariable;
     }
 
     public Entry declareWhileStatement(Entry innerBlock) {

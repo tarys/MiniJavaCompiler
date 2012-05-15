@@ -1,6 +1,5 @@
 package nametable.entries;
 
-import semantic.SemanticAnalyzer;
 import semantic.SemanticException;
 
 import java.util.LinkedList;
@@ -34,7 +33,7 @@ public class ClassEntry extends Entry {
             }
         }
         if (result == null) {
-            throw new SemanticException(SemanticAnalyzer.NO_SUCH_FIELD_IN_CLASS + this.getName() + "#" + name);
+            throw new SemanticException(SemanticException.NO_SUCH_FIELD_IN_CLASS + this.getName() + "#" + name);
         }
         return result;
     }
@@ -61,7 +60,7 @@ public class ClassEntry extends Entry {
             }
         }
         if (result == null) {
-            throw new SemanticException(SemanticAnalyzer.NO_SUCH_METHOD + this.getName() + "#" + name);
+            throw new SemanticException(SemanticException.NO_SUCH_METHOD + this.getName() + "#" + name);
         }
 
         return result;

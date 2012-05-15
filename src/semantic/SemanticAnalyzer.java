@@ -6,20 +6,12 @@ import nametable.entries.*;
 import java.util.List;
 
 public class SemanticAnalyzer {
-    public static final String BREAK_USED_BUT_CYCLE_NOT_DECLARED = "\"break\" used but cycle not declared";
-    public static final String NOT_BOOLEAN_EXPRESSION = "Not boolean expression";
-    public static final String INCOMPATIBLE_TYPES = "Incompatible types";
     public static final String CHAR_TYPE = "char";
     public static final String STRING_TYPE = "String";
     public static final String BOOLEAN_TYPE = "boolean";
     public static final String FLOAT_TYPE = "float";
     public static final String INTEGER_TYPE = "int";
     public static final String VOID_TYPE = "void";
-    public static final String NEITHER_INTEGER_NOR_FLOAT_TYPE = "Neither integer nor float type";
-    public static final String CLASS_NOT_DECLARED = "Class not declared: ";
-    public static final String NO_SUCH_FIELD_IN_CLASS = "No such field in class: ";
-    public static final String NO_SUCH_METHOD = "No such method in class: ";
-    public static final String WRONG_METHOD_PARAMETERS_AMOUNT = "Wrong method parameters amount";
 
     private NameTableBuilder nameTableBuilder;
     private boolean breakFlag;
@@ -30,7 +22,7 @@ public class SemanticAnalyzer {
 
     public void checkNotUsedBreak() throws SemanticException {
         if (isBreakFlag()) {
-            throw new SemanticException(BREAK_USED_BUT_CYCLE_NOT_DECLARED);
+            throw new SemanticException(SemanticException.BREAK_USED_BUT_CYCLE_NOT_DECLARED);
         }
     }
 
@@ -38,7 +30,7 @@ public class SemanticAnalyzer {
         if (arg.equals(INTEGER_TYPE) || arg.equals(FLOAT_TYPE)) {
             return arg;
         } else {
-            throw new SemanticException(NEITHER_INTEGER_NOR_FLOAT_TYPE);
+            throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
@@ -52,20 +44,46 @@ public class SemanticAnalyzer {
     }
 
     public String isVariableOrMethodParameterOrFieldInCurrentClassDeclared(String name) throws SemanticException {
-        return null;
+        List<Entry> candidates = getNameTableBuilder().lookUp(name);
+        String resultType = null;
+        for (Entry candidate : candidates) {
+            if (candidate instanceof FieldEntry) {
+                FieldEntry field = (FieldEntry) candidate;
+                if (field.getName().equals(name)) {
+                    resultType = field.getValueType();
+                    break;
+                }
+            } else if (candidate instanceof MethodParameterEntry) {
+                MethodParameterEntry methodParameter = (MethodParameterEntry) candidate;
+                if (methodParameter.getName().equals(name)) {
+                    resultType = methodParameter.getValueType();
+                    break;
+                }
+            } else if (candidate instanceof VariableEntry) {
+                VariableEntry variable = (VariableEntry) candidate;
+                if (variable.getName().equals(name)) {
+                    resultType = variable.getValueType();
+                    break;
+                }
+            }
+        }
+        if (resultType == null) {
+            throw new SemanticException(SemanticException.NOT_DECLARED_BUT_USED_VARIABLE_FIELD_OR_METHOD_PARAMETER + name);
+        }
+        return resultType;
     }
 
 
     public String orExpression(String arg1, String arg2) throws SemanticException {
         if (!arg1.equals(BOOLEAN_TYPE) || !arg2.equals(BOOLEAN_TYPE)) {
-            throw new SemanticException(NOT_BOOLEAN_EXPRESSION);
+            throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
         return BOOLEAN_TYPE;
     }
 
     public String andExpression(String arg1, String arg2) throws SemanticException {
         if (!arg1.equals(BOOLEAN_TYPE) || !arg2.equals(BOOLEAN_TYPE)) {
-            throw new SemanticException(NOT_BOOLEAN_EXPRESSION);
+            throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
         return BOOLEAN_TYPE;
     }
@@ -105,7 +123,7 @@ public class SemanticAnalyzer {
         if (isNumericType(arg1) && isNumericType(arg2)) {
             return FLOAT_TYPE;
         } else {
-            throw new SemanticException(NEITHER_INTEGER_NOR_FLOAT_TYPE);
+            throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
@@ -113,7 +131,7 @@ public class SemanticAnalyzer {
         if (isNumericType(arg1) && isNumericType(arg2)) {
             return (arg1.equals(INTEGER_TYPE) && arg2.equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
         } else {
-            throw new SemanticException(NEITHER_INTEGER_NOR_FLOAT_TYPE);
+            throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
@@ -121,7 +139,7 @@ public class SemanticAnalyzer {
         if (isNumericType(arg1) && isNumericType(arg2)) {
             return (arg1.equals(INTEGER_TYPE) && arg2.equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
         } else {
-            throw new SemanticException(NEITHER_INTEGER_NOR_FLOAT_TYPE);
+            throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
@@ -129,7 +147,7 @@ public class SemanticAnalyzer {
         if (isNumericType(arg1) && isNumericType(arg2)) {
             return (arg1.equals(INTEGER_TYPE) && arg2.equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
         } else {
-            throw new SemanticException(NEITHER_INTEGER_NOR_FLOAT_TYPE);
+            throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
@@ -139,7 +157,7 @@ public class SemanticAnalyzer {
 
     public String exclamationExpression(String arg) throws SemanticException {
         if (!arg.equals(BOOLEAN_TYPE)) {
-            throw new SemanticException(NOT_BOOLEAN_EXPRESSION);
+            throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
         return BOOLEAN_TYPE;
     }
@@ -192,19 +210,22 @@ public class SemanticAnalyzer {
 
     public void whileStatement(String conditionExpression) throws SemanticException {
         if (!conditionExpression.equals(BOOLEAN_TYPE)) {
-            throw new SemanticException(NOT_BOOLEAN_EXPRESSION);
+            throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
         setBreakFlag(false);
     }
 
     public void ifStatement(String conditionExpression) throws SemanticException {
         if (!conditionExpression.equals(BOOLEAN_TYPE)) {
-            throw new SemanticException(NOT_BOOLEAN_EXPRESSION);
+            throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
     }
 
     public void assignmentStatement(String name, String expressionType) throws SemanticException {
         List<Entry> assignCandidates = getNameTableBuilder().lookUp(name);
+        if (assignCandidates.isEmpty()) {
+            throw new SemanticException(SemanticException.NOT_DECLARED_BUT_USED_VARIABLE_FIELD_OR_METHOD_PARAMETER + name);
+        }
         boolean assignSuccess = false;
         for (Entry assignCandidate : assignCandidates) {
             if (assignCandidate instanceof ClassEntry) {
@@ -234,7 +255,7 @@ public class SemanticAnalyzer {
             }
         }
         if (!assignSuccess) {
-            throw new SemanticException(INCOMPATIBLE_TYPES);
+            throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES);
         }
     }
 
@@ -259,7 +280,7 @@ public class SemanticAnalyzer {
             }
         }
         if (declaredClass == null) {
-            throw new SemanticException(CLASS_NOT_DECLARED + className);
+            throw new SemanticException(SemanticException.CLASS_NOT_DECLARED + className);
         }
 
         return declaredClass;
@@ -287,18 +308,18 @@ public class SemanticAnalyzer {
     private void checkActualParameters(List<String> actualParameters, MethodEntry callMethod) throws SemanticException {
         List<MethodParameterEntry> formalParameters = callMethod.getParameters();
         if (formalParameters.size() != actualParameters.size()) {
-            throw new SemanticException(WRONG_METHOD_PARAMETERS_AMOUNT);
+            throw new SemanticException(SemanticException.WRONG_METHOD_PARAMETERS_AMOUNT);
         }
         for (int i = 0; i < formalParameters.size(); i++) {
             if (!formalParameters.get(i).getValueType().equals(actualParameters.get(i))) {
-                throw new SemanticException(INCOMPATIBLE_TYPES);
+                throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES);
             }
         }
     }
 
     private void areArgumentsComparable(String arg1, String arg2) throws SemanticException {
         if (!arg1.equals(arg2) && (!isNumericType(arg1) || arg1.equals(BOOLEAN_TYPE) || arg1.equals(CHAR_TYPE))) {
-            throw new SemanticException(NEITHER_INTEGER_NOR_FLOAT_TYPE);
+            throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
