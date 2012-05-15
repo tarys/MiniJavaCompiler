@@ -18,6 +18,8 @@ public class SemanticAnalyzer {
     public static final String NEITHER_INTEGER_NOR_FLOAT_TYPE = "Neither integer nor float type";
     public static final String CLASS_NOT_DECLARED = "Class not declared: ";
     public static final String NO_SUCH_FIELD_IN_CLASS = "No such field in class: ";
+    public static final String NO_SUCH_METHOD = "No such method in class: ";
+    public static final String WRONG_METHOD_PARAMETERS_AMOUNT = "Wrong method parameters amount";
 
     private NameTableBuilder nameTableBuilder;
     private boolean breakFlag;
@@ -45,27 +47,14 @@ public class SemanticAnalyzer {
     }
 
     public String isClassDeclared(String className) throws SemanticException {
-        List<Entry> candidates = getNameTableBuilder().lookUp(className);
-        boolean declared = false;
-        for (Entry candidate : candidates) {
-            if (candidate instanceof ClassEntry) {
-                ClassEntry classEntry = (ClassEntry) candidate;
-                if (classEntry.getName().equals(className)) {
-                    declared = true;
-                    break;
-                }
-            }
-        }
-        if (!declared) {
-            throw new SemanticException(CLASS_NOT_DECLARED + className);
-        }
-        return className;
+        ClassEntry declaredClass = lookUpDeclaredClass(className);
+        return declaredClass.getName();
     }
-
 
     public String isVariableOrMethodParameterOrFieldInCurrentClassDeclared(String name) throws SemanticException {
         return null;
     }
+
 
     public String orExpression(String arg1, String arg2) throws SemanticException {
         if (!arg1.equals(BOOLEAN_TYPE) || !arg2.equals(BOOLEAN_TYPE)) {
@@ -106,11 +95,11 @@ public class SemanticAnalyzer {
         return BOOLEAN_TYPE;
     }
 
-
     public String lowerExpression(String arg1, String arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
         return BOOLEAN_TYPE;
     }
+
 
     public String divideExpression(String arg1, String arg2) throws SemanticException {
         if (isNumericType(arg1) && isNumericType(arg2)) {
@@ -159,54 +148,45 @@ public class SemanticAnalyzer {
         return "String";
     }
 
-    public String instanceofExpression(String instanceName, String className) throws SemanticException {
-
+    public String instanceofExpression(String instanceType, String className) throws SemanticException {
+        // just looking for already declared class
+        lookUpDeclaredClass(className);
         return BOOLEAN_TYPE;
     }
 
     public String methodCallExpression(String methodName, List<String> actualParameters) throws SemanticException {
-        return null;
+        MethodEntry callMethod = lookUpDeclaredMethod(methodName);
+        //checking actual parameters' types
+        checkActualParameters(actualParameters, callMethod);
+
+        return callMethod.getReturnType();
     }
 
     public String methodCallExpression(String methodName) throws SemanticException {
-        return null;
+        MethodEntry callMethod = lookUpDeclaredMethod(methodName);
+        return callMethod.getReturnType();
     }
 
     public String methodCallExpression(String className, String methodName, List<String> actualParameters) throws SemanticException {
-        return null;
+        ClassEntry declaredClass = lookUpDeclaredClass(className);
+        MethodEntry callMethod = declaredClass.getMethod(methodName);
+        //checking actual parameters' types
+        checkActualParameters(actualParameters, callMethod);
+
+        return callMethod.getReturnType();
     }
 
     public String methodCallExpression(String className, String methodName) throws SemanticException {
-        List<Entry> callCandidates = getNameTableBuilder().lookUp(className);
-        MethodEntry callMethod = null;
-        for (Entry candidate : callCandidates) {
-            if (candidate instanceof MethodEntry) {
-                MethodEntry candidateMethod = (MethodEntry) candidate;
-                if (callMethod.getName().equals(methodName)) {
-                    callMethod = candidateMethod;
-                }
-            }
-        }
-        if (callMethod == null) {
-            throw new SemanticException("No such method in class: " + className + "#" + methodName);
-        }
+        ClassEntry declaredClass = lookUpDeclaredClass(className);
+        MethodEntry callMethod = declaredClass.getMethod(methodName);
+
         return callMethod.getReturnType();
     }
 
     public String fieldCallExpression(String className, String fieldName) throws SemanticException {
-        List<Entry> callCandidates = getNameTableBuilder().lookUp(className);
-        FieldEntry callField = null;
-        for (Entry candidate : callCandidates) {
-            if (candidate instanceof FieldEntry) {
-                FieldEntry candidateField = (FieldEntry) candidate;
-                if (callField.getName().equals(fieldName)) {
-                    callField = candidateField;
-                }
-            }
-        }
-        if (callField == null) {
-            throw new SemanticException(NO_SUCH_FIELD_IN_CLASS + className + "#" + fieldName);
-        }
+        ClassEntry declaredClass = lookUpDeclaredClass(className);
+        FieldEntry callField = declaredClass.getField(fieldName);
+
         return callField.getValueType();
     }
 
@@ -264,6 +244,56 @@ public class SemanticAnalyzer {
 
     public void setNameTableBuilder(NameTableBuilder nameTableBuilder) {
         this.nameTableBuilder = nameTableBuilder;
+    }
+
+    private ClassEntry lookUpDeclaredClass(String className) throws SemanticException {
+        ClassEntry declaredClass = null;
+        List<Entry> candidates = getNameTableBuilder().lookUp(className);
+        for (Entry candidate : candidates) {
+            if (candidate instanceof ClassEntry) {
+                ClassEntry classEntry = (ClassEntry) candidate;
+                if (classEntry.getName().equals(className)) {
+                    declaredClass = classEntry;
+                    break;
+                }
+            }
+        }
+        if (declaredClass == null) {
+            throw new SemanticException(CLASS_NOT_DECLARED + className);
+        }
+
+        return declaredClass;
+    }
+
+    private MethodEntry lookUpDeclaredMethod(String methodName) throws SemanticException {
+        MethodEntry declaredMethod = null;
+        List<Entry> candidates = getNameTableBuilder().lookUp(methodName);
+        for (Entry candidate : candidates) {
+            if (candidate instanceof MethodEntry) {
+                MethodEntry methodEntry = (MethodEntry) candidate;
+                if (methodEntry.getName().equals(methodName)) {
+                    declaredMethod = methodEntry;
+                    break;
+                }
+            }
+        }
+        if (declaredMethod == null) {
+            throw new SemanticException("No such method in current class: " + "#" + methodName);
+        }
+
+        return declaredMethod;
+    }
+
+    private void checkActualParameters(List<String> actualParameters, MethodEntry callMethod) throws SemanticException {
+        List<MethodParameterEntry> formalParameters = callMethod.getParameters();
+        if (formalParameters.size() != actualParameters.size()) {
+            throw new SemanticException(WRONG_METHOD_PARAMETERS_AMOUNT);
+        }
+        for (int i = 0; i < formalParameters.size(); i++) {
+            if (!formalParameters.get(i).getValueType().equals(actualParameters.get(i))) {
+                throw new SemanticException(INCOMPATIBLE_TYPES);
+            }
+        }
     }
 
     private void areArgumentsComparable(String arg1, String arg2) throws SemanticException {

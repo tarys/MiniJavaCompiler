@@ -149,11 +149,6 @@ public class NameTableBuilder {
         return declareIfStatement(thenBlock, null);
     }
 
-    /**
-     *
-     * @param entryName
-     * @return
-     */
     public List<Entry> lookUp(String entryName) {
         List<Entry> result = new LinkedList<Entry>();
         for (Entry topLevelEntry : topLevelEntries) {

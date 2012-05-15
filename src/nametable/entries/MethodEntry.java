@@ -11,13 +11,13 @@ public class MethodEntry extends Entry {
         this.returnType = returnType;
     }
 
-    public List<Entry> getParameters() {
-        List<Entry> result = new LinkedList<Entry>();
+    public List<MethodParameterEntry> getParameters() {
+        List<MethodParameterEntry> result = new LinkedList<MethodParameterEntry>();
         List<Entry> children = getChildren();
         if (children != null && !children.isEmpty()) {
             for (Entry child : children) {
                 if (child instanceof MethodParameterEntry) {
-                    result.add(child);
+                    result.add((MethodParameterEntry) child);
                 }
             }
         }

@@ -465,15 +465,15 @@ method_call_statement           ::= expression SEMICOLON;
 output_statement                ::= SYSTEM_OUT_PRINTLN LEFT_PARENTHESIS expression RIGHT_PARENTHESIS SEMICOLON;
 
 type                            ::= BOOLEAN_KEYWORD
-                                    {: RESULT = "boolean"; :}
+                                    {: RESULT = SemanticAnalyzer.BOOLEAN_TYPE; :}
                                   | CHAR_KEYWORD
-                                    {: RESULT = "char"; :}
+                                    {: RESULT = SemanticAnalyzer.CHAR_TYPE; :}
                                   | FLOAT_KEYWORD
-                                    {: RESULT = "float"; :}
+                                    {: RESULT = SemanticAnalyzer.FLOAT_TYPE; :}
                                   | INT_KEYWORD
-                                    {: RESULT = "int"; :}
+                                    {: RESULT = SemanticAnalyzer.INTEGER_TYPE; :}
                                   | STRING_KEYWORD
-                                    {: RESULT = "String"; :}
+                                    {: RESULT = SemanticAnalyzer.STRING_TYPE; :}
                                   | reference_type:value
                                     {: RESULT = value; :}
                                   ;
