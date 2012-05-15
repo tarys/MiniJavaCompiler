@@ -141,6 +141,9 @@ public class SemanticAnalyzerTest {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
+                "       while(true){" +
+                "           break;" +
+                "       }" +
                 "       break;" +
                 "   }" +
                 "}"));

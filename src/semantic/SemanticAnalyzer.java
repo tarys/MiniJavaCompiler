@@ -260,7 +260,7 @@ public class SemanticAnalyzer {
             }
         }
         if (!assignSuccess) {
-            throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES+ "expected '" + expectedType +"' but was '"
+            throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES + "expected '" + expectedType + "' but was '"
                     + expressionType + "'");
         }
     }
