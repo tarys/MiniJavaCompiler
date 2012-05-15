@@ -189,7 +189,7 @@ public class SemanticAnalyzerTest {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
-                "       while(true){" +
+                "       while(false){" +
                 "           break;" +
                 "       }" +
                 "       break;" +
@@ -201,6 +201,23 @@ public class SemanticAnalyzerTest {
         } catch (SemanticException e) {
             System.out.println(e.getMessage());
             Assert.assertTrue(e.getMessage().startsWith(SemanticException.BREAK_USED_BUT_LOOP_NOT_DECLARED));
+        }
+    }
+
+    @Test
+    public void testNotNumericArguments() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       int a = 14 + false;" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+            Assert.fail();
+        } catch (SemanticException e) {
+            System.out.println(e.getMessage());
+            Assert.assertTrue(e.getMessage().startsWith(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE));
         }
     }
 }
