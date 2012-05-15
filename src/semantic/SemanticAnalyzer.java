@@ -22,7 +22,7 @@ public class SemanticAnalyzer {
 
     public void checkNotUsedBreak() throws SemanticException {
         if (isBreakFlag()) {
-            throw new SemanticException(SemanticException.BREAK_USED_BUT_CYCLE_NOT_DECLARED);
+            throw new SemanticException(SemanticException.BREAK_USED_BUT_LOOP_NOT_DECLARED);
         }
     }
 

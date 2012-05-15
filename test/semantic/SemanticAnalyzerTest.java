@@ -100,4 +100,56 @@ public class SemanticAnalyzerTest {
             Assert.assertTrue(e.getMessage().startsWith(SemanticException.INCOMPATIBLE_TYPES));
         }
     }
+    @Test
+    public void testNotBooleanIfCondition() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       if(1){" +
+                "           int s = 14;" +
+                "       }" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+            Assert.fail();
+        } catch (SemanticException e) {
+            System.out.println(e.getMessage());
+            Assert.assertTrue(e.getMessage().startsWith(SemanticException.NOT_BOOLEAN_EXPRESSION));
+        }
+    }
+    @Test
+    public void testNotBooleanWhileCondition() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       while(1){" +
+                "           int s = 14;" +
+                "       }" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+            Assert.fail();
+        } catch (SemanticException e) {
+            System.out.println(e.getMessage());
+            Assert.assertTrue(e.getMessage().startsWith(SemanticException.NOT_BOOLEAN_EXPRESSION));
+        }
+    }
+    @Test
+    public void testBreakWithoutWhile() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       break;" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+            Assert.fail();
+        } catch (SemanticException e) {
+            System.out.println(e.getMessage());
+            Assert.assertTrue(e.getMessage().startsWith(SemanticException.BREAK_USED_BUT_LOOP_NOT_DECLARED));
+        }
+    }
 }

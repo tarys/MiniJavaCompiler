@@ -222,6 +222,7 @@ main_method_declaration         ::= PUBLIC_KEYWORD STATIC_KEYWORD VOID_KEYWORD M
                                     RIGHT_FIG_PARENTHESIS
                                     {:
                                         RESULT = parser.getNameTableBuilder().declareMainMethod(innerBlock);
+                                        parser.getSemanticAnalyzer().checkNotUsedBreak();
                                     :}
                                    ;
 
