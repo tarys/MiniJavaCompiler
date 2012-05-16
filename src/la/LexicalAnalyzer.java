@@ -20,41 +20,41 @@ public class LexicalAnalyzer implements Scanner {
     public static final String FLOAT_REGEX = "([-]{0,1}\\d*\\.\\d+([eE][+-]\\d+){0,1})";
     public static final String INTEGER_REGEX = "([-]{0,1}\\d+)";
     public static final String KEYWORD_REGEX = "(boolean"
-                                               + "|break"
-                                               + "|char"
-                                               + "|class"
-                                               + "|else"
-                                               + "|float"
-                                               + "|if"
-                                               + "|instanceof"
-                                               + "|int"
-                                               + "|main"
-                                               + "|new"
-                                               + "|public"
-                                               + "|return"
-                                               + "|static"
-                                               + "|String"
-                                               + "|System\\.in\\.read"
-                                               + "|System\\.out\\.println"
-                                               + "|void"
-                                               + "|while)";
+            + "|break"
+            + "|char"
+            + "|class"
+            + "|else"
+            + "|float"
+            + "|if"
+            + "|instanceof"
+            + "|int"
+            + "|main"
+            + "|new"
+            + "|public"
+            + "|return"
+            + "|static"
+            + "|String"
+            + "|System\\.in\\.read"
+            + "|System\\.out\\.println"
+            + "|void"
+            + "|while)";
     public static final String OPERATOR_REGEX = "(\\." +
-                                                "|\\*" +
-                                                "|\\/" +
-                                                "|\\+" +
-                                                "|\\-" +
-                                                "|<(\\=){0,1}" +
-                                                "|>(\\=){0,1}" +
-                                                "|instanceof" +
-                                                "|==" +
-                                                "|!=" +
-                                                "|\\!" +
-                                                "|&&" +
-                                                "|\\|\\|" +
-                                                "|\\=" +
-                                                "|System\\.in\\.read" +
-                                                "|System\\.out\\.println" +
-                                                "|break)";
+            "|\\*" +
+            "|\\/" +
+            "|\\+" +
+            "|\\-" +
+            "|<(\\=){0,1}" +
+            "|>(\\=){0,1}" +
+            "|instanceof" +
+            "|==" +
+            "|!=" +
+            "|\\!" +
+            "|&&" +
+            "|\\|\\|" +
+            "|\\=" +
+            "|System\\.in\\.read" +
+            "|System\\.out\\.println" +
+            "|break)";
 
     public static final String STRING_REGEX = "(\"(.|\\s)*\")";
     protected String sourceCodeText;
@@ -77,7 +77,7 @@ public class LexicalAnalyzer implements Scanner {
         for (LexemeType lexemeType : lexemeTypes) {
             try {
                 if (lexemeType.equals(LexemeType.EOF)
-                    && (getCurrentMarkerPosition() != getSourceCodeText().length())) {
+                        && (getCurrentMarkerPosition() != getSourceCodeText().length())) {
                     continue;
                 }
                 resultCandidates
@@ -85,9 +85,9 @@ public class LexicalAnalyzer implements Scanner {
             } catch (LexicalAnalyzerException ex) {
                 // this means that lexicalAnalyzer cannot find lexeme of given type
                 if (ex.getMessage().startsWith(LexicalAnalyzerException.NO_CLOSING_GAP_FOR_STRING_FOUND)
-                    || ex.getMessage().startsWith(LexicalAnalyzerException.NO_CLOSING_GAP_FOR_CHAR_FOUND)
-                    || ex.getMessage().startsWith(LexicalAnalyzerException.OUT_OF_FLOAT_RANGE)
-                    || ex.getMessage().startsWith(LexicalAnalyzerException.OUT_OF_INTEGER_RANGE)) {
+                        || ex.getMessage().startsWith(LexicalAnalyzerException.NO_CLOSING_GAP_FOR_CHAR_FOUND)
+                        || ex.getMessage().startsWith(LexicalAnalyzerException.OUT_OF_FLOAT_RANGE)
+                        || ex.getMessage().startsWith(LexicalAnalyzerException.OUT_OF_INTEGER_RANGE)) {
                     // but for this kind of errors we must stop analyzing
                     throw new LexicalAnalyzerException(ex);
                 }
@@ -118,6 +118,8 @@ public class LexicalAnalyzer implements Scanner {
             }
         } else if (resultCandidates.containsKey(LexemeType.FLOAT)) {
             result = resultCandidates.get(LexemeType.FLOAT);
+        } else if (resultCandidates.containsKey(LexemeType.BOOLEAN)) {
+            result = resultCandidates.get(LexemeType.BOOLEAN);
         } else {
             // fetching first and unique lexeme
             result = resultCandidates.get(resultCandidates.keySet().iterator().next());
@@ -151,7 +153,7 @@ public class LexicalAnalyzer implements Scanner {
             return LexemeBuilder.buildLexeme(LexemeType.EOF, "", startAnalyzePosition, startAnalyzePosition);
         }
         String notAnalyzedSourceSubstring = sourceCodeText.replaceAll(COMMENT_REGEX_STRING, "")
-                                                          .substring(startAnalyzePosition);
+                .substring(startAnalyzePosition);
         Matcher matcher;
         /* setting appropriate matcher for lexeme */
         switch (lexemeType) {
@@ -182,7 +184,7 @@ public class LexicalAnalyzer implements Scanner {
                 break;
             case STRING:
                 notAnalyzedSourceSubstring = fetchStringLiteral(notAnalyzedSourceSubstring, sourceCodeText,
-                                                                startAnalyzePosition);
+                        startAnalyzePosition);
                 matcher = Pattern.compile(STRING_REGEX).matcher(notAnalyzedSourceSubstring);
                 break;
             default:
@@ -193,7 +195,7 @@ public class LexicalAnalyzer implements Scanner {
             String lexemeText = matcher.group(1);
             Object lexemeValue = lexemeText;
             if (!lexemeType.equals(LexemeType.KEYWORD) && !lexemeType.equals(LexemeType.OPERATOR)
-                && isKeyword(lexemeText)) {
+                    && isKeyword(lexemeText)) {
                 throw new LexicalAnalyzerException("\"" + lexemeText + "\" is a keyword");
             }
             if (lexemeType.equals(LexemeType.INTEGER)) {
@@ -201,7 +203,7 @@ public class LexicalAnalyzer implements Scanner {
                     lexemeValue = Integer.parseInt(lexemeText);
                 } catch (NumberFormatException e) {
                     throw new LexicalAnalyzerException(LexicalAnalyzerException.OUT_OF_INTEGER_RANGE + " for " +
-                                                       lexemeText);
+                            lexemeText);
                 }
             }
             if (lexemeType.equals(LexemeType.FLOAT)) {
@@ -209,12 +211,12 @@ public class LexicalAnalyzer implements Scanner {
                     float f = Float.parseFloat(lexemeText);
                     if ((f <= Float.NEGATIVE_INFINITY) || (f >= Float.POSITIVE_INFINITY)) {
                         throw new LexicalAnalyzerException(LexicalAnalyzerException.OUT_OF_FLOAT_RANGE + " for " +
-                                                           lexemeText);
+                                lexemeText);
                     }
                     lexemeValue = new Float(f);
                 } catch (NumberFormatException e) {
                     throw new LexicalAnalyzerException(LexicalAnalyzerException.OUT_OF_FLOAT_RANGE + " for " +
-                                                       lexemeText);
+                            lexemeText);
                 }
             }
             if (lexemeType.equals(LexemeType.BOOLEAN)) {
@@ -222,7 +224,7 @@ public class LexicalAnalyzer implements Scanner {
                     lexemeValue = new Boolean(lexemeText);
                 } else {
                     throw new LexicalAnalyzerException(LexicalAnalyzerException.INCORRECT_BOOLEAN_VALUE
-                                                       + " for \"" + lexemeText + "\"");
+                            + " for \"" + lexemeText + "\"");
                 }
             }
             int lexemeStartPosition = startAnalyzePosition;
@@ -232,8 +234,8 @@ public class LexicalAnalyzer implements Scanner {
         } else {
             throw new LexicalAnalyzerException(
                     LexicalAnalyzerException.ILLEGAL_CHARACTERS_IN_DECLARATION + lexemeType.name()
-                                                                                           .toLowerCase()
-                    + " declaration");
+                            .toLowerCase()
+                            + " declaration");
         }
     }
 
@@ -248,7 +250,7 @@ public class LexicalAnalyzer implements Scanner {
                 // closing gap not found
                 throw new LexicalAnalyzerException(
                         LexicalAnalyzerException.NO_CLOSING_GAP_FOR_CHAR_FOUND + " near " + currentMarkerPosition
-                        + " position");
+                                + " position");
             } else {
                 result = sourceCodeText.substring(startIndex, endIndex);
             }
@@ -282,8 +284,8 @@ public class LexicalAnalyzer implements Scanner {
                 // closing gap not found
                 throw new LexicalAnalyzerException(
                         LexicalAnalyzerException.NO_CLOSING_GAP_FOR_STRING_FOUND + " near " + currentMarkerPosition
-                        + "" +
-                        " position");
+                                + "" +
+                                " position");
             } else {
                 result = sourceCodeText.substring(startIndex, endIndex);
             }

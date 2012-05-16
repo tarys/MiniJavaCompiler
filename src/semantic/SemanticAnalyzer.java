@@ -45,12 +45,6 @@ public class SemanticAnalyzer {
     }
 
     public String isVariableOrMethodParameterOrFieldInCurrentClassDeclared(String name) throws SemanticException {
-        // due to some unexpected SyntaxAnalyzer behaviour checking such situation
-        if (name.equals("true") || name.equals("false")) {
-            return BOOLEAN_TYPE;
-        }
-
-        // normal execution
         List<Entry> candidates = getNameTableBuilder().lookUp(name);
         String resultType = null;
         for (Entry candidate : candidates) {
