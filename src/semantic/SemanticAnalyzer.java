@@ -341,4 +341,16 @@ public class SemanticAnalyzer {
     private boolean isBreakFlag() {
         return breakFlag;
     }
+
+    public void methodDeclaration() throws SemanticException {
+        checkNotUsedBreak();
+    }
+
+    public void methodDeclaration(String returnType, String expressionType) throws SemanticException {
+        methodDeclaration();
+    }
+
+    public void methodDeclaration(String returnType, Entry innerBlock, String expressionType) throws SemanticException {
+        methodDeclaration(returnType, expressionType);
+    }
 }

@@ -302,19 +302,19 @@ methods_declaration             ::= methods_declaration:methodsList method_decla
 method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
                                         block:innerBlock
-                                        RETURN_KEYWORD expression SEMICOLON
+                                        RETURN_KEYWORD expression:expression SEMICOLON
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, returnType, paramsList, innerBlock);
-                                        parser.getSemanticAnalyzer().checkNotUsedBreak();
+                                        parser.getSemanticAnalyzer().methodDeclaration(returnType, innerBlock, expression);
                                    :}
                                   | PUBLIC_KEYWORD type:returnType IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
-                                        RETURN_KEYWORD expression SEMICOLON
+                                        RETURN_KEYWORD expression:expression SEMICOLON
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, returnType, paramsList);
-                                        parser.getSemanticAnalyzer().checkNotUsedBreak();
+                                        parser.getSemanticAnalyzer().methodDeclaration(returnType, expression);
                                    :}
                                   | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
@@ -322,16 +322,16 @@ method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:na
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, "void", paramsList, innerBlock);
-                                        parser.getSemanticAnalyzer().checkNotUsedBreak();
+                                        parser.getSemanticAnalyzer().methodDeclaration();
                                    :}
                                   | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, "void", paramsList);
-                                        parser.getSemanticAnalyzer().checkNotUsedBreak();
+                                        parser.getSemanticAnalyzer().methodDeclaration();
                                    :}
-                                    ;
+                                  ;
 
 method_params_declaration       ::= LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   | LEFT_PARENTHESIS params_list_declaration:paramsList RIGHT_PARENTHESIS
