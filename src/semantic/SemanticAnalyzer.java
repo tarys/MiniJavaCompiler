@@ -27,7 +27,7 @@ public class SemanticAnalyzer {
         }
     }
 
-    public String unaryMinus(String arg) throws SemanticException {
+    public String unaryMinusExpression(String arg) throws SemanticException {
         if (arg.equals(INTEGER_TYPE) || arg.equals(FLOAT_TYPE)) {
             return arg;
         } else {
@@ -44,7 +44,7 @@ public class SemanticAnalyzer {
         return declaredClass.getName();
     }
 
-    public String isVariableOrMethodParameterOrFieldInCurrentClassDeclared(String name) throws SemanticException {
+    public String identifierExpression(String name) throws SemanticException {
         List<Entry> candidates = getNameTableBuilder().lookUp(name);
         String resultType = null;
         for (Entry candidate : candidates) {

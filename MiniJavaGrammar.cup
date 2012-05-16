@@ -590,7 +590,7 @@ expression                      ::= expression:className STOP IDENTIFIER:fieldNa
                                   :}
                                   | IDENTIFIER:name
                                   {:
-                                        RESULT = parser.getSemanticAnalyzer().isVariableOrMethodParameterOrFieldInCurrentClassDeclared(name);
+                                        RESULT = parser.getSemanticAnalyzer().identifierExpression(name);
                                   :}
                                   | NEW_KEYWORD IDENTIFIER:className LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   {:
@@ -602,7 +602,7 @@ expression                      ::= expression:className STOP IDENTIFIER:fieldNa
                                   :}
                                   | MINUS expression:arg
                                   {:
-                                        RESULT = parser.getSemanticAnalyzer().unaryMinus(arg);
+                                        RESULT = parser.getSemanticAnalyzer().unaryMinusExpression(arg);
                                   :}
                                     %prec UNARY_MINUS;
 
