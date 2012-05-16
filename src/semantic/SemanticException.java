@@ -10,6 +10,7 @@ public class SemanticException extends Exception {
     public static final String NO_SUCH_METHOD_IN_CLASS = "No such method in class: ";
     public static final String WRONG_METHOD_PARAMETERS_AMOUNT = "Wrong method parameters amount";
     public static final String NOT_DECLARED_BUT_USED_VARIABLE_FIELD_OR_METHOD_PARAMETER = "Not declared but used variable, field or method parameter: ";
+    public static final String ILLEGAL_RETURN_TYPE = "Illegal return type: ";
 
     public SemanticException(String message) {
         super(message);

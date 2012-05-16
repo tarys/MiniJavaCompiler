@@ -306,7 +306,7 @@ method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:na
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, returnType, paramsList, innerBlock);
-                                        parser.getSemanticAnalyzer().methodDeclaration(returnType, innerBlock, expression);
+                                        parser.getSemanticAnalyzer().methodDeclaration(returnType, expression);
                                    :}
                                   | PUBLIC_KEYWORD type:returnType IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS

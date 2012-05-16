@@ -347,10 +347,9 @@ public class SemanticAnalyzer {
     }
 
     public void methodDeclaration(String returnType, String expressionType) throws SemanticException {
-        methodDeclaration();
-    }
-
-    public void methodDeclaration(String returnType, Entry innerBlock, String expressionType) throws SemanticException {
-        methodDeclaration(returnType, expressionType);
+        checkNotUsedBreak();
+        if (!returnType.equals(expressionType)) {
+            throw new SemanticException(SemanticException.ILLEGAL_RETURN_TYPE + "'" + returnType + "' expected but '" + expressionType + "' found");
+        }
     }
 }

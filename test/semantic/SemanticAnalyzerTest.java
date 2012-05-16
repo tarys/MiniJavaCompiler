@@ -220,4 +220,24 @@ public class SemanticAnalyzerTest {
             Assert.assertTrue(e.getMessage().startsWith(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE));
         }
     }
+    @Test
+    public void testWrongReturnType() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public String intMethod(){" +
+                "       int c = 3;" +
+                "       return c;" +
+                "   }" +
+                "   public static void main (String[] args){" +
+                "       int q;" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+            Assert.fail();
+        } catch (SemanticException e) {
+            System.out.println(e.getMessage());
+            Assert.assertTrue(e.getMessage().startsWith(SemanticException.ILLEGAL_RETURN_TYPE));
+        }
+    }
 }
