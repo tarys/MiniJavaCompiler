@@ -152,6 +152,14 @@ public class NameTableBuilder {
     public List<Entry> lookUp(String entryName) {
         List<Entry> result = new LinkedList<Entry>();
         for (Entry topLevelEntry : topLevelEntries) {
+            if (topLevelEntry instanceof BlockEntry) {
+                BlockEntry block = (BlockEntry) topLevelEntry;
+                for (Entry entry : block.getChildren()) {
+                    if (entry.getName().equals(entryName)) {
+                        result.add(entry);
+                    }
+                }
+            }
             if (topLevelEntry.getName().equals(entryName)) {
                 result.add(topLevelEntry);
             }
