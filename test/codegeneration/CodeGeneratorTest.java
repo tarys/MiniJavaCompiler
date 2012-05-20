@@ -25,23 +25,23 @@ public class CodeGeneratorTest {
         List<String> expected = new LinkedList<String>();
         expected.add("(SUB, 0, 12, T[0])");
         expected.add("(STORE, T[0], --, 'q')");
-        expected.add("(ADD, 'q', 2, T[1])");
-        expected.add("(STORE, T[1], --, 'q')");
-        expected.add("(ADD, 2, 5, T[2])");
-        expected.add("(SUB, 'q', T[2], T[3])");
-        expected.add("(SUB, 10, 15, T[4])");
-        expected.add("(DIV, 'q', T[4], T[5])");
-        expected.add("(ADD, T[3], T[5], T[6])");
-        expected.add("(STORE, T[6], --, 'q')");
-        expected.add("(MULT, 'q', 2, T[7])");
-        expected.add("(STORE, T[7], --, 'q')");
-        expected.add("(DIV, 'q', 2, T[8])");
-        expected.add("(STORE, T[8], --, 'q')");
+        expected.add("(ADD, 'q', 2, T[0])");
+        expected.add("(STORE, T[0], --, 'q')");
+        expected.add("(ADD, 2, 5, T[0])");
+        expected.add("(SUB, 'q', T[0], T[1])");
+        expected.add("(SUB, 10, 15, T[2])");
+        expected.add("(DIV, 'q', T[2], T[3])");
+        expected.add("(ADD, T[1], T[3], T[4])");
+        expected.add("(STORE, T[4], --, 'q')");
+        expected.add("(MULT, 'q', 2, T[4])");
+        expected.add("(STORE, T[4], --, 'q')");
+        expected.add("(DIV, 'q', 2, T[4])");
+        expected.add("(STORE, T[4], --, 'q')");
         int i = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
             System.out.println(quad);
-//            Assert.assertEquals(expected.get(i++), quad.toString());
+            Assert.assertEquals(expected.get(i++), quad.toString());
         }
     }
     @Test

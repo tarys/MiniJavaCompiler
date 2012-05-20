@@ -23,7 +23,7 @@ public class CodeGenerator extends AnalyzerDecorator {
         return entry;
     }
 
-    private TemporaryEntry generateArithmeticOperation(TemporaryEntry arg1, TemporaryEntry arg2, Operation operation, TemporaryEntry result) throws SemanticException {
+    private TemporaryEntry generateBinaryOperation(TemporaryEntry arg1, TemporaryEntry arg2, Operation operation, TemporaryEntry result) throws SemanticException {
         result.addAllQuads(arg1.getByteCode());
         result.addAllQuads(arg2.getByteCode());
         Quad newQuad = new Quad(operation, getLastQuadResult(arg1), getLastQuadResult(arg2), "T[" + maxTempVariableIndex++ + "]");
@@ -71,62 +71,62 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry orExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().orExpression(arg1, arg2);
+        return generateBinaryOperation(arg1,arg2,Operation.OR,getAnalyzer().orExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry andExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().andExpression(arg1, arg2);
+        return generateBinaryOperation(arg1,arg2,Operation.AND,getAnalyzer().orExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry notEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().notEqualExpression(arg1, arg2);
+        return generateBinaryOperation(arg1,arg2,Operation.NEQ,getAnalyzer().orExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry equalExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().equalExpression(arg1, arg2);
+        return generateBinaryOperation(arg1,arg2,Operation.EQ,getAnalyzer().orExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry greaterEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().greaterEqualExpression(arg1, arg2);
+        return generateBinaryOperation(arg1,arg2,Operation.GE,getAnalyzer().orExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry greaterExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().greaterExpression(arg1, arg2);
+        return generateBinaryOperation(arg1,arg2,Operation.GT,getAnalyzer().orExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry lowerEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().lowerEqualExpression(arg1, arg2);
+        return generateBinaryOperation(arg1,arg2,Operation.LE,getAnalyzer().orExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry lowerExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().lowerExpression(arg1, arg2);
+        return generateBinaryOperation(arg1,arg2,Operation.LT,getAnalyzer().orExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry divideExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateArithmeticOperation(arg1, arg2, Operation.DIV, getAnalyzer().divideExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.DIV, getAnalyzer().divideExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry timesExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateArithmeticOperation(arg1, arg2, Operation.MULT, getAnalyzer().timesExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.MULT, getAnalyzer().timesExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry minusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateArithmeticOperation(arg1, arg2, Operation.SUB, getAnalyzer().minusExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.SUB, getAnalyzer().minusExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry plusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateArithmeticOperation(arg1, arg2, Operation.ADD, getAnalyzer().plusExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.ADD, getAnalyzer().plusExpression(arg1, arg2));
     }
 
     @Override
