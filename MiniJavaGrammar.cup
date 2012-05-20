@@ -128,8 +128,8 @@ non terminal    Entry           statement;
 non terminal    Entry           assignment_statement;
 non terminal    Entry           if_statement;
 non terminal    Entry           while_statement;
-non terminal                    method_call_statement;
-non terminal                    output_statement;
+non terminal    Entry           method_call_statement;
+non terminal    Entry           output_statement;
 non terminal    String          type;
 non terminal    String          reference_type;
 /* as we actually neither call method nor calculating expressions we just store String representation of result type */
@@ -412,7 +412,10 @@ statements                      ::= statements:statements statement:statement
                                    :}
                                   ;
 
-statement                       ::= assignment_statement
+statement                       ::= assignment_statement:statement
+                                   {:
+                                        RESULT = statement;
+                                   :}
                                   | if_statement:statement
                                    {:
                                         RESULT = statement;
@@ -421,8 +424,15 @@ statement                       ::= assignment_statement
                                    {:
                                         RESULT = statement;
                                    :}
-                                  | method_call_statement
-                                  | output_statement;
+                                  | method_call_statement:statement
+                                   {:
+                                        RESULT = statement;
+                                   :}
+                                  | output_statement:statement
+                                   {:
+                                        RESULT = statement;
+                                   :}
+                                  ;
 
 assignment_statement            ::= IDENTIFIER:name ASSIGN expression:expression SEMICOLON
                                    {:
@@ -436,7 +446,7 @@ if_statement                    ::= IF_KEYWORD LEFT_PARENTHESIS expression:condi
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareIfStatement(thenBlock);
-                                        parser.getAnalyzer().ifStatement(conditionExpression);
+                                        parser.getAnalyzer().ifStatement(conditionExpression, RESULT);
                                    :}
                                   | IF_KEYWORD LEFT_PARENTHESIS expression:conditionExpression RIGHT_PARENTHESIS
                                     LEFT_FIG_PARENTHESIS
@@ -447,7 +457,7 @@ if_statement                    ::= IF_KEYWORD LEFT_PARENTHESIS expression:condi
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareIfStatement(thenBlock, elseBlock);
-                                        parser.getAnalyzer().ifStatement(conditionExpression);
+                                        parser.getAnalyzer().ifStatement(conditionExpression, RESULT);
                                    :}
                                   ;
 
@@ -458,14 +468,22 @@ while_statement                 ::= WHILE_KEYWORD
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareWhileStatement(innerBlock);
-                                        parser.getAnalyzer().whileStatement(conditionExpression);
+                                        parser.getAnalyzer().whileStatement(conditionExpression, RESULT);
                                    :}
                                   ;
 
-method_call_statement           ::= expression SEMICOLON;
+method_call_statement           ::= expression:expression SEMICOLON
+                                   {:
+                                        RESULT = parser.getAnalyzer().methodCallStatement(expression);
+                                   :}
+                                  ;
 
 
-output_statement                ::= SYSTEM_OUT_PRINTLN LEFT_PARENTHESIS expression RIGHT_PARENTHESIS SEMICOLON;
+output_statement                ::= SYSTEM_OUT_PRINTLN LEFT_PARENTHESIS expression:expression RIGHT_PARENTHESIS SEMICOLON
+                                   {:
+                                        RESULT = parser.getAnalyzer().systemOutPrintlnStatement(expression);
+                                   :}
+                                  ;
 
 type                            ::= BOOLEAN_KEYWORD
                                     {: RESULT = SemanticAnalyzer.BOOLEAN_TYPE; :}

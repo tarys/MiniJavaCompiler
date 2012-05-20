@@ -240,7 +240,7 @@ public class SemanticAnalyzer implements Analyzer {
     }
 
     @Override
-    public void whileStatement(TemporaryEntry conditionExpression) throws SemanticException {
+    public void whileStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException {
         if (!conditionExpression.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
@@ -248,7 +248,7 @@ public class SemanticAnalyzer implements Analyzer {
     }
 
     @Override
-    public void ifStatement(TemporaryEntry conditionExpression) throws SemanticException {
+    public void ifStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException {
         if (!conditionExpression.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
@@ -407,5 +407,15 @@ public class SemanticAnalyzer implements Analyzer {
     @Override
     public TemporaryEntry newExpression(String className) {
         return new TemporaryEntry(className);
+    }
+
+    @Override
+    public TemporaryEntry systemOutPrintlnStatement(TemporaryEntry expression) {
+        return expression;
+    }
+
+    @Override
+    public Entry methodCallStatement(TemporaryEntry expression) {
+        return expression;
     }
 }

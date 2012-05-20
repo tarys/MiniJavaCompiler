@@ -2,6 +2,7 @@ package codegeneration;
 
 import general.Analyzer;
 import general.AnalyzerDecorator;
+import nametable.entries.Entry;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticException;
 
@@ -161,13 +162,13 @@ public class CodeGenerator extends AnalyzerDecorator {
     }
 
     @Override
-    public void whileStatement(TemporaryEntry conditionExpression) throws SemanticException {
-        getAnalyzer().whileStatement(conditionExpression);
+    public void whileStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException {
+        getAnalyzer().whileStatement(conditionExpression, expression);
     }
 
     @Override
-    public void ifStatement(TemporaryEntry conditionExpression) throws SemanticException {
-        getAnalyzer().ifStatement(conditionExpression);
+    public void ifStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException {
+        getAnalyzer().ifStatement(conditionExpression, expression);
     }
 
     @Override

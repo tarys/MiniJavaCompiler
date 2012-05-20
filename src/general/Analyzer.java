@@ -1,6 +1,7 @@
 package general;
 
 import nametable.NameTableBuilder;
+import nametable.entries.Entry;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticException;
 
@@ -59,9 +60,9 @@ public interface Analyzer {
 
     TemporaryEntry fieldCallExpression(TemporaryEntry className, String fieldName) throws SemanticException;
 
-    void whileStatement(TemporaryEntry conditionExpression) throws SemanticException;
+    void whileStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException;
 
-    void ifStatement(TemporaryEntry conditionExpression) throws SemanticException;
+    void ifStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException;
 
     TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException;
 
@@ -84,4 +85,8 @@ public interface Analyzer {
     TemporaryEntry integerTypeExpression(Object value);
 
     TemporaryEntry newExpression(String className);
+
+    TemporaryEntry systemOutPrintlnStatement(TemporaryEntry expression);
+
+    Entry methodCallStatement(TemporaryEntry expression);
 }

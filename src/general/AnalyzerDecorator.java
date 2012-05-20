@@ -1,6 +1,7 @@
 package general;
 
 import nametable.NameTableBuilder;
+import nametable.entries.Entry;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticException;
 
@@ -152,13 +153,13 @@ public class AnalyzerDecorator implements Analyzer {
     }
 
     @Override
-    public void whileStatement(TemporaryEntry conditionExpression) throws SemanticException {
-        getAnalyzer().whileStatement(conditionExpression);
+    public void whileStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException {
+        getAnalyzer().whileStatement(conditionExpression, expression);
     }
 
     @Override
-    public void ifStatement(TemporaryEntry conditionExpression) throws SemanticException {
-        getAnalyzer().ifStatement(conditionExpression);
+    public void ifStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException {
+        getAnalyzer().ifStatement(conditionExpression, expression);
     }
 
     @Override
@@ -214,5 +215,15 @@ public class AnalyzerDecorator implements Analyzer {
     @Override
     public TemporaryEntry newExpression(String className) {
         return getAnalyzer().newExpression(className);
+    }
+
+    @Override
+    public TemporaryEntry systemOutPrintlnStatement(TemporaryEntry expression) {
+        return getAnalyzer().systemOutPrintlnStatement(expression);
+    }
+
+    @Override
+    public Entry methodCallStatement(TemporaryEntry expression) {
+        return getAnalyzer().methodCallStatement(expression);
     }
 }
