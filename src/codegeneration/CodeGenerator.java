@@ -31,23 +31,24 @@ public class CodeGenerator extends AnalyzerDecorator {
         return result;
     }
 
-    public CodeGenerator(Analyzer analyzer) {
-        super(analyzer);
-        maxTempVariableIndex = 0;
-    }
-
     private List<Quad> optimizeCode(List<Quad> byteCode) {
         List<Quad> result = new LinkedList<Quad>();
-
+        int quadCount = 0;
         for (Quad quad : byteCode) {
             switch (quad.getOperation()) {
                 case CONST:
                     break;
                 default:
+                    quad.setQuadNumber(++quadCount);
                     result.add(quad);
             }
         }
         return result;
+    }
+
+    public CodeGenerator(Analyzer analyzer) {
+        super(analyzer);
+        maxTempVariableIndex = 0;
     }
 
     @Override
@@ -72,7 +73,7 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry orExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateBinaryOperation(arg1,arg2,Operation.OR,getAnalyzer().orExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.OR, getAnalyzer().orExpression(arg1, arg2));
     }
 
     @Override
@@ -191,6 +192,19 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public void ifStatement(TemporaryEntry conditionExpression, Entry thenBlock, Entry elseBlock, Entry result) throws SemanticException {
         getAnalyzer().ifStatement(conditionExpression, thenBlock, elseBlock, result);
+        List<Quad> thenCode = thenBlock.getByteCode();
+        Quad lastThenQuad = thenCode.get(thenCode.size() - 1);
+        Quad ifFalseQuad = new Quad(Operation.BZ, getLastQuadResult(conditionExpression), lastThenQuad, null);
+        result.addQuad(ifFalseQuad);
+        result.addAllQuads(thenCode);
+        if (elseBlock != null) {
+            List<Quad> elseCode = elseBlock.getByteCode();
+            Quad lastElseQuad = elseCode.get(elseCode.size() - 1);
+            Quad elseOverJumpQuad = new Quad(Operation.BR, lastElseQuad, null, null);
+            ifFalseQuad.setArgument2(elseOverJumpQuad);
+            result.addQuad(elseOverJumpQuad);
+            result.addAllQuads(elseCode);
+        }
     }
 
     @Override

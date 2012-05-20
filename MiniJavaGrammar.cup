@@ -368,6 +368,7 @@ param_declaration               ::= type:type IDENTIFIER:name
 block                           ::= variables_declaration:variablesEntriesList
                                    {:
                                        RESULT = parser.getNameTableBuilder().declareBlock(variablesEntriesList);
+                                       parser.getAnalyzer().block(variablesEntriesList, new LinkedList<Entry>(), RESULT);
                                    :}
                                   | variables_declaration:variablesEntriesList statements:statements
                                    {:
