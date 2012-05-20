@@ -20,9 +20,9 @@ public class VariableEntry extends Entry {
     public String toString() {
         String superString = super.toString();
         StringBuffer result = new StringBuffer(superString);
-        result.insert(result.indexOf("]") - 1, "; value type = '");
-        result.insert(result.indexOf("]") - 1, getValueType());
-        result.insert(result.indexOf("]") - 1, "'");
+        result.insert(result.lastIndexOf("]") - 1, "; value type = '");
+        result.insert(result.lastIndexOf("]") - 1, getValueType());
+        result.insert(result.lastIndexOf("]") - 1, "'");
 
         return result.toString();
     }

@@ -8,13 +8,12 @@ import semantic.SemanticException;
 import java.util.List;
 
 public class CodeGenerator extends AnalyzerDecorator {
-    private static  int maxTempVariableIndex = 0;
+    private static int maxTempVariableIndex = 0;
 
-    private TemporaryEntry generateConstCode(Object value) {
-        TemporaryEntry result = getAnalyzer().charTypeExpression(value);
-        result.getByteCode().clear();
-        result.getByteCode().add(new Quad(Operation.CONST, null, null, value));
-        return result;
+    private TemporaryEntry generateConstCode(Object value, TemporaryEntry entry) {
+        entry.getByteCode().clear();
+        entry.getByteCode().add(new Quad(Operation.CONST, null, null, value));
+        return entry;
     }
 
     public CodeGenerator(Analyzer analyzer) {
@@ -33,7 +32,6 @@ public class CodeGenerator extends AnalyzerDecorator {
             newQuad = new Quad(Operation.SUB, 0, lastQuad.getResult(), "T[" + maxTempVariableIndex + "]");
         }
         code.add(newQuad);
-        result.getByteCode().addAll(code);
         return result;
     }
 
@@ -49,7 +47,9 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry identifierExpression(String name) throws SemanticException {
-        return getAnalyzer().identifierExpression(name);
+        TemporaryEntry result = getAnalyzer().identifierExpression(name);
+        result.getByteCode().add(new Quad(Operation.CONST, null, null, "'" + name + "'"));
+        return result;
     }
 
     @Override
@@ -184,27 +184,27 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry charTypeExpression(Object value) {
-        return generateConstCode(value);
+        return generateConstCode(value, getAnalyzer().charTypeExpression(value));
     }
 
     @Override
     public TemporaryEntry stringTypeExpression(Object value) {
-        return generateConstCode(value);
+        return generateConstCode(value, getAnalyzer().stringTypeExpression(value));
     }
 
     @Override
     public TemporaryEntry booleanTypeExpression(Object value) {
-        return generateConstCode(value);
+        return generateConstCode(value, getAnalyzer().booleanTypeExpression(value));
     }
 
     @Override
     public TemporaryEntry floatTypeExpression(Object value) {
-        return generateConstCode(value);
+        return generateConstCode(value, getAnalyzer().floatTypeExpression(value));
     }
 
     @Override
     public TemporaryEntry integerTypeExpression(Object value) {
-        return generateConstCode(value);
+        return generateConstCode(value, getAnalyzer().integerTypeExpression(value));
     }
 
     @Override

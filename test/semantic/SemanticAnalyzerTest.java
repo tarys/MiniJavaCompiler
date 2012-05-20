@@ -230,7 +230,7 @@ public class SemanticAnalyzerTest {
                 "   public String intMethod(){" +
                 "       int c = -3;" +
                 "       int d = 3;" +
-                "       return c+d*intMethod2();" +
+                "       return c+(-d);" +
                 "   }" +
                 "   public static void main (String[] args){" +
                 "       int q;" +
