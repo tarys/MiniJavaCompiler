@@ -10,7 +10,7 @@ public class TemporaryEntry extends VariableEntry {
     private static int temporaryEntriesCount;
 
     public TemporaryEntry(String valueType) {
-        super("T[" + ++temporaryEntriesCount + "]", valueType);
+        super("Temp#" + ++temporaryEntriesCount, valueType);
     }
     public void addQuad(Quad newQuad) {
         getByteCode().add(newQuad);
