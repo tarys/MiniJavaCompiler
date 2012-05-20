@@ -153,7 +153,8 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName) throws SemanticException {
-        return getAnalyzer().methodCallExpression(className, methodName);
+        TemporaryEntry result = getAnalyzer().methodCallExpression(className, methodName);
+        return result;
     }
 
     @Override
@@ -217,5 +218,31 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public TemporaryEntry newExpression(String className) {
         return getAnalyzer().newExpression(className);
+    }
+
+    @Override
+    public TemporaryEntry systemOutPrintlnStatement(TemporaryEntry expression) {
+        expression.addQuad(new Quad(Operation.PRINTLN, getLastQuadResult(expression), null, null));
+        return expression;
+    }
+
+    @Override
+    public Entry methodCallStatement(TemporaryEntry expression) {
+        return super.methodCallStatement(expression);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void block(List<Entry> statements, Entry block) {
+        getAnalyzer().block(statements, block);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void methodDeclaration(Entry innerBlock) throws SemanticException {
+        getAnalyzer().methodDeclaration(innerBlock);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock) throws SemanticException {
+       getAnalyzer().methodDeclaration(returnType, expression, innerBlock);    //To change body of overridden methods use File | Settings | File Templates.
     }
 }

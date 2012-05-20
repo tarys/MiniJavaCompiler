@@ -89,4 +89,10 @@ public interface Analyzer {
     TemporaryEntry systemOutPrintlnStatement(TemporaryEntry expression);
 
     Entry methodCallStatement(TemporaryEntry expression);
+
+    void block(List<Entry> statements, Entry block);
+
+    void methodDeclaration(Entry innerBlock) throws SemanticException;
+
+    void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock) throws SemanticException;
 }

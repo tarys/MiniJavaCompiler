@@ -308,7 +308,7 @@ method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:na
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, returnType, paramsList, innerBlock);
-                                        parser.getAnalyzer().methodDeclaration(returnType, expression);
+                                        parser.getAnalyzer().methodDeclaration(returnType, expression, innerBlock);
                                    :}
                                   | PUBLIC_KEYWORD type:returnType IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
@@ -324,7 +324,7 @@ method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:na
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, "void", paramsList, innerBlock);
-                                        parser.getAnalyzer().methodDeclaration();
+                                        parser.getAnalyzer().methodDeclaration(innerBlock);
                                    :}
                                   | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
@@ -367,10 +367,12 @@ block                           ::= variables_declaration:variablesEntriesList
                                   | variables_declaration:variablesEntriesList statements:statements
                                    {:
                                        RESULT = parser.getNameTableBuilder().declareBlock(variablesEntriesList, statements);
+                                       parser.getAnalyzer().block(statements, RESULT);
                                    :}
                                   | statements:statements
                                    {:
                                        RESULT = parser.getNameTableBuilder().declareBlock(null, statements);
+                                       parser.getAnalyzer().block(statements, RESULT);
                                    :}
                                   ;
 

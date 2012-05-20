@@ -418,4 +418,18 @@ public class SemanticAnalyzer implements Analyzer {
     public Entry methodCallStatement(TemporaryEntry expression) {
         return expression;
     }
+
+    @Override
+    public void block(List<Entry> statements, Entry block) {
+    }
+
+    @Override
+    public void methodDeclaration(Entry innerBlock) throws SemanticException {
+        methodDeclaration();
+    }
+
+    @Override
+    public void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock) throws SemanticException {
+        methodDeclaration(returnType,expression);
+    }
 }
