@@ -62,7 +62,7 @@ public interface Analyzer {
 
     void whileStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException;
 
-    void ifStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException;
+    void ifStatement(TemporaryEntry conditionExpression, Entry thenBlock, Entry elseBlock, Entry result) throws SemanticException;
 
     TemporaryEntry assignmentStatement(String name, TemporaryEntry expression, Entry result) throws SemanticException;
 

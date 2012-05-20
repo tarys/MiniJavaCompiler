@@ -158,8 +158,8 @@ public class AnalyzerDecorator implements Analyzer {
     }
 
     @Override
-    public void ifStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException {
-        getAnalyzer().ifStatement(conditionExpression, expression);
+    public void ifStatement(TemporaryEntry conditionExpression, Entry thenBlock, Entry elseBlock, Entry result) throws SemanticException {
+        getAnalyzer().ifStatement(conditionExpression, thenBlock, elseBlock, result);
     }
 
     @Override

@@ -453,7 +453,7 @@ if_statement                    ::= IF_KEYWORD LEFT_PARENTHESIS expression:condi
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareIfStatement(thenBlock);
-                                        parser.getAnalyzer().ifStatement(conditionExpression, RESULT);
+                                        parser.getAnalyzer().ifStatement(conditionExpression, thenBlock, null, RESULT);
                                    :}
                                   | IF_KEYWORD LEFT_PARENTHESIS expression:conditionExpression RIGHT_PARENTHESIS
                                     LEFT_FIG_PARENTHESIS
@@ -464,7 +464,7 @@ if_statement                    ::= IF_KEYWORD LEFT_PARENTHESIS expression:condi
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareIfStatement(thenBlock, elseBlock);
-                                        parser.getAnalyzer().ifStatement(conditionExpression, RESULT);
+                                        parser.getAnalyzer().ifStatement(conditionExpression, thenBlock, elseBlock, RESULT);
                                    :}
                                   ;
 
