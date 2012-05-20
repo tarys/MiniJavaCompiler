@@ -1,10 +1,12 @@
 // CUP specification for a simple expression evaluator (w/ actions)
 
 import codegeneration.CodeGenerator;
+import codegeneration.Quad;
 import general.Analyzer;
 import java_cup.runtime.Symbol;
 import nametable.NameTableBuilder;
 import nametable.entries.Entry;
+import nametable.entries.ProgramEntry;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticAnalyzer;
 import java.util.LinkedList;
@@ -28,6 +30,9 @@ parser code {:
         return this.nameTableBuilder.getNameTable();
     }
 
+    public List<Quad> getByteCode() {
+        return ((ProgramEntry)getNameTable().get(0)).getMainClass().getMainMethod().getByteCode();
+    }
 
     @Override
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
@@ -224,7 +229,7 @@ main_method_declaration         ::= PUBLIC_KEYWORD STATIC_KEYWORD VOID_KEYWORD M
                                     RIGHT_FIG_PARENTHESIS
                                     {:
                                         RESULT = parser.getNameTableBuilder().declareMainMethod(innerBlock);
-                                        parser.getAnalyzer().checkNotUsedBreak();
+                                        parser.getAnalyzer().mainMethodDeclaration(innerBlock,RESULT);
                                     :}
                                    ;
 

@@ -241,4 +241,9 @@ public class AnalyzerDecorator implements Analyzer {
     public void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock) throws SemanticException {
         getAnalyzer().methodDeclaration(returnType, expression, innerBlock);
     }
+
+    @Override
+    public void mainMethodDeclaration(Entry innerBlock, Entry result) throws SemanticException {
+        getAnalyzer().mainMethodDeclaration(innerBlock, result);
+    }
 }

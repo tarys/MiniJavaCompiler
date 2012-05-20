@@ -4,6 +4,8 @@ import la.LexicalAnalyzer;
 import org.junit.Test;
 import sa.LR1Analyzer;
 
+import java.util.List;
+
 public class CodeGeneratorTest {
     @Test
     public void testUnaryMinus() throws Exception {
@@ -15,5 +17,9 @@ public class CodeGeneratorTest {
                 "   }" +
                 "}"));
         parser.parse();
+        List<Quad> code = parser.getByteCode();
+        for (Quad quad : code) {
+            System.out.println(quad);
+        }
     }
 }

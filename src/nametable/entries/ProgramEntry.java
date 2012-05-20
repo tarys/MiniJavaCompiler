@@ -6,4 +6,12 @@ public class ProgramEntry extends Entry {
         super("Program");
     }
 
+    public MainClassEntry getMainClass() {
+        for (Entry entry : getChildren()) {
+            if (entry instanceof MainClassEntry) {
+                return (MainClassEntry) entry;
+            }
+        }
+        return null;
+    }
 }

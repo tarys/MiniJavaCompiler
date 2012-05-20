@@ -26,6 +26,9 @@ public class CodeGenerator extends AnalyzerDecorator {
         super(analyzer);
     }
 
+    private void optimizeCode(List<Quad> byteCode) {
+    }
+
     @Override
     public TemporaryEntry unaryMinusExpression(TemporaryEntry arg) throws SemanticException {
         TemporaryEntry result = getAnalyzer().unaryMinusExpression(arg);
@@ -37,11 +40,6 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public void breakExpression() throws SemanticException {
         getAnalyzer().breakExpression();
-    }
-
-    @Override
-    public String isClassDeclared(String className) throws SemanticException {
-        return getAnalyzer().isClassDeclared(className);
     }
 
     @Override
@@ -242,7 +240,10 @@ public class CodeGenerator extends AnalyzerDecorator {
     }
 
     @Override
-    public void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock) throws SemanticException {
-       getAnalyzer().methodDeclaration(returnType, expression, innerBlock);    //To change body of overridden methods use File | Settings | File Templates.
+    public void mainMethodDeclaration(Entry innerBlock, Entry result) throws SemanticException {
+        getAnalyzer().mainMethodDeclaration(innerBlock, result);
+        optimizeCode(innerBlock.getByteCode());
+        result.getByteCode().addAll(innerBlock.getByteCode());
     }
+
 }

@@ -432,4 +432,9 @@ public class SemanticAnalyzer implements Analyzer {
     public void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock) throws SemanticException {
         methodDeclaration(returnType,expression);
     }
+
+    @Override
+    public void mainMethodDeclaration(Entry innerBlock, Entry RESULT) throws SemanticException {
+        checkNotUsedBreak();
+    }
 }

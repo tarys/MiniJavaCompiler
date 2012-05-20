@@ -95,4 +95,6 @@ public interface Analyzer {
     void methodDeclaration(Entry innerBlock) throws SemanticException;
 
     void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock) throws SemanticException;
+
+    void mainMethodDeclaration(Entry innerBlock, Entry RESULT) throws SemanticException;
 }

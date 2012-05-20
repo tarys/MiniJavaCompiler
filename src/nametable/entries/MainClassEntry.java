@@ -5,4 +5,13 @@ public class MainClassEntry extends ClassEntry {
         super(name);
     }
 
+    public MainMethodEntry getMainMethod(){
+        for (Entry entry : getChildren()) {
+            if (entry instanceof MainMethodEntry) {
+                return (MainMethodEntry) entry;
+            }
+        }
+        return null;
+    }
+
 }
