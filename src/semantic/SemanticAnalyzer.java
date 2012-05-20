@@ -31,7 +31,7 @@ public class SemanticAnalyzer implements Analyzer {
 
     @Override
     public TemporaryEntry unaryMinusExpression(TemporaryEntry arg) throws SemanticException {
-        if (isNumericType(arg)) {
+        if (isNumericType(arg.getValueType())) {
             return arg;
         } else {
             throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
@@ -136,7 +136,7 @@ public class SemanticAnalyzer implements Analyzer {
 
     @Override
     public TemporaryEntry divideExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        if (isNumericType(arg1) && isNumericType(arg2)) {
+        if (isNumericType(arg1.getValueType()) && isNumericType(arg2.getValueType())) {
             return new TemporaryEntry(FLOAT_TYPE);
         } else {
             throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
@@ -145,7 +145,7 @@ public class SemanticAnalyzer implements Analyzer {
 
     @Override
     public TemporaryEntry timesExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        if (isNumericType(arg1) && isNumericType(arg2)) {
+        if (isNumericType(arg1.getValueType()) && isNumericType(arg2.getValueType())) {
             String valueType = (arg1.getValueType().equals(INTEGER_TYPE) && arg2.getValueType().equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
             return new TemporaryEntry(valueType);
         } else {
@@ -155,7 +155,7 @@ public class SemanticAnalyzer implements Analyzer {
 
     @Override
     public TemporaryEntry minusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        if (isNumericType(arg1) && isNumericType(arg2)) {
+        if (isNumericType(arg1.getValueType()) && isNumericType(arg2.getValueType())) {
             String valueType = (arg1.getValueType().equals(INTEGER_TYPE) && arg2.getValueType().equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
             return new TemporaryEntry(valueType);
         } else {
@@ -165,7 +165,7 @@ public class SemanticAnalyzer implements Analyzer {
 
     @Override
     public TemporaryEntry plusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        if (isNumericType(arg1) && isNumericType(arg2)) {
+        if (isNumericType(arg1.getValueType()) && isNumericType(arg2.getValueType())) {
             String valueType = (arg1.getValueType().equals(INTEGER_TYPE) && arg2.getValueType().equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
             return new TemporaryEntry(valueType);
         } else {
@@ -281,7 +281,10 @@ public class SemanticAnalyzer implements Analyzer {
                 VariableEntry candidate = (VariableEntry) assignCandidate;
                 expectedType = candidate.getValueType();
             }
-            if (expectedType.equals(expression.getValueType())) {
+            if (expectedType.equals(FLOAT_TYPE) && expression.getValueType().equals(INTEGER_TYPE)) {
+                assignSuccess = true;
+                break;
+            } else if (expectedType.equals(expression.getValueType())) {
                 assignSuccess = true;
                 break;
             }
@@ -354,13 +357,13 @@ public class SemanticAnalyzer implements Analyzer {
     }
 
     private void areArgumentsComparable(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        if (!arg1.getValueType().equals(arg2) && (!isNumericType(arg1) || arg1.getValueType().equals(BOOLEAN_TYPE) || arg1.getValueType().equals(CHAR_TYPE))) {
+        if (!arg1.getValueType().equals(arg2) && (!isNumericType(arg1.getValueType()) || arg1.getValueType().equals(BOOLEAN_TYPE) || arg1.getValueType().equals(CHAR_TYPE))) {
             throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
-    private boolean isNumericType(TemporaryEntry arg) {
-        return (arg.getValueType().equals(INTEGER_TYPE) || arg.getValueType().equals(FLOAT_TYPE));
+    private boolean isNumericType(String arg) {
+        return (arg.equals(INTEGER_TYPE) || arg.equals(FLOAT_TYPE));
     }
 
     private void setBreakFlag(boolean breakFlag) {

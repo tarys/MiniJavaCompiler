@@ -23,8 +23,7 @@ public class CodeGenerator extends AnalyzerDecorator {
         return entry;
     }
 
-    private TemporaryEntry generateArithmeticOperation(TemporaryEntry arg1, TemporaryEntry arg2, Operation operation) throws SemanticException {
-        TemporaryEntry result = getAnalyzer().plusExpression(arg1, arg2);
+    private TemporaryEntry generateArithmeticOperation(TemporaryEntry arg1, TemporaryEntry arg2, Operation operation, TemporaryEntry result) throws SemanticException {
         result.addAllQuads(arg1.getByteCode());
         result.addAllQuads(arg2.getByteCode());
         Quad newQuad = new Quad(operation, getLastQuadResult(arg1), getLastQuadResult(arg2), "T[" + maxTempVariableIndex++ + "]");
@@ -38,9 +37,13 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     private List<Quad> optimizeCode(List<Quad> byteCode) {
         List<Quad> result = new LinkedList<Quad>();
+
         for (Quad quad : byteCode) {
-            if (!quad.getOperation().equals(Operation.CONST)) {
-                result.add(quad);
+            switch (quad.getOperation()) {
+                case CONST:
+                    break;
+                default:
+                    result.add(quad);
             }
         }
         return result;
@@ -108,22 +111,22 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry divideExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateArithmeticOperation(arg1, arg2, Operation.DIV);
+        return generateArithmeticOperation(arg1, arg2, Operation.DIV, getAnalyzer().divideExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry timesExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateArithmeticOperation(arg1, arg2, Operation.MULT);
+        return generateArithmeticOperation(arg1, arg2, Operation.MULT, getAnalyzer().timesExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry minusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateArithmeticOperation(arg1, arg2, Operation.SUB);
+        return generateArithmeticOperation(arg1, arg2, Operation.SUB, getAnalyzer().minusExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry plusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateArithmeticOperation(arg1, arg2, Operation.ADD);
+        return generateArithmeticOperation(arg1, arg2, Operation.ADD, getAnalyzer().plusExpression(arg1, arg2));
     }
 
     @Override
@@ -193,6 +196,8 @@ public class CodeGenerator extends AnalyzerDecorator {
     public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
         getAnalyzer().assignmentStatement(name, expression);
         Quad newQuad = new Quad(Operation.STORE, getLastQuadResult(expression), null, "'" + name + "'");
+        // decreace max index because we have saved value to memory
+        maxTempVariableIndex--;
         expression.addQuad(newQuad);
         return expression;
     }
