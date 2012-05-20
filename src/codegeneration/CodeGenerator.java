@@ -1,34 +1,40 @@
-package general;
+package codegeneration;
 
-import nametable.NameTableBuilder;
+import general.Analyzer;
+import general.AnalyzerDecorator;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticException;
 
 import java.util.List;
 
-public class AnalyzerDecorator implements Analyzer {
-    private Analyzer analyzer;
+public class CodeGenerator extends AnalyzerDecorator {
+    private static  int maxTempVariableIndex = 0;
 
-    public AnalyzerDecorator(Analyzer analyzer) {
-        this.setAnalyzer(analyzer);
+    private TemporaryEntry generateConstCode(Object value) {
+        TemporaryEntry result = getAnalyzer().charTypeExpression(value);
+        result.getByteCode().clear();
+        result.getByteCode().add(new Quad(Operation.CONST, null, null, value));
+        return result;
     }
 
-    protected Analyzer getAnalyzer() {
-        return analyzer;
-    }
-
-    protected void setAnalyzer(Analyzer analyzer) {
-        this.analyzer = analyzer;
-    }
-
-    @Override
-    public void checkNotUsedBreak() throws SemanticException {
-        getAnalyzer().checkNotUsedBreak();
+    public CodeGenerator(Analyzer analyzer) {
+        super(analyzer);
     }
 
     @Override
     public TemporaryEntry unaryMinusExpression(TemporaryEntry arg) throws SemanticException {
-        return getAnalyzer().unaryMinusExpression(arg);
+        TemporaryEntry result = getAnalyzer().unaryMinusExpression(arg);
+        List<Quad> code = arg.getByteCode();
+        Quad lastQuad = code.get(code.size() - 1);
+        Quad newQuad;
+        if (lastQuad.getOperation().equals(Operation.CONST)) {
+            newQuad = new Quad(Operation.SUB, 0, lastQuad.getResult(), "T[" + maxTempVariableIndex++ + "]");
+        } else {
+            newQuad = new Quad(Operation.SUB, 0, lastQuad.getResult(), "T[" + maxTempVariableIndex + "]");
+        }
+        code.add(newQuad);
+        result.getByteCode().addAll(code);
+        return result;
     }
 
     @Override
@@ -163,17 +169,7 @@ public class AnalyzerDecorator implements Analyzer {
 
     @Override
     public void assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
-       getAnalyzer().assignmentStatement(name, expression);
-    }
-
-    @Override
-    public NameTableBuilder getNameTableBuilder() {
-        return getAnalyzer().getNameTableBuilder();
-    }
-
-    @Override
-    public void setNameTableBuilder(NameTableBuilder nameTableBuilder) {
-        getAnalyzer().setNameTableBuilder(nameTableBuilder);
+        getAnalyzer().assignmentStatement(name, expression);
     }
 
     @Override
@@ -188,27 +184,27 @@ public class AnalyzerDecorator implements Analyzer {
 
     @Override
     public TemporaryEntry charTypeExpression(Object value) {
-        return getAnalyzer().charTypeExpression(value);
+        return generateConstCode(value);
     }
 
     @Override
     public TemporaryEntry stringTypeExpression(Object value) {
-        return getAnalyzer().stringTypeExpression(value);
+        return generateConstCode(value);
     }
 
     @Override
     public TemporaryEntry booleanTypeExpression(Object value) {
-        return getAnalyzer().booleanTypeExpression(value);
+        return generateConstCode(value);
     }
 
     @Override
     public TemporaryEntry floatTypeExpression(Object value) {
-        return getAnalyzer().floatTypeExpression(value);
+        return generateConstCode(value);
     }
 
     @Override
     public TemporaryEntry integerTypeExpression(Object value) {
-        return getAnalyzer().integerTypeExpression(value);
+        return generateConstCode(value);
     }
 
     @Override

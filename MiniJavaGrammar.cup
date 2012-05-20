@@ -1,11 +1,12 @@
 // CUP specification for a simple expression evaluator (w/ actions)
 
+import codegeneration.CodeGenerator;
+import general.Analyzer;
 import java_cup.runtime.Symbol;
 import nametable.NameTableBuilder;
 import nametable.entries.Entry;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticAnalyzer;
-
 import java.util.LinkedList;
 import java.util.List;
 

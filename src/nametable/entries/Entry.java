@@ -23,6 +23,7 @@ public abstract class Entry {
         this.name = name;
         this.parent = null;
         this.children = new LinkedList<Entry>();
+        this.byteCode = new LinkedList<Quad>();
     }
 
     public Entry getParent() {

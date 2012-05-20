@@ -228,7 +228,7 @@ public class SemanticAnalyzerTest {
                 "       return 1;" +
                 "   }" +
                 "   public String intMethod(){" +
-                "       int c = 3;" +
+                "       int c = -3;" +
                 "       int d = 3;" +
                 "       return c+d*intMethod2();" +
                 "   }" +
