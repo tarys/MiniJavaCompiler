@@ -14,6 +14,9 @@ public class CodeGeneratorTest {
                 "   public static void main (String[] args){" +
                 "       int q = -12;" +
                 "       q = q + 2;" +
+                "       q = q - 2;" +
+                "       q = q * 2;" +
+                "       q = q / 2;" +
                 "   }" +
                 "}"));
         parser.parse();

@@ -1,5 +1,9 @@
 package nametable.entries;
 
+import codegeneration.Quad;
+
+import java.util.Collection;
+
 public class VariableEntry extends Entry {
     private String valueType;
 

@@ -12,11 +12,5 @@ public class TemporaryEntry extends VariableEntry {
     public TemporaryEntry(String valueType) {
         super("Temp#" + ++temporaryEntriesCount, valueType);
     }
-    public void addQuad(Quad newQuad) {
-        getByteCode().add(newQuad);
-    }
-    public void addAllQuads(Collection<? extends Quad> newQuads) {
-        getByteCode().addAll(newQuads);
-    }
 
 }

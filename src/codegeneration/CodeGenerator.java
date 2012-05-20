@@ -6,6 +6,7 @@ import nametable.entries.Entry;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticException;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class CodeGenerator extends AnalyzerDecorator {
@@ -22,11 +23,27 @@ public class CodeGenerator extends AnalyzerDecorator {
         return entry;
     }
 
+    private TemporaryEntry generateArithmeticOperation(TemporaryEntry arg1, TemporaryEntry arg2, Operation operation) throws SemanticException {
+        TemporaryEntry result = getAnalyzer().plusExpression(arg1, arg2);
+        result.addAllQuads(arg1.getByteCode());
+        result.addAllQuads(arg2.getByteCode());
+        Quad newQuad = new Quad(operation, getLastQuadResult(arg1), getLastQuadResult(arg2), "T[" + maxTempVariableIndex++ + "]");
+        result.addQuad(newQuad);
+        return result;
+    }
+
     public CodeGenerator(Analyzer analyzer) {
         super(analyzer);
     }
 
-    private void optimizeCode(List<Quad> byteCode) {
+    private List<Quad> optimizeCode(List<Quad> byteCode) {
+        List<Quad> result = new LinkedList<Quad>();
+        for (Quad quad : byteCode) {
+            if (!quad.getOperation().equals(Operation.CONST)) {
+                result.add(quad);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -91,27 +108,22 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry divideExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().divideExpression(arg1, arg2);
+        return generateArithmeticOperation(arg1, arg2, Operation.DIV);
     }
 
     @Override
     public TemporaryEntry timesExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().timesExpression(arg1, arg2);
+        return generateArithmeticOperation(arg1, arg2, Operation.MULT);
     }
 
     @Override
     public TemporaryEntry minusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().minusExpression(arg1, arg2);
+        return generateArithmeticOperation(arg1, arg2, Operation.SUB);
     }
 
     @Override
     public TemporaryEntry plusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        TemporaryEntry result = getAnalyzer().plusExpression(arg1, arg2);
-        result.addAllQuads(arg1.getByteCode());
-        result.addAllQuads(arg2.getByteCode());
-        Quad newQuad = new Quad(Operation.ADD, getLastQuadResult(arg1), getLastQuadResult(arg2), "T[" + maxTempVariableIndex++ + "]");
-        result.addQuad(newQuad);
-        return result;
+        return generateArithmeticOperation(arg1, arg2, Operation.ADD);
     }
 
     @Override
@@ -231,7 +243,11 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public void block(List<Entry> statements, Entry block) {
-        getAnalyzer().block(statements, block);    //To change body of overridden methods use File | Settings | File Templates.
+        getAnalyzer().block(statements, block);
+        for (Entry statement : statements) {
+            List<Quad> code = block.getByteCode();
+            code.addAll(statement.getByteCode());
+        }
     }
 
     @Override
@@ -242,8 +258,8 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public void mainMethodDeclaration(Entry innerBlock, Entry result) throws SemanticException {
         getAnalyzer().mainMethodDeclaration(innerBlock, result);
-        optimizeCode(innerBlock.getByteCode());
-        result.getByteCode().addAll(innerBlock.getByteCode());
+        List<Quad> code = optimizeCode(innerBlock.getByteCode());
+        result.addAllQuads(code);
     }
 
 }

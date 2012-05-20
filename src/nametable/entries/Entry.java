@@ -2,6 +2,7 @@ package nametable.entries;
 
 import codegeneration.Quad;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -149,5 +150,13 @@ public abstract class Entry {
 
     public List<Quad> getByteCode() {
         return byteCode;
+    }
+
+    public void addQuad(Quad newQuad) {
+        getByteCode().add(newQuad);
+    }
+
+    public void addAllQuads(Collection<? extends Quad> newQuads) {
+        getByteCode().addAll(newQuads);
     }
 }
