@@ -1,12 +1,13 @@
 package semantic;
 
+import general.Analyzer;
 import nametable.NameTableBuilder;
 import nametable.entries.*;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class SemanticAnalyzer {
+public class SemanticAnalyzer implements Analyzer {
     public static final String CHAR_TYPE = "char";
     public static final String STRING_TYPE = "String";
     public static final String BOOLEAN_TYPE = "boolean";
@@ -21,12 +22,14 @@ public class SemanticAnalyzer {
         this.nameTableBuilder = nameTableBuilder;
     }
 
+    @Override
     public void checkNotUsedBreak() throws SemanticException {
         if (isBreakFlag()) {
             throw new SemanticException(SemanticException.BREAK_USED_BUT_LOOP_NOT_DECLARED);
         }
     }
 
+    @Override
     public TemporaryEntry unaryMinusExpression(TemporaryEntry arg) throws SemanticException {
         if (isNumericType(arg)) {
             return arg;
@@ -35,15 +38,18 @@ public class SemanticAnalyzer {
         }
     }
 
+    @Override
     public void breakExpression() throws SemanticException {
         setBreakFlag(true);
     }
 
+    @Override
     public String isClassDeclared(String className) throws SemanticException {
         ClassEntry declaredClass = lookUpDeclaredClass(className);
         return declaredClass.getName();
     }
 
+    @Override
     public TemporaryEntry identifierExpression(String name) throws SemanticException {
         List<Entry> candidates = getNameTableBuilder().lookUp(name);
         String resultType = null;
@@ -75,6 +81,7 @@ public class SemanticAnalyzer {
     }
 
 
+    @Override
     public TemporaryEntry orExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         if (!arg1.getValueType().equals(BOOLEAN_TYPE) || !arg2.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
@@ -82,6 +89,7 @@ public class SemanticAnalyzer {
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
+    @Override
     public TemporaryEntry andExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         if (!arg1.getValueType().equals(BOOLEAN_TYPE) || !arg2.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
@@ -89,37 +97,44 @@ public class SemanticAnalyzer {
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
+    @Override
     public TemporaryEntry notEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
+    @Override
     public TemporaryEntry equalExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
+    @Override
     public TemporaryEntry greaterEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
+    @Override
     public TemporaryEntry greaterExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
+    @Override
     public TemporaryEntry lowerEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
+    @Override
     public TemporaryEntry lowerExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
 
+    @Override
     public TemporaryEntry divideExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         if (isNumericType(arg1) && isNumericType(arg2)) {
             return new TemporaryEntry(FLOAT_TYPE);
@@ -128,6 +143,7 @@ public class SemanticAnalyzer {
         }
     }
 
+    @Override
     public TemporaryEntry timesExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         if (isNumericType(arg1) && isNumericType(arg2)) {
             String valueType = (arg1.getValueType().equals(INTEGER_TYPE) && arg2.getValueType().equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
@@ -137,6 +153,7 @@ public class SemanticAnalyzer {
         }
     }
 
+    @Override
     public TemporaryEntry minusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         if (isNumericType(arg1) && isNumericType(arg2)) {
             String valueType = (arg1.getValueType().equals(INTEGER_TYPE) && arg2.getValueType().equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
@@ -146,6 +163,7 @@ public class SemanticAnalyzer {
         }
     }
 
+    @Override
     public TemporaryEntry plusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         if (isNumericType(arg1) && isNumericType(arg2)) {
             String valueType = (arg1.getValueType().equals(INTEGER_TYPE) && arg2.getValueType().equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
@@ -155,10 +173,12 @@ public class SemanticAnalyzer {
         }
     }
 
+    @Override
     public TemporaryEntry parenthesisExpression(TemporaryEntry arg) throws SemanticException {
         return arg;
     }
 
+    @Override
     public TemporaryEntry exclamationExpression(TemporaryEntry arg) throws SemanticException {
         if (!arg.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
@@ -166,16 +186,19 @@ public class SemanticAnalyzer {
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
+    @Override
     public TemporaryEntry systemReadInExpression() throws SemanticException {
         return new TemporaryEntry("String");
     }
 
+    @Override
     public TemporaryEntry instanceofExpression(TemporaryEntry instanceType, TemporaryEntry classNameEntry) throws SemanticException {
         // just looking for already declared class
         lookUpDeclaredClass(classNameEntry.getValueType());
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
+    @Override
     public TemporaryEntry methodCallExpression(String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
         MethodEntry callMethod = lookUpDeclaredMethod(methodName);
         //checking actual parameters' types
@@ -184,11 +207,13 @@ public class SemanticAnalyzer {
         return new TemporaryEntry(callMethod.getReturnType());
     }
 
+    @Override
     public TemporaryEntry methodCallExpression(String methodName) throws SemanticException {
         MethodEntry callMethod = lookUpDeclaredMethod(methodName);
         return new TemporaryEntry(callMethod.getReturnType());
     }
 
+    @Override
     public TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
         ClassEntry declaredClass = lookUpDeclaredClass(className.getValueType());
         MethodEntry callMethod = declaredClass.getMethod(methodName);
@@ -198,6 +223,7 @@ public class SemanticAnalyzer {
         return new TemporaryEntry(callMethod.getReturnType());
     }
 
+    @Override
     public TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName) throws SemanticException {
         /* checking actual parameters' types
            because there are no actual parameters we create empty list
@@ -205,6 +231,7 @@ public class SemanticAnalyzer {
         return this.methodCallExpression(className, methodName, new LinkedList<TemporaryEntry>());
     }
 
+    @Override
     public TemporaryEntry fieldCallExpression(TemporaryEntry className, String fieldName) throws SemanticException {
         ClassEntry declaredClass = lookUpDeclaredClass(className.getValueType());
         FieldEntry callField = declaredClass.getField(fieldName);
@@ -212,6 +239,7 @@ public class SemanticAnalyzer {
         return new TemporaryEntry(callField.getValueType());
     }
 
+    @Override
     public void whileStatement(TemporaryEntry conditionExpression) throws SemanticException {
         if (!conditionExpression.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
@@ -219,12 +247,14 @@ public class SemanticAnalyzer {
         setBreakFlag(false);
     }
 
+    @Override
     public void ifStatement(TemporaryEntry conditionExpression) throws SemanticException {
         if (!conditionExpression.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
     }
 
+    @Override
     public void assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
         List<Entry> assignCandidates = getNameTableBuilder().lookUp(name);
         if (assignCandidates.isEmpty()) {
@@ -257,10 +287,12 @@ public class SemanticAnalyzer {
         }
     }
 
+    @Override
     public NameTableBuilder getNameTableBuilder() {
         return nameTableBuilder;
     }
 
+    @Override
     public void setNameTableBuilder(NameTableBuilder nameTableBuilder) {
         this.nameTableBuilder = nameTableBuilder;
     }
@@ -333,10 +365,12 @@ public class SemanticAnalyzer {
         return breakFlag;
     }
 
+    @Override
     public void methodDeclaration() throws SemanticException {
         checkNotUsedBreak();
     }
 
+    @Override
     public void methodDeclaration(String returnType, TemporaryEntry expression) throws SemanticException {
         checkNotUsedBreak();
         if (!returnType.equals(expression.getValueType())) {
@@ -344,26 +378,32 @@ public class SemanticAnalyzer {
         }
     }
 
+    @Override
     public TemporaryEntry charTypeExpression(Object value) {
         return new TemporaryEntry(CHAR_TYPE);
     }
 
+    @Override
     public TemporaryEntry stringTypeExpression(Object value) {
         return new TemporaryEntry(STRING_TYPE);
     }
 
+    @Override
     public TemporaryEntry booleanTypeExpression(Object value) {
         return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
+    @Override
     public TemporaryEntry floatTypeExpression(Object value) {
         return new TemporaryEntry(FLOAT_TYPE);
     }
 
+    @Override
     public TemporaryEntry integerTypeExpression(Object value) {
         return new TemporaryEntry(INTEGER_TYPE);
     }
 
+    @Override
     public TemporaryEntry newExpression(String className) {
         return new TemporaryEntry(className);
     }

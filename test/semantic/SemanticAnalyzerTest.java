@@ -224,9 +224,13 @@ public class SemanticAnalyzerTest {
     public void testWrongReturnType() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
                 "public class MainClass{" +
+                "   public int intMethod2(){" +
+                "       return 1;" +
+                "   }" +
                 "   public String intMethod(){" +
                 "       int c = 3;" +
-                "       return c;" +
+                "       int d = 3;" +
+                "       return c+d*intMethod2();" +
                 "   }" +
                 "   public static void main (String[] args){" +
                 "       int q;" +

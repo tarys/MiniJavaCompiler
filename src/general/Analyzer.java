@@ -1,0 +1,87 @@
+package general;
+
+import nametable.NameTableBuilder;
+import nametable.entries.TemporaryEntry;
+import semantic.SemanticException;
+
+import java.util.List;
+
+public interface Analyzer {
+    void checkNotUsedBreak() throws SemanticException;
+
+    TemporaryEntry unaryMinusExpression(TemporaryEntry arg) throws SemanticException;
+
+    void breakExpression() throws SemanticException;
+
+    String isClassDeclared(String className) throws SemanticException;
+
+    TemporaryEntry identifierExpression(String name) throws SemanticException;
+
+    TemporaryEntry orExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry andExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry notEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry equalExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry greaterEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry greaterExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry lowerEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry lowerExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry divideExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry timesExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry minusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry plusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException;
+
+    TemporaryEntry parenthesisExpression(TemporaryEntry arg) throws SemanticException;
+
+    TemporaryEntry exclamationExpression(TemporaryEntry arg) throws SemanticException;
+
+    TemporaryEntry systemReadInExpression() throws SemanticException;
+
+    TemporaryEntry instanceofExpression(TemporaryEntry instanceType, TemporaryEntry classNameEntry) throws SemanticException;
+
+    TemporaryEntry methodCallExpression(String methodName, List<TemporaryEntry> actualParameters) throws SemanticException;
+
+    TemporaryEntry methodCallExpression(String methodName) throws SemanticException;
+
+    TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException;
+
+    TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName) throws SemanticException;
+
+    TemporaryEntry fieldCallExpression(TemporaryEntry className, String fieldName) throws SemanticException;
+
+    void whileStatement(TemporaryEntry conditionExpression) throws SemanticException;
+
+    void ifStatement(TemporaryEntry conditionExpression) throws SemanticException;
+
+    void assignmentStatement(String name, TemporaryEntry expression) throws SemanticException;
+
+    NameTableBuilder getNameTableBuilder();
+
+    void setNameTableBuilder(NameTableBuilder nameTableBuilder);
+
+    void methodDeclaration() throws SemanticException;
+
+    void methodDeclaration(String returnType, TemporaryEntry expression) throws SemanticException;
+
+    TemporaryEntry charTypeExpression(Object value);
+
+    TemporaryEntry stringTypeExpression(Object value);
+
+    TemporaryEntry booleanTypeExpression(Object value);
+
+    TemporaryEntry floatTypeExpression(Object value);
+
+    TemporaryEntry integerTypeExpression(Object value);
+
+    TemporaryEntry newExpression(String className);
+}

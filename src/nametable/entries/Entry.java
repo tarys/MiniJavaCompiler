@@ -1,5 +1,7 @@
 package nametable.entries;
 
+import codegeneration.Quad;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -15,6 +17,7 @@ public abstract class Entry {
      */
     private Entry parent;
     private List<Entry> children;
+    private List<Quad> byteCode;
 
     protected Entry(String name) {
         this.name = name;
@@ -143,4 +146,7 @@ public abstract class Entry {
         }
     }
 
+    public List<Quad> getByteCode() {
+        return byteCode;
+    }
 }
