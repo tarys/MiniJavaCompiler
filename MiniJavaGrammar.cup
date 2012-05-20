@@ -476,7 +476,7 @@ while_statement                 ::= WHILE_KEYWORD
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareWhileStatement(innerBlock);
-                                        parser.getAnalyzer().whileStatement(conditionExpression, RESULT);
+                                        parser.getAnalyzer().whileStatement(conditionExpression, innerBlock, RESULT);
                                    :}
                                   ;
 

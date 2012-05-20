@@ -153,8 +153,8 @@ public class AnalyzerDecorator implements Analyzer {
     }
 
     @Override
-    public void whileStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException {
-        getAnalyzer().whileStatement(conditionExpression, expression);
+    public void whileStatement(TemporaryEntry conditionExpression, Entry innerBlock, Entry result) throws SemanticException {
+        getAnalyzer().whileStatement(conditionExpression, innerBlock, result);
     }
 
     @Override

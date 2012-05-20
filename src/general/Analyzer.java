@@ -60,7 +60,7 @@ public interface Analyzer {
 
     TemporaryEntry fieldCallExpression(TemporaryEntry className, String fieldName) throws SemanticException;
 
-    void whileStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException;
+    void whileStatement(TemporaryEntry conditionExpression, Entry innerBlock, Entry result) throws SemanticException;
 
     void ifStatement(TemporaryEntry conditionExpression, Entry thenBlock, Entry elseBlock, Entry result) throws SemanticException;
 

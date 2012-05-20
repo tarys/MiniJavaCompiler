@@ -240,7 +240,7 @@ public class SemanticAnalyzer implements Analyzer {
     }
 
     @Override
-    public void whileStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException {
+    public void whileStatement(TemporaryEntry conditionExpression, Entry innerBlock, Entry result) throws SemanticException {
         if (!conditionExpression.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
