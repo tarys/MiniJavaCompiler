@@ -183,11 +183,18 @@ public class CodeGenerator extends AnalyzerDecorator {
     }
 
     @Override
-    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression, Entry RESULT) throws SemanticException {
-        TemporaryEntry result = getAnalyzer().assignmentStatement(name, expression, RESULT);
+    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression, Entry result) throws SemanticException {
+        assignmentStatement(name, expression);
+        result.addAllQuads(expression.getByteCode());
+        return expression;
+    }
+
+    @Override
+    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
+        getAnalyzer().assignmentStatement(name, expression);
         Quad newQuad = new Quad(Operation.STORE, getLastQuadResult(expression), null, "'" + name + "'");
-        result.addQuad(newQuad);
-        return result;
+        expression.addQuad(newQuad);
+        return expression;
     }
 
     @Override
@@ -244,6 +251,19 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public void block(List<Entry> statements, Entry block) {
         getAnalyzer().block(statements, block);
+        for (Entry statement : statements) {
+            List<Quad> code = block.getByteCode();
+            code.addAll(statement.getByteCode());
+        }
+    }
+
+    @Override
+    public void block(List<Entry> variablesEntriesList, List<Entry> statements, Entry block) {
+        getAnalyzer().block(variablesEntriesList, statements, block);
+        for (Entry variable : variablesEntriesList) {
+            List<Quad> code = block.getByteCode();
+            code.addAll(variable.getByteCode());
+        }
         for (Entry statement : statements) {
             List<Quad> code = block.getByteCode();
             code.addAll(statement.getByteCode());

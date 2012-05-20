@@ -372,7 +372,7 @@ block                           ::= variables_declaration:variablesEntriesList
                                   | variables_declaration:variablesEntriesList statements:statements
                                    {:
                                        RESULT = parser.getNameTableBuilder().declareBlock(variablesEntriesList, statements);
-                                       parser.getAnalyzer().block(statements, RESULT);
+                                       parser.getAnalyzer().block(variablesEntriesList, statements, RESULT);
                                    :}
                                   | statements:statements
                                    {:

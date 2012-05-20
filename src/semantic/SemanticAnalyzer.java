@@ -256,6 +256,11 @@ public class SemanticAnalyzer implements Analyzer {
 
     @Override
     public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression, Entry result) throws SemanticException {
+        return assignmentStatement(name, expression);
+    }
+
+    @Override
+    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
         List<Entry> assignCandidates = getNameTableBuilder().lookUp(name);
         if (assignCandidates.isEmpty()) {
             throw new SemanticException(SemanticException.NOT_DECLARED_BUT_USED_VARIABLE_FIELD_OR_METHOD_PARAMETER + name);
@@ -430,11 +435,15 @@ public class SemanticAnalyzer implements Analyzer {
 
     @Override
     public void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock) throws SemanticException {
-        methodDeclaration(returnType,expression);
+        methodDeclaration(returnType, expression);
     }
 
     @Override
     public void mainMethodDeclaration(Entry innerBlock, Entry RESULT) throws SemanticException {
         checkNotUsedBreak();
+    }
+
+    @Override
+    public void block(List<Entry> variablesEntriesList, List<Entry> statements, Entry result) {
     }
 }

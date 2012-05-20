@@ -64,7 +64,9 @@ public interface Analyzer {
 
     void ifStatement(TemporaryEntry conditionExpression, Entry expression) throws SemanticException;
 
-    TemporaryEntry assignmentStatement(String name, TemporaryEntry expression, Entry RESULT) throws SemanticException;
+    TemporaryEntry assignmentStatement(String name, TemporaryEntry expression, Entry result) throws SemanticException;
+
+    TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException;
 
     NameTableBuilder getNameTableBuilder();
 
@@ -97,4 +99,6 @@ public interface Analyzer {
     void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock) throws SemanticException;
 
     void mainMethodDeclaration(Entry innerBlock, Entry RESULT) throws SemanticException;
+
+    void block(List<Entry> variablesEntriesList, List<Entry> statements, Entry result);
 }

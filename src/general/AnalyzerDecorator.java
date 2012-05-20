@@ -168,6 +168,11 @@ public class AnalyzerDecorator implements Analyzer {
     }
 
     @Override
+    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
+        return getAnalyzer().assignmentStatement(name, expression);
+    }
+
+    @Override
     public NameTableBuilder getNameTableBuilder() {
         return getAnalyzer().getNameTableBuilder();
     }
@@ -245,5 +250,10 @@ public class AnalyzerDecorator implements Analyzer {
     @Override
     public void mainMethodDeclaration(Entry innerBlock, Entry result) throws SemanticException {
         getAnalyzer().mainMethodDeclaration(innerBlock, result);
+    }
+
+    @Override
+    public void block(List<Entry> variablesEntriesList, List<Entry> statements, Entry result) {
+        getAnalyzer().block(variablesEntriesList,statements, result);
     }
 }
