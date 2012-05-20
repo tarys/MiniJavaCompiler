@@ -33,6 +33,7 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     public CodeGenerator(Analyzer analyzer) {
         super(analyzer);
+        maxTempVariableIndex = 0;
     }
 
     private List<Quad> optimizeCode(List<Quad> byteCode) {
@@ -76,37 +77,37 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry andExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateBinaryOperation(arg1,arg2,Operation.AND,getAnalyzer().orExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.AND, getAnalyzer().andExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry notEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateBinaryOperation(arg1,arg2,Operation.NEQ,getAnalyzer().orExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.NEQ, getAnalyzer().notEqualExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry equalExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateBinaryOperation(arg1,arg2,Operation.EQ,getAnalyzer().orExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.EQ, getAnalyzer().equalExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry greaterEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateBinaryOperation(arg1,arg2,Operation.GE,getAnalyzer().orExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.GE, getAnalyzer().greaterEqualExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry greaterExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateBinaryOperation(arg1,arg2,Operation.GT,getAnalyzer().orExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.GT, getAnalyzer().greaterExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry lowerEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateBinaryOperation(arg1,arg2,Operation.LE,getAnalyzer().orExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.LE, getAnalyzer().lowerEqualExpression(arg1, arg2));
     }
 
     @Override
     public TemporaryEntry lowerExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return generateBinaryOperation(arg1,arg2,Operation.LT,getAnalyzer().orExpression(arg1, arg2));
+        return generateBinaryOperation(arg1, arg2, Operation.LT, getAnalyzer().lowerExpression(arg1, arg2));
     }
 
     @Override
@@ -136,12 +137,19 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry exclamationExpression(TemporaryEntry arg) throws SemanticException {
-        return getAnalyzer().exclamationExpression(arg);
+        TemporaryEntry result = getAnalyzer().exclamationExpression(arg);
+        result.addAllQuads(arg.getByteCode());
+        Quad newQuad = new Quad(Operation.NOT, getLastQuadResult(arg), null, "T[" + maxTempVariableIndex++ + "]");
+        result.addQuad(newQuad);
+        return result;
     }
 
     @Override
     public TemporaryEntry systemReadInExpression() throws SemanticException {
-        return getAnalyzer().systemReadInExpression();
+        TemporaryEntry result = getAnalyzer().systemReadInExpression();
+        Quad newQuad = new Quad(Operation.READ, null, null, "T[" + maxTempVariableIndex++ + "]");
+        result.addQuad(newQuad);
+        return result;
     }
 
     @Override
@@ -196,8 +204,10 @@ public class CodeGenerator extends AnalyzerDecorator {
     public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
         getAnalyzer().assignmentStatement(name, expression);
         Quad newQuad = new Quad(Operation.STORE, getLastQuadResult(expression), null, "'" + name + "'");
-        // decreace max index because we have saved value to memory
-        maxTempVariableIndex--;
+        if (maxTempVariableIndex > 0) {
+            // decreace max index because we have saved value to memory
+            maxTempVariableIndex--;
+        }
         expression.addQuad(newQuad);
         return expression;
     }

@@ -45,15 +45,39 @@ public class CodeGeneratorTest {
         }
     }
     @Test
-    public void testPrintln() throws Exception {
+    public void testBooleanOperations() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
+                "       boolean b = false;" +
+                "       boolean c = true;" +
+                "       b = b || c && !b || (1 >= 2);" +
+                "   }" +
+                "}"));
+        parser.parse();
+        List<String> expected = new LinkedList<String>();
+        expected.add("(SUB, 0, 12, T[0])");
+        int i = 0;
+        List<Quad> code = parser.getByteCode();
+        for (Quad quad : code) {
+            System.out.println(quad);
+//            Assert.assertEquals(expected.get(i++), quad.toString());
+        }
+    }
+
+    @Test
+    public void testPrintlnRead() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       String s = System.in.read();" +
                 "       System.out.println(\"Hello, world!\");" +
                 "   }" +
                 "}"));
         parser.parse();
         List<String> expected = new LinkedList<String>();
+        expected.add("(READ, --, --, T[0])");
+        expected.add("(STORE, T[0], --, 's')");
         expected.add("(PRINTLN, \"Hello, world!\", --, --)");
         int i = 0;
         List<Quad> code = parser.getByteCode();
