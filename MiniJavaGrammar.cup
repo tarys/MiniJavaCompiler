@@ -3,6 +3,7 @@
 import java_cup.runtime.Symbol;
 import nametable.NameTableBuilder;
 import nametable.entries.Entry;
+import semantic.TemporaryEntry;
 import semantic.SemanticAnalyzer;
 
 import java.util.LinkedList;
@@ -131,8 +132,8 @@ non terminal                    output_statement;
 non terminal    String          type;
 non terminal    String          reference_type;
 /* as we actually neither call method nor calculating expressions we just store String representation of result type */
-non terminal    String          expression;
-non terminal    List<String>    actual_params_list;
+non terminal    TemporaryEntry          expression;
+non terminal    List<TemporaryEntry>    actual_params_list;
 
 /* Precedences */
 precedence left     ASSIGN;
@@ -570,23 +571,23 @@ expression                      ::= expression:className STOP IDENTIFIER:fieldNa
                                   :}
                                   | INTEGER_TYPE:value
                                   {:
-                                        RESULT = SemanticAnalyzer.INTEGER_TYPE;
+                                        RESULT = parser.getSemanticAnalyzer().integerTypeExpression(value);
                                   :}
                                   | FLOAT_TYPE:value
                                   {:
-                                        RESULT = SemanticAnalyzer.FLOAT_TYPE;
+                                        RESULT = parser.getSemanticAnalyzer().floatTypeExpression(value);
                                   :}
                                   | BOOLEAN_TYPE:value
                                   {:
-                                        RESULT = SemanticAnalyzer.BOOLEAN_TYPE;
+                                        RESULT = parser.getSemanticAnalyzer().booleanTypeExpression(value);
                                   :}
                                   | STRING_TYPE:value
                                   {:
-                                        RESULT = SemanticAnalyzer.STRING_TYPE;
+                                        RESULT = parser.getSemanticAnalyzer().stringTypeExpression(value);
                                   :}
                                   | CHAR_TYPE:value
                                   {:
-                                        RESULT = SemanticAnalyzer.CHAR_TYPE;
+                                        RESULT = parser.getSemanticAnalyzer().charTypeExpression(value);
                                   :}
                                   | IDENTIFIER:name
                                   {:
@@ -594,7 +595,7 @@ expression                      ::= expression:className STOP IDENTIFIER:fieldNa
                                   :}
                                   | NEW_KEYWORD IDENTIFIER:className LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = parser.getSemanticAnalyzer().isClassDeclared(className);
+                                        RESULT = parser.getSemanticAnalyzer().newExpression(className);
                                   :}
                                   | BREAK
                                   {:
@@ -613,7 +614,7 @@ actual_params_list              ::= actual_params_list:list COMMA expression:exp
                                   :}
                                   | expression:expression
                                   {:
-                                       RESULT = new LinkedList<String>();
+                                       RESULT = new LinkedList<TemporaryEntry>();
                                        RESULT.add(expression);
                                   :}
                                   ;

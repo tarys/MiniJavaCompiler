@@ -27,8 +27,8 @@ public class SemanticAnalyzer {
         }
     }
 
-    public String unaryMinusExpression(String arg) throws SemanticException {
-        if (arg.equals(INTEGER_TYPE) || arg.equals(FLOAT_TYPE)) {
+    public TemporaryEntry unaryMinusExpression(TemporaryEntry arg) throws SemanticException {
+        if (isNumericType(arg)) {
             return arg;
         } else {
             throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
@@ -44,7 +44,7 @@ public class SemanticAnalyzer {
         return declaredClass.getName();
     }
 
-    public String identifierExpression(String name) throws SemanticException {
+    public TemporaryEntry identifierExpression(String name) throws SemanticException {
         List<Entry> candidates = getNameTableBuilder().lookUp(name);
         String resultType = null;
         for (Entry candidate : candidates) {
@@ -71,158 +71,161 @@ public class SemanticAnalyzer {
         if (resultType == null) {
             throw new SemanticException(SemanticException.NOT_DECLARED_BUT_USED_VARIABLE_FIELD_OR_METHOD_PARAMETER + name);
         }
-        return resultType;
+        return new TemporaryEntry(resultType);
     }
 
 
-    public String orExpression(String arg1, String arg2) throws SemanticException {
-        if (!arg1.equals(BOOLEAN_TYPE) || !arg2.equals(BOOLEAN_TYPE)) {
+    public TemporaryEntry orExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
+        if (!arg1.getValueType().equals(BOOLEAN_TYPE) || !arg2.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
-        return BOOLEAN_TYPE;
+        return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
-    public String andExpression(String arg1, String arg2) throws SemanticException {
-        if (!arg1.equals(BOOLEAN_TYPE) || !arg2.equals(BOOLEAN_TYPE)) {
+    public TemporaryEntry andExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
+        if (!arg1.getValueType().equals(BOOLEAN_TYPE) || !arg2.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
-        return BOOLEAN_TYPE;
+        return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
-    public String notEqualExpression(String arg1, String arg2) throws SemanticException {
+    public TemporaryEntry notEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
-        return BOOLEAN_TYPE;
+        return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
-    public String equalExpression(String arg1, String arg2) throws SemanticException {
+    public TemporaryEntry equalExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
-        return BOOLEAN_TYPE;
+        return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
-    public String greaterEqualExpression(String arg1, String arg2) throws SemanticException {
+    public TemporaryEntry greaterEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
-        return BOOLEAN_TYPE;
+        return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
-    public String greaterExpression(String arg1, String arg2) throws SemanticException {
+    public TemporaryEntry greaterExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
-        return BOOLEAN_TYPE;
+        return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
-    public String lowerEqualExpression(String arg1, String arg2) throws SemanticException {
+    public TemporaryEntry lowerEqualExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
-        return BOOLEAN_TYPE;
+        return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
-    public String lowerExpression(String arg1, String arg2) throws SemanticException {
+    public TemporaryEntry lowerExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         areArgumentsComparable(arg1, arg2);
-        return BOOLEAN_TYPE;
+        return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
 
-    public String divideExpression(String arg1, String arg2) throws SemanticException {
+    public TemporaryEntry divideExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         if (isNumericType(arg1) && isNumericType(arg2)) {
-            return FLOAT_TYPE;
+            return new TemporaryEntry(FLOAT_TYPE);
         } else {
             throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
-    public String timesExpression(String arg1, String arg2) throws SemanticException {
+    public TemporaryEntry timesExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         if (isNumericType(arg1) && isNumericType(arg2)) {
-            return (arg1.equals(INTEGER_TYPE) && arg2.equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
+            String valueType = (arg1.getValueType().equals(INTEGER_TYPE) && arg2.getValueType().equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
+            return new TemporaryEntry(valueType);
         } else {
             throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
-    public String minusExpression(String arg1, String arg2) throws SemanticException {
+    public TemporaryEntry minusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         if (isNumericType(arg1) && isNumericType(arg2)) {
-            return (arg1.equals(INTEGER_TYPE) && arg2.equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
+            String valueType = (arg1.getValueType().equals(INTEGER_TYPE) && arg2.getValueType().equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
+            return new TemporaryEntry(valueType);
         } else {
             throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
-    public String plusExpression(String arg1, String arg2) throws SemanticException {
+    public TemporaryEntry plusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
         if (isNumericType(arg1) && isNumericType(arg2)) {
-            return (arg1.equals(INTEGER_TYPE) && arg2.equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
+            String valueType = (arg1.getValueType().equals(INTEGER_TYPE) && arg2.getValueType().equals(INTEGER_TYPE)) ? INTEGER_TYPE : FLOAT_TYPE;
+            return new TemporaryEntry(valueType);
         } else {
             throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
-    public String parenthesisExpression(String arg) throws SemanticException {
+    public TemporaryEntry parenthesisExpression(TemporaryEntry arg) throws SemanticException {
         return arg;
     }
 
-    public String exclamationExpression(String arg) throws SemanticException {
-        if (!arg.equals(BOOLEAN_TYPE)) {
+    public TemporaryEntry exclamationExpression(TemporaryEntry arg) throws SemanticException {
+        if (!arg.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
-        return BOOLEAN_TYPE;
+        return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
-    public String systemReadInExpression() throws SemanticException {
-        return "String";
+    public TemporaryEntry systemReadInExpression() throws SemanticException {
+        return new TemporaryEntry("String");
     }
 
-    public String instanceofExpression(String instanceType, String className) throws SemanticException {
+    public TemporaryEntry instanceofExpression(TemporaryEntry instanceType, TemporaryEntry classNameEntry) throws SemanticException {
         // just looking for already declared class
-        lookUpDeclaredClass(className);
-        return BOOLEAN_TYPE;
+        lookUpDeclaredClass(classNameEntry.getValueType());
+        return new TemporaryEntry(BOOLEAN_TYPE);
     }
 
-    public String methodCallExpression(String methodName, List<String> actualParameters) throws SemanticException {
+    public TemporaryEntry methodCallExpression(String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
         MethodEntry callMethod = lookUpDeclaredMethod(methodName);
         //checking actual parameters' types
         checkActualParameters(actualParameters, callMethod);
 
-        return callMethod.getReturnType();
+        return new TemporaryEntry(callMethod.getReturnType());
     }
 
-    public String methodCallExpression(String methodName) throws SemanticException {
+    public TemporaryEntry methodCallExpression(String methodName) throws SemanticException {
         MethodEntry callMethod = lookUpDeclaredMethod(methodName);
-        return callMethod.getReturnType();
+        return new TemporaryEntry(callMethod.getReturnType());
     }
 
-    public String methodCallExpression(String className, String methodName, List<String> actualParameters) throws SemanticException {
-        ClassEntry declaredClass = lookUpDeclaredClass(className);
+    public TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
+        ClassEntry declaredClass = lookUpDeclaredClass(className.getValueType());
         MethodEntry callMethod = declaredClass.getMethod(methodName);
         //checking actual parameters' types
         checkActualParameters(actualParameters, callMethod);
 
-        return callMethod.getReturnType();
+        return new TemporaryEntry(callMethod.getReturnType());
     }
 
-    public String methodCallExpression(String className, String methodName) throws SemanticException {
+    public TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName) throws SemanticException {
         /* checking actual parameters' types
            because there are no actual parameters we create empty list
         */
-        return this.methodCallExpression(className, methodName, new LinkedList<String>());
+        return this.methodCallExpression(className, methodName, new LinkedList<TemporaryEntry>());
     }
 
-    public String fieldCallExpression(String className, String fieldName) throws SemanticException {
-        ClassEntry declaredClass = lookUpDeclaredClass(className);
+    public TemporaryEntry fieldCallExpression(TemporaryEntry className, String fieldName) throws SemanticException {
+        ClassEntry declaredClass = lookUpDeclaredClass(className.getValueType());
         FieldEntry callField = declaredClass.getField(fieldName);
 
-        return callField.getValueType();
+        return new TemporaryEntry(callField.getValueType());
     }
 
-    public void whileStatement(String conditionExpression) throws SemanticException {
-        if (!conditionExpression.equals(BOOLEAN_TYPE)) {
+    public void whileStatement(TemporaryEntry conditionExpression) throws SemanticException {
+        if (!conditionExpression.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
         setBreakFlag(false);
     }
 
-    public void ifStatement(String conditionExpression) throws SemanticException {
-        if (!conditionExpression.equals(BOOLEAN_TYPE)) {
+    public void ifStatement(TemporaryEntry conditionExpression) throws SemanticException {
+        if (!conditionExpression.getValueType().equals(BOOLEAN_TYPE)) {
             throw new SemanticException(SemanticException.NOT_BOOLEAN_EXPRESSION);
         }
     }
 
-    public void assignmentStatement(String name, String expressionType) throws SemanticException {
+    public void assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
         List<Entry> assignCandidates = getNameTableBuilder().lookUp(name);
         if (assignCandidates.isEmpty()) {
             throw new SemanticException(SemanticException.NOT_DECLARED_BUT_USED_VARIABLE_FIELD_OR_METHOD_PARAMETER + name);
@@ -233,36 +236,24 @@ public class SemanticAnalyzer {
             if (assignCandidate instanceof ClassEntry) {
                 ClassEntry candidate = (ClassEntry) assignCandidate;
                 expectedType = candidate.getName();
-                if (expectedType.equals(expressionType)) {
-                    assignSuccess = true;
-                    break;
-                }
             } else if (assignCandidate instanceof FieldEntry) {
                 FieldEntry candidate = (FieldEntry) assignCandidate;
                 expectedType = candidate.getValueType();
-                if (expectedType.equals(expressionType)) {
-                    assignSuccess = true;
-                    break;
-                }
             } else if (assignCandidate instanceof MethodParameterEntry) {
                 MethodParameterEntry candidate = (MethodParameterEntry) assignCandidate;
                 expectedType = candidate.getValueType();
-                if (expectedType.equals(expressionType)) {
-                    assignSuccess = true;
-                    break;
-                }
             } else if (assignCandidate instanceof VariableEntry) {
                 VariableEntry candidate = (VariableEntry) assignCandidate;
                 expectedType = candidate.getValueType();
-                if (expectedType.equals(expressionType)) {
-                    assignSuccess = true;
-                    break;
-                }
+            }
+            if (expectedType.equals(expression.getValueType())) {
+                assignSuccess = true;
+                break;
             }
         }
         if (!assignSuccess) {
             throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES + "expected '" + expectedType + "' but was '"
-                    + expressionType + "'");
+                    + expression.getValueType() + "'");
         }
     }
 
@@ -312,26 +303,26 @@ public class SemanticAnalyzer {
         return declaredMethod;
     }
 
-    private void checkActualParameters(List<String> actualParameters, MethodEntry callMethod) throws SemanticException {
+    private void checkActualParameters(List<TemporaryEntry> actualParameters, MethodEntry callMethod) throws SemanticException {
         List<MethodParameterEntry> formalParameters = callMethod.getParameters();
         if (formalParameters.size() != actualParameters.size()) {
             throw new SemanticException(SemanticException.WRONG_METHOD_PARAMETERS_AMOUNT);
         }
         for (int i = 0; i < formalParameters.size(); i++) {
-            if (!formalParameters.get(i).getValueType().equals(actualParameters.get(i))) {
+            if (!formalParameters.get(i).getValueType().equals(actualParameters.get(i).getValueType())) {
                 throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES);
             }
         }
     }
 
-    private void areArgumentsComparable(String arg1, String arg2) throws SemanticException {
-        if (!arg1.equals(arg2) && (!isNumericType(arg1) || arg1.equals(BOOLEAN_TYPE) || arg1.equals(CHAR_TYPE))) {
+    private void areArgumentsComparable(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
+        if (!arg1.getValueType().equals(arg2) && (!isNumericType(arg1) || arg1.getValueType().equals(BOOLEAN_TYPE) || arg1.getValueType().equals(CHAR_TYPE))) {
             throw new SemanticException(SemanticException.NEITHER_INTEGER_NOR_FLOAT_TYPE);
         }
     }
 
-    private boolean isNumericType(String arg) {
-        return (arg.equals(INTEGER_TYPE) || arg.equals(FLOAT_TYPE));
+    private boolean isNumericType(TemporaryEntry arg) {
+        return (arg.getValueType().equals(INTEGER_TYPE) || arg.getValueType().equals(FLOAT_TYPE));
     }
 
     private void setBreakFlag(boolean breakFlag) {
@@ -346,10 +337,34 @@ public class SemanticAnalyzer {
         checkNotUsedBreak();
     }
 
-    public void methodDeclaration(String returnType, String expressionType) throws SemanticException {
+    public void methodDeclaration(String returnType, TemporaryEntry expression) throws SemanticException {
         checkNotUsedBreak();
-        if (!returnType.equals(expressionType)) {
-            throw new SemanticException(SemanticException.ILLEGAL_RETURN_TYPE + "'" + returnType + "' expected but '" + expressionType + "' found");
+        if (!returnType.equals(expression.getValueType())) {
+            throw new SemanticException(SemanticException.ILLEGAL_RETURN_TYPE + "'" + returnType + "' expected but '" + expression.getValueType() + "' found");
         }
+    }
+
+    public TemporaryEntry charTypeExpression(Object value) {
+        return new TemporaryEntry(CHAR_TYPE);
+    }
+
+    public TemporaryEntry stringTypeExpression(Object value) {
+        return new TemporaryEntry(STRING_TYPE);
+    }
+
+    public TemporaryEntry booleanTypeExpression(Object value) {
+        return new TemporaryEntry(BOOLEAN_TYPE);
+    }
+
+    public TemporaryEntry floatTypeExpression(Object value) {
+        return new TemporaryEntry(FLOAT_TYPE);
+    }
+
+    public TemporaryEntry integerTypeExpression(Object value) {
+        return new TemporaryEntry(INTEGER_TYPE);
+    }
+
+    public TemporaryEntry newExpression(String className) {
+        return new TemporaryEntry(className);
     }
 }
