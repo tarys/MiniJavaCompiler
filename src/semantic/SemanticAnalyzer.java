@@ -255,7 +255,7 @@ public class SemanticAnalyzer implements Analyzer {
     }
 
     @Override
-    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
+    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression, Entry result) throws SemanticException {
         List<Entry> assignCandidates = getNameTableBuilder().lookUp(name);
         if (assignCandidates.isEmpty()) {
             throw new SemanticException(SemanticException.NOT_DECLARED_BUT_USED_VARIABLE_FIELD_OR_METHOD_PARAMETER + name);

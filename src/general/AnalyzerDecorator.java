@@ -163,8 +163,8 @@ public class AnalyzerDecorator implements Analyzer {
     }
 
     @Override
-    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
-        return getAnalyzer().assignmentStatement(name, expression);
+    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression, Entry result) throws SemanticException {
+        return getAnalyzer().assignmentStatement(name, expression, result);
     }
 
     @Override

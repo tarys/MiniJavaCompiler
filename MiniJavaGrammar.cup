@@ -400,7 +400,7 @@ variable_declaration            ::= type:type IDENTIFIER:name SEMICOLON
                                   | type:type IDENTIFIER:name ASSIGN expression:expression SEMICOLON
                                     {:
                                         RESULT = parser.getNameTableBuilder().declareVariable(name, type);
-                                        parser.getAnalyzer().assignmentStatement(name, expression);
+                                        parser.getAnalyzer().assignmentStatement(name, expression, RESULT);
                                     :}
                                   ;
 statements                      ::= statements:statements statement:statement

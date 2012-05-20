@@ -183,8 +183,8 @@ public class CodeGenerator extends AnalyzerDecorator {
     }
 
     @Override
-    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
-        TemporaryEntry result = getAnalyzer().assignmentStatement(name, expression);
+    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression, Entry RESULT) throws SemanticException {
+        TemporaryEntry result = getAnalyzer().assignmentStatement(name, expression, RESULT);
         Quad newQuad = new Quad(Operation.STORE, getLastQuadResult(expression), null, "'" + name + "'");
         result.addQuad(newQuad);
         return result;
