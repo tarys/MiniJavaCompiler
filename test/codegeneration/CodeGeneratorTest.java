@@ -1,10 +1,8 @@
 package codegeneration;
 
 import la.LexicalAnalyzer;
-import org.junit.Assert;
 import org.junit.Test;
 import sa.LR1Analyzer;
-import semantic.SemanticException;
 
 public class CodeGeneratorTest {
     @Test
@@ -13,8 +11,9 @@ public class CodeGeneratorTest {
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
                 "       int q = -12;" +
+                "       q = q + 2;" +
                 "   }" +
                 "}"));
-            parser.parse();
+        parser.parse();
     }
 }

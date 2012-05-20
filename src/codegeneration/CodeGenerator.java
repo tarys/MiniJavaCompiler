@@ -10,9 +10,14 @@ import java.util.List;
 public class CodeGenerator extends AnalyzerDecorator {
     private static int maxTempVariableIndex = 0;
 
+    private Object getLastQuadResult(TemporaryEntry arg) {
+        List<Quad> code = arg.getByteCode();
+        Quad lastQuad = code.get(code.size() - 1);
+        return lastQuad.getResult();
+    }
+
     private TemporaryEntry generateConstCode(Object value, TemporaryEntry entry) {
-        entry.getByteCode().clear();
-        entry.getByteCode().add(new Quad(Operation.CONST, null, null, value));
+        entry.addQuad(new Quad(Operation.CONST, null, null, value));
         return entry;
     }
 
@@ -23,15 +28,8 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public TemporaryEntry unaryMinusExpression(TemporaryEntry arg) throws SemanticException {
         TemporaryEntry result = getAnalyzer().unaryMinusExpression(arg);
-        List<Quad> code = arg.getByteCode();
-        Quad lastQuad = code.get(code.size() - 1);
-        Quad newQuad;
-        if (lastQuad.getOperation().equals(Operation.CONST)) {
-            newQuad = new Quad(Operation.SUB, 0, lastQuad.getResult(), "T[" + maxTempVariableIndex++ + "]");
-        } else {
-            newQuad = new Quad(Operation.SUB, 0, lastQuad.getResult(), "T[" + maxTempVariableIndex + "]");
-        }
-        code.add(newQuad);
+        Quad newQuad = new Quad(Operation.SUB, 0, getLastQuadResult(arg), "T[" + maxTempVariableIndex++ + "]");
+        arg.addQuad(newQuad);
         return result;
     }
 
@@ -109,7 +107,12 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry plusExpression(TemporaryEntry arg1, TemporaryEntry arg2) throws SemanticException {
-        return getAnalyzer().plusExpression(arg1, arg2);
+        TemporaryEntry result = getAnalyzer().plusExpression(arg1, arg2);
+        result.addAllQuads(arg1.getByteCode());
+        result.addAllQuads(arg2.getByteCode());
+        Quad newQuad = new Quad(Operation.ADD, getLastQuadResult(arg1), getLastQuadResult(arg2), "T[" + maxTempVariableIndex++ + "]");
+        result.addQuad(newQuad);
+        return result;
     }
 
     @Override
@@ -168,8 +171,8 @@ public class CodeGenerator extends AnalyzerDecorator {
     }
 
     @Override
-    public void assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
-        getAnalyzer().assignmentStatement(name, expression);
+    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
+        return getAnalyzer().assignmentStatement(name, expression);
     }
 
     @Override

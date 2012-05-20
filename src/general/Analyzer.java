@@ -63,7 +63,7 @@ public interface Analyzer {
 
     void ifStatement(TemporaryEntry conditionExpression) throws SemanticException;
 
-    void assignmentStatement(String name, TemporaryEntry expression) throws SemanticException;
+    TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException;
 
     NameTableBuilder getNameTableBuilder();
 

@@ -125,7 +125,7 @@ non terminal    List<Entry>     variables_declaration;
 non terminal    Entry           variable_declaration;
 non terminal    List<Entry>     statements;
 non terminal    Entry           statement;
-non terminal                    assignment_statement;
+non terminal    Entry           assignment_statement;
 non terminal    Entry           if_statement;
 non terminal    Entry           while_statement;
 non terminal                    method_call_statement;
@@ -426,7 +426,7 @@ statement                       ::= assignment_statement
 
 assignment_statement            ::= IDENTIFIER:name ASSIGN expression:expression SEMICOLON
                                    {:
-                                        parser.getAnalyzer().assignmentStatement(name, expression);
+                                        RESULT = parser.getAnalyzer().assignmentStatement(name, expression);
                                    :}
                                   ;
 

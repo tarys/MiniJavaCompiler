@@ -3,6 +3,7 @@ package nametable.entries;
 import codegeneration.Quad;
 import nametable.entries.VariableEntry;
 
+import java.util.Collection;
 import java.util.List;
 
 public class TemporaryEntry extends VariableEntry {
@@ -10,6 +11,12 @@ public class TemporaryEntry extends VariableEntry {
 
     public TemporaryEntry(String valueType) {
         super("T[" + ++temporaryEntriesCount + "]", valueType);
+    }
+    public void addQuad(Quad newQuad) {
+        getByteCode().add(newQuad);
+    }
+    public void addAllQuads(Collection<? extends Quad> newQuads) {
+        getByteCode().addAll(newQuads);
     }
 
 }

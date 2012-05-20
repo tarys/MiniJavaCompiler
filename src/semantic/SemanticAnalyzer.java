@@ -255,7 +255,7 @@ public class SemanticAnalyzer implements Analyzer {
     }
 
     @Override
-    public void assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
+    public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
         List<Entry> assignCandidates = getNameTableBuilder().lookUp(name);
         if (assignCandidates.isEmpty()) {
             throw new SemanticException(SemanticException.NOT_DECLARED_BUT_USED_VARIABLE_FIELD_OR_METHOD_PARAMETER + name);
@@ -285,6 +285,7 @@ public class SemanticAnalyzer implements Analyzer {
             throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES + "expected '" + expectedType + "' but was '"
                     + expression.getValueType() + "'");
         }
+        return expression;
     }
 
     @Override
