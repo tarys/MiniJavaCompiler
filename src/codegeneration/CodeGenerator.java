@@ -204,7 +204,9 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry instanceofExpression(TemporaryEntry instanceType, TemporaryEntry classNameEntry) throws SemanticException {
-        return getAnalyzer().instanceofExpression(instanceType, classNameEntry);
+        TemporaryEntry result = getAnalyzer().instanceofExpression(instanceType, classNameEntry);
+        result.addQuad(new Quad(Operation.INSTNCF, getLastQuadResult(instanceType), getLastQuadResult(classNameEntry),"T[" + maxTempVariableIndex++ + "]"));
+        return result;
     }
 
     @Override
@@ -237,10 +239,20 @@ public class CodeGenerator extends AnalyzerDecorator {
     public TemporaryEntry methodCallExpression(TemporaryEntry classObject, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
         TemporaryEntry result = getAnalyzer().methodCallExpression(classObject, methodName, actualParameters);
         MethodEntry method = result.getCallMethod();
-        Quad methodCall = new Quad(Operation.MCALL, getLastQuadResult(classObject), methodName, "T[" + maxTempVariableIndex++ + "]");
-        Quad returnQuad = new Quad(Operation.PUSH, methodCall, null, null);
-        result.addQuad(returnQuad);
-        result.addQuad(methodCall);
+        if ((method != null)) {
+            Quad methodCall = new Quad(Operation.MCALL, getLastQuadResult(classObject), methodName, null);
+            Quad returnQuad = new Quad(Operation.RETURN, null, null, null);
+            ListIterator<TemporaryEntry> iterator = actualParameters.listIterator(actualParameters.size());
+            while (iterator.hasPrevious()) {
+                result.addQuad(new Quad(Operation.PUSH, getLastQuadResult(iterator.previous()), null, null));
+            }
+            result.addQuad(methodCall);
+            result.addAllQuads(method.getByteCode());
+            Quad popQuad = new Quad(Operation.POP, null, null, "T[" + maxTempVariableIndex + "]");
+            returnQuad.setArgument1(popQuad);
+            result.addQuad(returnQuad);
+            result.addQuad(popQuad);
+        }
         return result;
     }
 

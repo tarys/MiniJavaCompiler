@@ -255,7 +255,7 @@ public class CodeGeneratorTest {
     }
 
     @Test
-    public void testMethodCall() throws Exception {
+    public void testThisMethodCall() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
                 "public class MainClass{" +
                 "   public int a(int i, String s){" +
@@ -284,6 +284,51 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (ADD, 'i', 2, T[0])");
         expected.add(i++ + ". (PUSH, T[0], --, --)");
         expected.add(i++ + ". (RETURN, <14>, --, --)");
+        expected.add(i++ + ". (POP, --, --, T[1])");
+        expected.add(i++ + ". (ADD, T[0], T[1], T[1])");
+        expected.add(i++ + ". (STORE, T[1], --, 'c')");
+        int k = 0;
+        List<Quad> code = parser.getByteCode();
+        for (Quad quad : code) {
+            Assert.assertEquals(expected.get(k++), quad.toString());
+            System.out.println(quad);
+        }
+    }
+    @Test
+    public void testMethodCall() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "class MyClass{" +
+                "   public int a(int i, String s){" +
+                "       System.out.println(s);" +
+                "       return i + 2;" +
+                "   }" +
+                "}" +
+                "" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       MyClass mc = new MyClass();" +
+                "       int c = 1;" +
+                "       c = 4 + c + mc.a(3, \"str\");" +
+                "   }" +
+                "}"));
+        parser.parse();
+        List<String> expected = new LinkedList<String>();
+        int i = 1;
+        expected.add(i++ + ". (OBJ, MyClass, --, T[1])");
+        expected.add(i++ + ". (STORE, T[1], --, 'mc')");
+        expected.add(i++ + ". (STORE, 1, --, 'c')");
+        expected.add(i++ + ". (ADD, 4, 'c', T[0])");
+        expected.add(i++ + ". (PUSH, \"str\", --, --)");
+        expected.add(i++ + ". (PUSH, 3, --, --)");
+        expected.add(i++ + ". (MCALL, 'mc', a, --)");
+        expected.add(i++ + ". (POP, --, --, T[1])");
+        expected.add(i++ + ". (STORE, T[1], --, 'i')");
+        expected.add(i++ + ". (POP, --, --, T[1])");
+        expected.add(i++ + ". (STORE, T[1], --, 's')");
+        expected.add(i++ + ". (PRINTLN, 's', --, --)");
+        expected.add(i++ + ". (ADD, 'i', 2, T[0])");
+        expected.add(i++ + ". (PUSH, T[0], --, --)");
+        expected.add(i++ + ". (RETURN, <16>, --, --)");
         expected.add(i++ + ". (POP, --, --, T[1])");
         expected.add(i++ + ". (ADD, T[0], T[1], T[1])");
         expected.add(i++ + ". (STORE, T[1], --, 'c')");
