@@ -450,4 +450,8 @@ public class SemanticAnalyzer implements Analyzer {
     @Override
     public void block(List<Entry> variablesEntriesList, List<Entry> statements, Entry result) {
     }
+
+    @Override
+    public void assignmentStatement(String name) {
+    }
 }

@@ -102,4 +102,6 @@ public interface Analyzer {
     void mainMethodDeclaration(Entry innerBlock, Entry RESULT) throws SemanticException;
 
     void block(List<Entry> variablesEntriesList, List<Entry> statements, Entry result);
+
+    void assignmentStatement(String name);
 }

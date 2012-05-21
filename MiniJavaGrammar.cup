@@ -398,6 +398,7 @@ variables_declaration           ::= variables_declaration:variablesEntriesList v
 variable_declaration            ::= type:type IDENTIFIER:name SEMICOLON
                                     {:
                                         RESULT = parser.getNameTableBuilder().declareVariable(name, type);
+                                        parser.getAnalyzer().assignmentStatement(name);
                                     :}
                                   | type:type IDENTIFIER:name ASSIGN expression:expression SEMICOLON
                                     {:

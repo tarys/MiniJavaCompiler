@@ -257,4 +257,9 @@ public class AnalyzerDecorator implements Analyzer {
     public void block(List<Entry> variablesEntriesList, List<Entry> statements, Entry result) {
         getAnalyzer().block(variablesEntriesList,statements, result);
     }
+
+    @Override
+    public void assignmentStatement(String name) {
+        getAnalyzer().assignmentStatement(name);
+    }
 }
