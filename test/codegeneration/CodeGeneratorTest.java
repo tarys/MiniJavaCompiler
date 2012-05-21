@@ -4,6 +4,7 @@ import junit.framework.Assert;
 import la.LexicalAnalyzer;
 import org.junit.Test;
 import sa.LR1Analyzer;
+import semantic.SemanticException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -202,6 +203,26 @@ public class CodeGeneratorTest {
             Assert.assertEquals(expected.get(k++), quad.toString());
             System.out.println(quad);
         }
+    }
+    @Test
+    public void testNotInitialized() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "class MyClass{" +
+                "       public int a;" +
+                "}" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       MyClass mc;" +
+                "       int b = mc.a;" +
+                "   }" +
+                "}"));
+        try {
+            parser.parse();
+        } catch (SemanticException e) {
+            System.out.println(e.getMessage());
+            Assert.assertTrue(e.getMessage().startsWith(SemanticException.ENTITY_DECLARED_BUT_NOT_INITIALIZED));
+        }
+
     }
     @Test
     public void testFieldCall() throws Exception {
