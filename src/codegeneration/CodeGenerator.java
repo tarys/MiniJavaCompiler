@@ -215,19 +215,22 @@ public class CodeGenerator extends AnalyzerDecorator {
     }
 
     @Override
-    public TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
-        return getAnalyzer().methodCallExpression(className, methodName, actualParameters);
+    public TemporaryEntry methodCallExpression(TemporaryEntry classObject, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
+        return getAnalyzer().methodCallExpression(classObject, methodName, actualParameters);
     }
 
     @Override
-    public TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName) throws SemanticException {
-        TemporaryEntry result = getAnalyzer().methodCallExpression(className, methodName);
+    public TemporaryEntry methodCallExpression(TemporaryEntry classObject, String methodName) throws SemanticException {
+        TemporaryEntry result = getAnalyzer().methodCallExpression(classObject, methodName);
         return result;
     }
 
     @Override
-    public TemporaryEntry fieldCallExpression(TemporaryEntry className, String fieldName) throws SemanticException {
-        return getAnalyzer().fieldCallExpression(className, fieldName);
+    public TemporaryEntry fieldCallExpression(TemporaryEntry classObject, String fieldName) throws SemanticException {
+        TemporaryEntry result = getAnalyzer().fieldCallExpression(classObject, fieldName);
+        Quad newQuad = new Quad(Operation.FCALL, getLastQuadResult(classObject), fieldName, "T[" + maxTempVariableIndex++ + "]");
+        result.addQuad(newQuad);
+        return result;
     }
 
     @Override

@@ -215,8 +215,8 @@ public class SemanticAnalyzer implements Analyzer {
     }
 
     @Override
-    public TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
-        ClassEntry declaredClass = lookUpDeclaredClass(className.getValueType());
+    public TemporaryEntry methodCallExpression(TemporaryEntry classObject, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
+        ClassEntry declaredClass = lookUpDeclaredClass(classObject.getValueType());
         MethodEntry callMethod = declaredClass.getMethod(methodName);
         //checking actual parameters' types
         checkActualParameters(actualParameters, callMethod);
@@ -225,16 +225,16 @@ public class SemanticAnalyzer implements Analyzer {
     }
 
     @Override
-    public TemporaryEntry methodCallExpression(TemporaryEntry className, String methodName) throws SemanticException {
+    public TemporaryEntry methodCallExpression(TemporaryEntry classObject, String methodName) throws SemanticException {
         /* checking actual parameters' types
            because there are no actual parameters we create empty list
         */
-        return this.methodCallExpression(className, methodName, new LinkedList<TemporaryEntry>());
+        return this.methodCallExpression(classObject, methodName, new LinkedList<TemporaryEntry>());
     }
 
     @Override
-    public TemporaryEntry fieldCallExpression(TemporaryEntry className, String fieldName) throws SemanticException {
-        ClassEntry declaredClass = lookUpDeclaredClass(className.getValueType());
+    public TemporaryEntry fieldCallExpression(TemporaryEntry classObject, String fieldName) throws SemanticException {
+        ClassEntry declaredClass = lookUpDeclaredClass(classObject.getValueType());
         FieldEntry callField = declaredClass.getField(fieldName);
 
         return new TemporaryEntry(callField.getValueType());

@@ -203,4 +203,28 @@ public class CodeGeneratorTest {
             System.out.println(quad);
         }
     }
+    @Test
+    public void testFieldCall() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "class MyClass{" +
+                "       public int a;" +
+                "}" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       MyClass mc = new MyClass();" +
+                "       int b = mc.a;" +
+                "   }" +
+                "}"));
+        parser.parse();
+        List<String> expected = new LinkedList<String>();
+        int i = 1;
+        expected.add(i++ + ". (OBJ, MyClass, --, T[0])");
+        expected.add(i++ + ". (STORE, T[0], --, 'mc')");
+        int k = 0;
+        List<Quad> code = parser.getByteCode();
+        for (Quad quad : code) {
+//            Assert.assertEquals(expected.get(k++), quad.toString());
+            System.out.println(quad);
+        }
+    }
 }
