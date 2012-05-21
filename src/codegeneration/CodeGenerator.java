@@ -2,10 +2,7 @@ package codegeneration;
 
 import general.Analyzer;
 import general.AnalyzerDecorator;
-import nametable.entries.BreakEntry;
-import nametable.entries.Entry;
-import nametable.entries.MethodEntry;
-import nametable.entries.TemporaryEntry;
+import nametable.entries.*;
 import semantic.SemanticException;
 
 import java.util.LinkedList;
@@ -218,10 +215,17 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public TemporaryEntry methodCallExpression(String methodName) throws SemanticException {
         TemporaryEntry result = getAnalyzer().methodCallExpression(methodName);
-        Quad methodCall = new Quad(Operation.MCALL, "THIS", methodName, "T[" + maxTempVariableIndex++ + "]");
-        Quad returnQuad = new Quad(Operation.PUSH, methodCall, null, null);
-        result.addQuad(returnQuad);
-        result.addQuad(methodCall);
+        MethodEntry method = result.getCallMethod();
+        if ((method != null)) {
+            Quad methodCall = new Quad(Operation.MCALL, "THIS", methodName, "T[" + maxTempVariableIndex++ + "]");
+            Quad pushQuad = new Quad(Operation.PUSH, methodCall, null, null);
+            Quad returnQuad = new Quad(Operation.RETURN, methodCall, null, null);
+            result.addQuad(pushQuad);
+            result.addQuad(methodCall);
+            result.addAllQuads(method.getByteCode());
+            result.addQuad(returnQuad);
+        }
+
         return result;
     }
 
@@ -388,4 +392,18 @@ public class CodeGenerator extends AnalyzerDecorator {
         result.addAllQuads(code);
     }
 
+    @Override
+    public void methodDeclaration(String returnType, List<Entry> paramsList, TemporaryEntry expression, Entry innerBlock, Entry result) throws SemanticException {
+        getAnalyzer().methodDeclaration(returnType, paramsList, expression, innerBlock, result);
+        ListIterator<Entry> iterator = paramsList.listIterator();
+        while (iterator.hasNext()) {
+            MethodParameterEntry param = (MethodParameterEntry) iterator.next();
+            result.addQuad(new Quad(Operation.POP, null, null, "T[" + maxTempVariableIndex + "]"));
+            result.addQuad(new Quad(Operation.STORE, "T[" + maxTempVariableIndex + "]", null, "'" + param.getName() + "'"));
+        }
+        result.addAllQuads(innerBlock.getByteCode());
+        result.addAllQuads(expression.getByteCode());
+        Object lastQuadResult = getLastQuadResult(expression);
+        result.addQuad(new Quad(Operation.PUSH, lastQuadResult, null, null));
+    }
 }

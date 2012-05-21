@@ -56,7 +56,7 @@ public class Quad {
     @Override
     public String toString() {
         String operationString = operation.equals(Operation.BRBACK) ? "BR" : operation.toString();
-        Object arg1String = "--";
+        String arg1String = "--";
         if (argument1 != null) {
             switch (operation) {
                 case BR:
@@ -66,20 +66,24 @@ public class Quad {
                     arg1String = "<" + (((Quad) argument1).getQuadNumber()) + ">";
                     break;
                 case PUSH:
-                    arg1String = "<" + (((Quad) argument1).getQuadNumber() + 1) + ">";
+                    if (argument1 instanceof Quad) {
+                        arg1String = "<" + (((Quad) argument1).getQuadNumber() + 1) + ">";
+                    } else {
+                        arg1String = argument1.toString();
+                    }
                     break;
                 default:
-                    arg1String = argument1;
+                    arg1String = argument1.toString();
             }
         }
-        Object arg2String = "--";
+        String arg2String = "--";
         if (argument2 != null) {
             switch (operation) {
                 case BZ:
                     arg2String = "<" + (((Quad) argument2).getQuadNumber() + 1) + ">";
                     break;
                 default:
-                    arg2String = argument2;
+                    arg2String = argument2.toString();
             }
         }
         Object resultString = "--";
