@@ -220,10 +220,12 @@ public class CodeGeneratorTest {
         int i = 1;
         expected.add(i++ + ". (OBJ, MyClass, --, T[0])");
         expected.add(i++ + ". (STORE, T[0], --, 'mc')");
+        expected.add(i++ + ". (FCALL, 'mc', a, T[0])");
+        expected.add(i++ + ". (STORE, T[0], --, 'b')");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
-//            Assert.assertEquals(expected.get(k++), quad.toString());
+            Assert.assertEquals(expected.get(k++), quad.toString());
             System.out.println(quad);
         }
     }
