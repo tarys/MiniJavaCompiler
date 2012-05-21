@@ -194,11 +194,12 @@ public class CodeGeneratorTest {
         parser.parse();
         List<String> expected = new LinkedList<String>();
         int i = 1;
-        expected.add(i++ + ". (STORE, false, --, 'k')");
+        expected.add(i++ + ". (OBJ, MyClass, --, T[0])");
+        expected.add(i++ + ". (STORE, T[0], --, 'mc')");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
-//            Assert.assertEquals(expected.get(k++), quad.toString());
+            Assert.assertEquals(expected.get(k++), quad.toString());
             System.out.println(quad);
         }
     }
