@@ -12,6 +12,7 @@ import java.util.ListIterator;
 
 public class CodeGenerator extends AnalyzerDecorator {
     private static int maxTempVariableIndex = 0;
+    private Quad breakQuad;
 
     private Object getLastQuadResult(Entry arg) {
         List<Quad> code = arg.getByteCode();
@@ -101,8 +102,10 @@ public class CodeGenerator extends AnalyzerDecorator {
     }
 
     @Override
-    public void breakExpression() throws SemanticException {
-        getAnalyzer().breakExpression();
+    public TemporaryEntry breakStatement() throws SemanticException {
+        TemporaryEntry result = getAnalyzer().breakStatement();
+        this.breakQuad = new Quad(Operation.BR, null, null, null);
+        return result;
     }
 
     @Override
@@ -235,6 +238,10 @@ public class CodeGenerator extends AnalyzerDecorator {
         Quad returnToConditionQuad = new Quad(Operation.BRBACK, firstConditionQuad, null, null);
         Quad exitWhileQuad = new Quad(Operation.BZ, getLastQuadResult(conditionExpression), returnToConditionQuad, null);
         result.addQuad(exitWhileQuad);
+        if (breakQuad != null) {
+            breakQuad.setArgument1(exitWhileQuad);
+            breakQuad = null;
+        }
         result.addAllQuads(innerBlock.getByteCode());
         result.addQuad(returnToConditionQuad);
     }

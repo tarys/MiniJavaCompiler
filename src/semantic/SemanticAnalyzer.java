@@ -39,8 +39,9 @@ public class SemanticAnalyzer implements Analyzer {
     }
 
     @Override
-    public void breakExpression() throws SemanticException {
+    public TemporaryEntry breakStatement() throws SemanticException {
         setBreakFlag(true);
+        return new TemporaryEntry("break");
     }
 
     @Override

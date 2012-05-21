@@ -135,6 +135,7 @@ non terminal    Entry           if_statement;
 non terminal    Entry           while_statement;
 non terminal    Entry           method_call_statement;
 non terminal    Entry           output_statement;
+non terminal    Entry           break_statement;
 non terminal    String          type;
 non terminal    String          reference_type;
 /* as we actually neither call method nor calculating expressions we just store String representation of result type */
@@ -440,6 +441,8 @@ statement                       ::= assignment_statement:statement
                                    {:
                                         RESULT = statement;
                                    :}
+                                  | break_statement
+
                                   ;
 
 assignment_statement            ::= IDENTIFIER:name ASSIGN expression:expression SEMICOLON
@@ -490,6 +493,11 @@ method_call_statement           ::= expression:expression SEMICOLON
 output_statement                ::= SYSTEM_OUT_PRINTLN LEFT_PARENTHESIS expression:expression RIGHT_PARENTHESIS SEMICOLON
                                    {:
                                         RESULT = parser.getAnalyzer().systemOutPrintlnStatement(expression);
+                                   :}
+                                  ;
+break_statement                 ::= BREAK SEMICOLON
+                                   {:
+                                        RESULT = parser.getAnalyzer().breakExpression();
                                    :}
                                   ;
 
@@ -623,10 +631,6 @@ expression                      ::= expression:className STOP IDENTIFIER:fieldNa
                                   | NEW_KEYWORD IDENTIFIER:className LEFT_PARENTHESIS RIGHT_PARENTHESIS
                                   {:
                                         RESULT = parser.getAnalyzer().newExpression(className);
-                                  :}
-                                  | BREAK
-                                  {:
-                                       parser.getAnalyzer().breakExpression();
                                   :}
                                   | MINUS expression:arg
                                   {:

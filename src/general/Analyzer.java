@@ -12,7 +12,7 @@ public interface Analyzer {
 
     TemporaryEntry unaryMinusExpression(TemporaryEntry arg) throws SemanticException;
 
-    void breakExpression() throws SemanticException;
+    TemporaryEntry breakStatement() throws SemanticException;
 
     String isClassDeclared(String className) throws SemanticException;
 

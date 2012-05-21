@@ -33,8 +33,8 @@ public class AnalyzerDecorator implements Analyzer {
     }
 
     @Override
-    public void breakExpression() throws SemanticException {
-        getAnalyzer().breakExpression();
+    public TemporaryEntry breakStatement() throws SemanticException {
+        return getAnalyzer().breakStatement();
     }
 
     @Override
