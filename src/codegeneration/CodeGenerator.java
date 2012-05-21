@@ -323,7 +323,10 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry newExpression(String className) {
-        return getAnalyzer().newExpression(className);
+        TemporaryEntry result = getAnalyzer().newExpression(className);
+        Quad newQuad = new Quad(Operation.OBJ, className, null, "T[" + maxTempVariableIndex++ + "]");
+        result.addQuad(newQuad);
+        return result;
     }
 
     @Override

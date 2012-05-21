@@ -180,4 +180,26 @@ public class CodeGeneratorTest {
             System.out.println(quad);
         }
     }
+    @Test
+    public void testNew() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "class MyClass{" +
+                "       public int a;" +
+                "}" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       MyClass mc = new MyClass();" +
+                "   }" +
+                "}"));
+        parser.parse();
+        List<String> expected = new LinkedList<String>();
+        int i = 1;
+        expected.add(i++ + ". (STORE, false, --, 'k')");
+        int k = 0;
+        List<Quad> code = parser.getByteCode();
+        for (Quad quad : code) {
+//            Assert.assertEquals(expected.get(k++), quad.toString());
+            System.out.println(quad);
+        }
+    }
 }
