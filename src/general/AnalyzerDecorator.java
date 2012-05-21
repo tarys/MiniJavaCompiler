@@ -1,6 +1,7 @@
 package general;
 
 import nametable.NameTableBuilder;
+import nametable.entries.BreakEntry;
 import nametable.entries.Entry;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticException;
@@ -33,7 +34,7 @@ public class AnalyzerDecorator implements Analyzer {
     }
 
     @Override
-    public TemporaryEntry breakStatement() throws SemanticException {
+    public BreakEntry breakStatement() throws SemanticException {
         return getAnalyzer().breakStatement();
     }
 

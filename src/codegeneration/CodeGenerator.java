@@ -2,6 +2,7 @@ package codegeneration;
 
 import general.Analyzer;
 import general.AnalyzerDecorator;
+import nametable.entries.BreakEntry;
 import nametable.entries.Entry;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticException;
@@ -102,9 +103,10 @@ public class CodeGenerator extends AnalyzerDecorator {
     }
 
     @Override
-    public TemporaryEntry breakStatement() throws SemanticException {
-        TemporaryEntry result = getAnalyzer().breakStatement();
+    public BreakEntry breakStatement() throws SemanticException {
+        BreakEntry result = getAnalyzer().breakStatement();
         this.breakQuad = new Quad(Operation.BR, null, null, null);
+        result.addQuad(breakQuad);
         return result;
     }
 

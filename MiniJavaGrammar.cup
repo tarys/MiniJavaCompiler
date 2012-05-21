@@ -441,8 +441,10 @@ statement                       ::= assignment_statement:statement
                                    {:
                                         RESULT = statement;
                                    :}
-                                  | break_statement
-
+                                  | break_statement:statement
+                                   {:
+                                        RESULT = statement;
+                                   :}
                                   ;
 
 assignment_statement            ::= IDENTIFIER:name ASSIGN expression:expression SEMICOLON
@@ -497,7 +499,7 @@ output_statement                ::= SYSTEM_OUT_PRINTLN LEFT_PARENTHESIS expressi
                                   ;
 break_statement                 ::= BREAK SEMICOLON
                                    {:
-                                        RESULT = parser.getAnalyzer().breakExpression();
+                                        RESULT = parser.getAnalyzer().breakStatement();
                                    :}
                                   ;
 

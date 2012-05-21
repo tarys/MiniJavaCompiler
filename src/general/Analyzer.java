@@ -1,6 +1,7 @@
 package general;
 
 import nametable.NameTableBuilder;
+import nametable.entries.BreakEntry;
 import nametable.entries.Entry;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticException;
@@ -12,7 +13,7 @@ public interface Analyzer {
 
     TemporaryEntry unaryMinusExpression(TemporaryEntry arg) throws SemanticException;
 
-    TemporaryEntry breakStatement() throws SemanticException;
+    BreakEntry breakStatement() throws SemanticException;
 
     String isClassDeclared(String className) throws SemanticException;
 
