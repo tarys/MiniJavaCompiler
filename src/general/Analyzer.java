@@ -103,7 +103,7 @@ public interface Analyzer {
 
     void methodDeclaration(List<Entry> paramsList, Entry result) throws SemanticException;
 
-    void methodDeclaration(List<Entry> paramsList, Entry innerBlock, Entry result);
+    void methodDeclaration(List<Entry> paramsList, Entry innerBlock, Entry result) throws SemanticException;
 
     void methodDeclaration(String returnType, List<Entry> paramsList, TemporaryEntry expression, Entry result) throws SemanticException;
 

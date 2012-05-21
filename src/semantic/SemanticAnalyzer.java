@@ -453,20 +453,14 @@ public class SemanticAnalyzer implements Analyzer {
     public void assignmentStatement(String name) {
     }
 
-    public void methodDeclaration(Entry innerBlock, Entry result) throws SemanticException {
-        methodDeclaration(innerBlock);
-    }
-
-    public void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock, Entry result) throws SemanticException {
-        methodDeclaration(returnType, expression);
-    }
-
     @Override
     public void methodDeclaration(List<Entry> paramsList, Entry result) throws SemanticException {
+        methodDeclaration();
     }
 
     @Override
-    public void methodDeclaration(List<Entry> paramsList, Entry innerBlock, Entry result) {
+    public void methodDeclaration(List<Entry> paramsList, Entry innerBlock, Entry result) throws SemanticException {
+        methodDeclaration();
     }
 
     @Override

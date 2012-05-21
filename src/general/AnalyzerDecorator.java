@@ -259,7 +259,7 @@ public class AnalyzerDecorator implements Analyzer {
     }
 
     @Override
-    public void methodDeclaration(List<Entry> paramsList, Entry innerBlock, Entry result) {
+    public void methodDeclaration(List<Entry> paramsList, Entry innerBlock, Entry result) throws SemanticException {
         getAnalyzer().methodDeclaration(paramsList, innerBlock, result);
     }
 
