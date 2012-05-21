@@ -51,15 +51,15 @@ public interface Analyzer {
 
     TemporaryEntry instanceofExpression(TemporaryEntry instanceType, TemporaryEntry classNameEntry) throws SemanticException;
 
-    TemporaryEntry methodCallExpression(String methodName, List<TemporaryEntry> actualParameters) throws SemanticException;
-
-    TemporaryEntry methodCallExpression(String methodName) throws SemanticException;
-
     TemporaryEntry methodCallExpression(TemporaryEntry classObject, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException;
 
     TemporaryEntry methodCallExpression(TemporaryEntry classObject, String methodName) throws SemanticException;
 
     TemporaryEntry fieldCallExpression(TemporaryEntry classObject, String fieldName) throws SemanticException;
+
+    TemporaryEntry methodCallExpression(String methodName, List<TemporaryEntry> actualParameters) throws SemanticException;
+
+    TemporaryEntry methodCallExpression(String methodName) throws SemanticException;
 
     void whileStatement(TemporaryEntry conditionExpression, Entry innerBlock, Entry result) throws SemanticException;
 

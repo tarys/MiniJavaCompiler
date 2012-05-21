@@ -205,12 +205,14 @@ public class SemanticAnalyzer implements Analyzer {
         //checking actual parameters' types
         checkActualParameters(actualParameters, callMethod);
 
-        return new TemporaryEntry(callMethod.getReturnType());
+        return new TemporaryEntry(callMethod);
     }
 
     @Override
     public TemporaryEntry methodCallExpression(String methodName) throws SemanticException {
         MethodEntry callMethod = lookUpDeclaredMethod(methodName);
+        //checking actual parameters' types
+        checkActualParameters(new LinkedList<TemporaryEntry>(), callMethod);
         return new TemporaryEntry(callMethod);
     }
 
@@ -221,7 +223,7 @@ public class SemanticAnalyzer implements Analyzer {
         //checking actual parameters' types
         checkActualParameters(actualParameters, callMethod);
 
-        return new TemporaryEntry(callMethod.getReturnType());
+        return new TemporaryEntry(callMethod);
     }
 
     @Override
@@ -351,8 +353,10 @@ public class SemanticAnalyzer implements Analyzer {
             throw new SemanticException(SemanticException.WRONG_METHOD_PARAMETERS_AMOUNT);
         }
         for (int i = 0; i < formalParameters.size(); i++) {
-            if (!formalParameters.get(i).getValueType().equals(actualParameters.get(i).getValueType())) {
-                throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES);
+            String formalValueType = formalParameters.get(i).getValueType();
+            String actualValueType = actualParameters.get(i).getValueType();
+            if (!formalValueType.equals(actualValueType)) {
+                throw new SemanticException(SemanticException.INCOMPATIBLE_TYPES + "'" + formalValueType + "' expected but '" + actualValueType + "' found");
             }
         }
     }

@@ -4,6 +4,7 @@ import general.Analyzer;
 import general.AnalyzerDecorator;
 import nametable.entries.BreakEntry;
 import nametable.entries.Entry;
+import nametable.entries.MethodEntry;
 import nametable.entries.TemporaryEntry;
 import semantic.SemanticException;
 
@@ -226,8 +227,13 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry methodCallExpression(TemporaryEntry classObject, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
-        TemporaryEntry temporaryEntry = getAnalyzer().methodCallExpression(classObject, methodName, actualParameters);
-        return temporaryEntry;
+        TemporaryEntry result = getAnalyzer().methodCallExpression(classObject, methodName, actualParameters);
+        MethodEntry method = result.getCallMethod();
+        Quad methodCall = new Quad(Operation.MCALL, getLastQuadResult(classObject), methodName, "T[" + maxTempVariableIndex++ + "]");
+        Quad returnQuad = new Quad(Operation.PUSH, methodCall, null, null);
+        result.addQuad(returnQuad);
+        result.addQuad(methodCall);
+        return result;
     }
 
     @Override

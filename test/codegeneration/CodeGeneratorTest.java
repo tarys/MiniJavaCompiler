@@ -265,7 +265,7 @@ public class CodeGeneratorTest {
                 "" +
                 "   public static void main (String[] args){" +
                 "       int c = 1;" +
-                "       c = 4 + c + a();" +
+                "       c = 4 + c + a(3, \"str\");" +
                 "   }" +
                 "}"));
         parser.parse();
