@@ -149,7 +149,12 @@ public class CodeGeneratorTest {
                 "       boolean k = false;" +
                 "       while(true || false && true || false){" +
                 "           int i = 2;" +
+                "           if (i > 10){" +
+                "               break;" +
+                "           }" +
+                "           i = 4;" +
                 "       }" +
+                "       k = k || true;" +
                 "   }" +
                 "}"));
         parser.parse();
@@ -159,9 +164,15 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (AND, false, true, T[0])");
         expected.add(i++ + ". (OR, true, T[0], T[1])");
         expected.add(i++ + ". (OR, T[1], false, T[2])");
-        expected.add(i++ + ". (BZ, T[2], <8>, --)");
+        expected.add(i++ + ". (BZ, T[2], <12>, --)");
         expected.add(i++ + ". (STORE, 2, --, 'i')");
+        expected.add(i++ + ". (GT, 'i', 10, T[2])");
+        expected.add(i++ + ". (BZ, T[2], <10>, --)");
+        expected.add(i++ + ". (BR, <12>, --, --)");
+        expected.add(i++ + ". (STORE, 4, --, 'i')");
         expected.add(i++ + ". (BR, <2>, --, --)");
+        expected.add(i++ + ". (OR, 'k', true, T[2])");
+        expected.add(i++ + ". (STORE, T[2], --, 'k')");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {

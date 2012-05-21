@@ -241,7 +241,7 @@ public class CodeGenerator extends AnalyzerDecorator {
         Quad exitWhileQuad = new Quad(Operation.BZ, getLastQuadResult(conditionExpression), returnToConditionQuad, null);
         result.addQuad(exitWhileQuad);
         if (breakQuad != null) {
-            breakQuad.setArgument1(exitWhileQuad);
+            breakQuad.setArgument1(returnToConditionQuad);
             breakQuad = null;
         }
         result.addAllQuads(innerBlock.getByteCode());
