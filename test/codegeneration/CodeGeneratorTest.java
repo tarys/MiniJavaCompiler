@@ -39,6 +39,7 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (STORE, T[4], --, 'q')");
         expected.add(i++ + ". (DIV, 'q', 2, T[4])");
         expected.add(i++ + ". (STORE, T[4], --, 'q')");
+        expected.add(i++ + ". (RETURN, --, --, --)");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
@@ -68,6 +69,7 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (GE, 1, 2, T[3])");
         expected.add(i++ + ". (OR, T[2], T[3], T[4])");
         expected.add(i++ + ". (STORE, T[4], --, 'b')");
+        expected.add(i++ + ". (RETURN, --, --, --)");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
@@ -91,6 +93,7 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (READ, --, --, T[0])");
         expected.add(i++ + ". (STORE, T[0], --, 's')");
         expected.add(i++ + ". (PRINTLN, \"Hello, world!\", --, --)");
+        expected.add(i++ + ". (RETURN, --, --, --)");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
@@ -134,6 +137,7 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (STORE, \"123\", --, 's1')");
         expected.add(i++ + ". (STORE, \"123\", --, 's2')");
         expected.add(i++ + ". (STORE, \"123\", --, 's3')");
+        expected.add(i++ + ". (RETURN, --, --, --)");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
@@ -174,6 +178,7 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (BR, <2>, --, --)");
         expected.add(i++ + ". (OR, 'k', true, T[2])");
         expected.add(i++ + ". (STORE, T[2], --, 'k')");
+        expected.add(i++ + ". (RETURN, --, --, --)");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
@@ -198,6 +203,7 @@ public class CodeGeneratorTest {
         int i = 1;
         expected.add(i++ + ". (OBJ, MyClass, --, T[0])");
         expected.add(i++ + ". (STORE, T[0], --, 'mc')");
+        expected.add(i++ + ". (RETURN, --, --, --)");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
@@ -246,6 +252,7 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (STORE, T[0], --, 'mc')");
         expected.add(i++ + ". (FCALL, 'mc', a, T[0])");
         expected.add(i++ + ". (STORE, T[0], --, 'b')");
+        expected.add(i++ + ". (RETURN, --, --, --)");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
@@ -287,6 +294,7 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (POP, --, --, T[1])");
         expected.add(i++ + ". (ADD, T[0], T[1], T[1])");
         expected.add(i++ + ". (STORE, T[1], --, 'c')");
+        expected.add(i++ + ". (RETURN, --, --, --)");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
@@ -332,10 +340,42 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (POP, --, --, T[1])");
         expected.add(i++ + ". (ADD, T[0], T[1], T[1])");
         expected.add(i++ + ". (STORE, T[1], --, 'c')");
+        expected.add(i++ + ". (RETURN, --, --, --)");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
             Assert.assertEquals(expected.get(k++), quad.toString());
+            System.out.println(quad);
+        }
+    }
+    @Test
+    public void testInstanceof() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "class MyClass{" +
+                "   public int a(int i, String s){" +
+                "       System.out.println(s);" +
+                "       return i + 2;" +
+                "   }" +
+                "}" +
+                "" +
+                "public class MainClass{" +
+                "   public static void main (String[] args){" +
+                "       MyClass mc = new MyClass();" +
+                "       int c = 1;" +
+                "       if (mc instanceof MyClass){" +
+                "           c = 4 + c + mc.a(3, \"str\");" +
+                "       }" +
+                "       System.out.println(\"Well done!\");" +
+                "   }" +
+                "}"));
+        parser.parse();
+        List<String> expected = new LinkedList<String>();
+        int i = 1;
+        expected.add(i++ + ". (STORE, T[1], --, 'c')");
+        int k = 0;
+        List<Quad> code = parser.getByteCode();
+        for (Quad quad : code) {
+//            Assert.assertEquals(expected.get(k++), quad.toString());
             System.out.println(quad);
         }
     }

@@ -73,6 +73,12 @@ public class SemanticAnalyzer implements Analyzer {
                     resultType = variable.getValueType();
                     break;
                 }
+            } else if (candidate instanceof ClassEntry){
+                ClassEntry classEntry = (ClassEntry) candidate;
+                if(classEntry.getName().equals(name)){
+                    resultType = name;
+                    break;
+                }
             }
         }
         if (resultType == null) {

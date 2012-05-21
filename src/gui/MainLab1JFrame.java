@@ -10,6 +10,7 @@
  */
 package gui;
 
+import codegeneration.Quad;
 import la.Lexeme;
 import la.LexemeBuilder;
 import la.LexemeType;
@@ -18,6 +19,7 @@ import la.LexicalAnalyzerException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Scanner;
 import nametable.entries.Entry;
 
@@ -317,7 +319,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         logInfo(info);
     }
 
-    public void logInfo(String info) {
+    public void logInfo(Object info) {
         StringBuffer logText = new StringBuffer(logPane.getText());
         int insertionIndex = logText.indexOf("</body>");
         logText.insert(insertionIndex, "<div color='green'>"
@@ -345,6 +347,10 @@ public class MainLab1JFrame extends javax.swing.JFrame {
             Entry rootEntry = syntaxAnalyzer.getNameTable().get(0);
             programTree.setModel(new NameTableJTreeModel(rootEntry));
             logInfo("The syntax is correct");
+            List<Quad> quads = syntaxAnalyzer.getByteCode();
+            for (Quad quad : quads) {
+                logInfo(quad);
+            }
         } catch (Exception ex) {
             logError(ex.getMessage());
         }

@@ -205,7 +205,7 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public TemporaryEntry instanceofExpression(TemporaryEntry instanceType, TemporaryEntry classNameEntry) throws SemanticException {
         TemporaryEntry result = getAnalyzer().instanceofExpression(instanceType, classNameEntry);
-        result.addQuad(new Quad(Operation.INSTNCF, getLastQuadResult(instanceType), getLastQuadResult(classNameEntry),"T[" + maxTempVariableIndex++ + "]"));
+        result.addQuad(new Quad(Operation.INSTNCF, getLastQuadResult(instanceType), getLastQuadResult(classNameEntry), "T[" + maxTempVariableIndex++ + "]"));
         return result;
     }
 
@@ -404,8 +404,10 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public void mainMethodDeclaration(Entry innerBlock, Entry result) throws SemanticException {
         getAnalyzer().mainMethodDeclaration(innerBlock, result);
-        List<Quad> code = optimizeCode(innerBlock.getByteCode());
-        result.addAllQuads(code);
+        innerBlock.addQuad(new Quad(Operation.RETURN, null, null, null));
+        List<Quad> code = innerBlock.getByteCode();
+        code = optimizeCode(code);
+        result.addAllQuads(code) ;
     }
 
     @Override
