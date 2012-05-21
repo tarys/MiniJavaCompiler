@@ -523,17 +523,17 @@ reference_type                  ::= IDENTIFIER:name
                                         RESULT = parser.getAnalyzer().isClassDeclared(name);
                                     :};
 
-expression                      ::= expression:className STOP IDENTIFIER:fieldName
+expression                      ::= expression:classObject STOP IDENTIFIER:fieldName
                                   {:
-                                       RESULT = parser.getAnalyzer().fieldCallExpression(className, fieldName);
+                                       RESULT = parser.getAnalyzer().fieldCallExpression(classObject, fieldName);
                                   :}
-                                  | expression:className STOP IDENTIFIER:methodName LEFT_PARENTHESIS  RIGHT_PARENTHESIS
+                                  | expression:classObject STOP IDENTIFIER:methodName LEFT_PARENTHESIS  RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = parser.getAnalyzer().methodCallExpression(className, methodName);
+                                        RESULT = parser.getAnalyzer().methodCallExpression(classObject, methodName);
                                   :}
-                                  | expression:className STOP IDENTIFIER:methodName LEFT_PARENTHESIS actual_params_list:actualParameters  RIGHT_PARENTHESIS
+                                  | expression:classObject STOP IDENTIFIER:methodName LEFT_PARENTHESIS actual_params_list:actualParameters  RIGHT_PARENTHESIS
                                   {:
-                                        RESULT = parser.getAnalyzer().methodCallExpression(className, methodName, actualParameters);
+                                        RESULT = parser.getAnalyzer().methodCallExpression(classObject, methodName, actualParameters);
                                   :}
                                   | IDENTIFIER:methodName LEFT_PARENTHESIS  RIGHT_PARENTHESIS
                                   {:
