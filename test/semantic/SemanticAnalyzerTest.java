@@ -48,7 +48,7 @@ public class SemanticAnalyzerTest {
                 "}" +
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
-                "       MyClass s;" +
+                "       MyClass s = new MyClass();" +
                 "       s.d;" +
                 "   }" +
                 "}"));
@@ -68,7 +68,7 @@ public class SemanticAnalyzerTest {
                 "}" +
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
-                "       MyClass s;" +
+                "       MyClass s = new MyClass();" +
                 "       s.d();" +
                 "   }" +
                 "}"));
@@ -91,7 +91,7 @@ public class SemanticAnalyzerTest {
                 "}" +
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
-                "       MyClass s;" +
+                "       MyClass s = new MyClass();" +
                 "       s.d();" +
                 "   }" +
                 "}"));
@@ -114,7 +114,7 @@ public class SemanticAnalyzerTest {
                 "}" +
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
-                "       MyClass s;" +
+                "       MyClass s = new MyClass();" +
                 "       boolean b = s.d(3);" +
                 "   }" +
                 "}"));
@@ -133,7 +133,7 @@ public class SemanticAnalyzerTest {
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
                 "       boolean s;" +
-                "       int k;" +
+                "       int k = 1;" +
                 "       s = k;" +
                 "   }" +
                 "}"));

@@ -14,6 +14,7 @@ import java.util.ListIterator;
 public class CodeGenerator extends AnalyzerDecorator {
     private static int maxTempVariableIndex = 0;
     private Quad breakQuad;
+    private List<String> notInitializedEntities;
 
     private Object getLastQuadResult(Entry arg) {
         List<Quad> code = arg.getByteCode();
@@ -92,6 +93,7 @@ public class CodeGenerator extends AnalyzerDecorator {
     public CodeGenerator(Analyzer analyzer) {
         super(analyzer);
         maxTempVariableIndex = 0;
+        notInitializedEntities = new LinkedList<String>();
     }
 
     @Override
@@ -113,6 +115,9 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public TemporaryEntry identifierExpression(String name) throws SemanticException {
         TemporaryEntry result = getAnalyzer().identifierExpression(name);
+        if (notInitializedEntities.contains(name)) {
+            throw new SemanticException(SemanticException.ENTITY_DECLARED_BUT_NOT_INITIALIZED + "'" + name + "'");
+        }
         result.getByteCode().add(new Quad(Operation.CONST, null, null, "'" + name + "'"));
         return result;
     }
@@ -271,6 +276,12 @@ public class CodeGenerator extends AnalyzerDecorator {
     }
 
     @Override
+    public void assignmentStatement(String name) {
+        getAnalyzer().assignmentStatement(name);
+        notInitializedEntities.add(name);
+    }
+
+    @Override
     public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression, Entry result) throws SemanticException {
         assignmentStatement(name, expression);
         result.addAllQuads(expression.getByteCode());
@@ -280,6 +291,9 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public TemporaryEntry assignmentStatement(String name, TemporaryEntry expression) throws SemanticException {
         getAnalyzer().assignmentStatement(name, expression);
+        if (notInitializedEntities.contains(name)) {
+            notInitializedEntities.remove(name);
+        }
         Quad newQuad = new Quad(Operation.STORE, getLastQuadResult(expression), null, "'" + name + "'");
         if (maxTempVariableIndex > 0) {
             // decreace max index because we have saved value to memory
