@@ -211,7 +211,7 @@ public class SemanticAnalyzer implements Analyzer {
     @Override
     public TemporaryEntry methodCallExpression(String methodName) throws SemanticException {
         MethodEntry callMethod = lookUpDeclaredMethod(methodName);
-        return new TemporaryEntry(callMethod.getReturnType());
+        return new TemporaryEntry(callMethod);
     }
 
     @Override
@@ -375,12 +375,10 @@ public class SemanticAnalyzer implements Analyzer {
         return breakFlag;
     }
 
-    @Override
     public void methodDeclaration() throws SemanticException {
         checkNotUsedBreak();
     }
 
-    @Override
     public void methodDeclaration(String returnType, TemporaryEntry expression) throws SemanticException {
         checkNotUsedBreak();
         if (!returnType.equals(expression.getValueType())) {
@@ -453,5 +451,32 @@ public class SemanticAnalyzer implements Analyzer {
 
     @Override
     public void assignmentStatement(String name) {
+    }
+
+    public void methodDeclaration(Entry innerBlock, Entry result) throws SemanticException {
+        methodDeclaration(innerBlock);
+    }
+
+    public void methodDeclaration(String returnType, TemporaryEntry expression, Entry innerBlock, Entry result) throws SemanticException {
+        methodDeclaration(returnType, expression);
+    }
+
+    @Override
+    public void methodDeclaration(List<Entry> paramsList, Entry result) throws SemanticException {
+    }
+
+    @Override
+    public void methodDeclaration(List<Entry> paramsList, Entry innerBlock, Entry result) {
+    }
+
+    @Override
+    public void methodDeclaration(String returnType, List<Entry> paramsList, TemporaryEntry expression, Entry innerBlock) throws SemanticException {
+        methodDeclaration(returnType, expression);
+
+    }
+
+    @Override
+    public void methodDeclaration(String returnType, List<Entry> paramsList, TemporaryEntry expression, Entry innerBlock, Entry result) throws SemanticException {
+        methodDeclaration(returnType, expression);
     }
 }

@@ -184,16 +184,6 @@ public class AnalyzerDecorator implements Analyzer {
     }
 
     @Override
-    public void methodDeclaration() throws SemanticException {
-        getAnalyzer().methodDeclaration();
-    }
-
-    @Override
-    public void methodDeclaration(String returnType, TemporaryEntry expression) throws SemanticException {
-        getAnalyzer().methodDeclaration(returnType, expression);
-    }
-
-    @Override
     public TemporaryEntry charTypeExpression(Object value) {
         return getAnalyzer().charTypeExpression(value);
     }
@@ -255,11 +245,31 @@ public class AnalyzerDecorator implements Analyzer {
 
     @Override
     public void block(List<Entry> variablesEntriesList, List<Entry> statements, Entry result) {
-        getAnalyzer().block(variablesEntriesList,statements, result);
+        getAnalyzer().block(variablesEntriesList, statements, result);
     }
 
     @Override
     public void assignmentStatement(String name) {
         getAnalyzer().assignmentStatement(name);
+    }
+
+    @Override
+    public void methodDeclaration(List<Entry> paramsList, Entry result) throws SemanticException {
+        getAnalyzer().methodDeclaration(paramsList, result);
+    }
+
+    @Override
+    public void methodDeclaration(List<Entry> paramsList, Entry innerBlock, Entry result) {
+        getAnalyzer().methodDeclaration(paramsList, innerBlock, result);
+    }
+
+    @Override
+    public void methodDeclaration(String returnType, List<Entry> paramsList, TemporaryEntry expression, Entry result) throws SemanticException {
+        getAnalyzer().methodDeclaration(returnType, paramsList, expression, result);
+    }
+
+    @Override
+    public void methodDeclaration(String returnType, List<Entry> paramsList, TemporaryEntry expression, Entry innerBlock, Entry result) throws SemanticException {
+        getAnalyzer().methodDeclaration(returnType, paramsList, expression, innerBlock, result);
     }
 }

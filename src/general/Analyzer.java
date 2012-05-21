@@ -73,10 +73,6 @@ public interface Analyzer {
 
     void setNameTableBuilder(NameTableBuilder nameTableBuilder);
 
-    void methodDeclaration() throws SemanticException;
-
-    void methodDeclaration(String returnType, TemporaryEntry expression) throws SemanticException;
-
     TemporaryEntry charTypeExpression(Object value);
 
     TemporaryEntry stringTypeExpression(Object value);
@@ -104,4 +100,12 @@ public interface Analyzer {
     void block(List<Entry> variablesEntriesList, List<Entry> statements, Entry result);
 
     void assignmentStatement(String name);
+
+    void methodDeclaration(List<Entry> paramsList, Entry result) throws SemanticException;
+
+    void methodDeclaration(List<Entry> paramsList, Entry innerBlock, Entry result);
+
+    void methodDeclaration(String returnType, List<Entry> paramsList, TemporaryEntry expression, Entry result) throws SemanticException;
+
+    void methodDeclaration(String returnType, List<Entry> paramsList, TemporaryEntry expression, Entry innerBlock, Entry result) throws SemanticException;
 }

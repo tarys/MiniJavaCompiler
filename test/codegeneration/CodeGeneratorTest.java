@@ -181,6 +181,7 @@ public class CodeGeneratorTest {
             System.out.println(quad);
         }
     }
+
     @Test
     public void testNew() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
@@ -204,6 +205,7 @@ public class CodeGeneratorTest {
             System.out.println(quad);
         }
     }
+
     @Test
     public void testNotInitialized() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
@@ -224,6 +226,7 @@ public class CodeGeneratorTest {
         }
 
     }
+
     @Test
     public void testFieldCall() throws Exception {
         LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
@@ -247,6 +250,35 @@ public class CodeGeneratorTest {
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
             Assert.assertEquals(expected.get(k++), quad.toString());
+            System.out.println(quad);
+        }
+    }
+
+    @Test
+    public void testMethodCall() throws Exception {
+        LR1Analyzer parser = new LR1Analyzer(new LexicalAnalyzer("" +
+                "public class MainClass{" +
+                "   public int a(int i, String s){" +
+                "       System.out.println(s);" +
+                "       return i + 2;" +
+                "   }" +
+                "" +
+                "   public static void main (String[] args){" +
+                "       int c = 1;" +
+                "       c = 4 + c + a();" +
+                "   }" +
+                "}"));
+        parser.parse();
+        List<String> expected = new LinkedList<String>();
+        int i = 1;
+        expected.add(i++ + ". (OBJ, MyClass, --, T[0])");
+        expected.add(i++ + ". (STORE, T[0], --, 'mc')");
+        expected.add(i++ + ". (FCALL, 'mc', a, T[0])");
+        expected.add(i++ + ". (STORE, T[0], --, 'b')");
+        int k = 0;
+        List<Quad> code = parser.getByteCode();
+        for (Quad quad : code) {
+//            Assert.assertEquals(expected.get(k++), quad.toString());
             System.out.println(quad);
         }
     }

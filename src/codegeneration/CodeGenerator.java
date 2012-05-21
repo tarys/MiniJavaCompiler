@@ -216,18 +216,23 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry methodCallExpression(String methodName) throws SemanticException {
-        return getAnalyzer().methodCallExpression(methodName);
+        TemporaryEntry result = getAnalyzer().methodCallExpression(methodName);
+        Quad methodCall = new Quad(Operation.MCALL, "THIS", methodName, "T[" + maxTempVariableIndex++ + "]");
+        Quad returnQuad = new Quad(Operation.PUSH, methodCall, null, null);
+        result.addQuad(returnQuad);
+        result.addQuad(methodCall);
+        return result;
     }
 
     @Override
     public TemporaryEntry methodCallExpression(TemporaryEntry classObject, String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
-        return getAnalyzer().methodCallExpression(classObject, methodName, actualParameters);
+        TemporaryEntry temporaryEntry = getAnalyzer().methodCallExpression(classObject, methodName, actualParameters);
+        return temporaryEntry;
     }
 
     @Override
     public TemporaryEntry methodCallExpression(TemporaryEntry classObject, String methodName) throws SemanticException {
-        TemporaryEntry result = getAnalyzer().methodCallExpression(classObject, methodName);
-        return result;
+        return methodCallExpression(classObject, methodName, new LinkedList<TemporaryEntry>());
     }
 
     @Override
@@ -304,16 +309,6 @@ public class CodeGenerator extends AnalyzerDecorator {
     }
 
     @Override
-    public void methodDeclaration() throws SemanticException {
-        getAnalyzer().methodDeclaration();
-    }
-
-    @Override
-    public void methodDeclaration(String returnType, TemporaryEntry expression) throws SemanticException {
-        getAnalyzer().methodDeclaration(returnType, expression);
-    }
-
-    @Override
     public TemporaryEntry charTypeExpression(Object value) {
         return generateConstCode(value, getAnalyzer().charTypeExpression(value));
     }
@@ -354,7 +349,8 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public Entry methodCallStatement(TemporaryEntry expression) {
-        return super.methodCallStatement(expression);    //To change body of overridden methods use File | Settings | File Templates.
+        getAnalyzer().methodCallStatement(expression);
+        return expression;
     }
 
     @Override
@@ -377,11 +373,6 @@ public class CodeGenerator extends AnalyzerDecorator {
             List<Quad> code = block.getByteCode();
             code.addAll(statement.getByteCode());
         }
-    }
-
-    @Override
-    public void methodDeclaration(Entry innerBlock) throws SemanticException {
-        getAnalyzer().methodDeclaration(innerBlock);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     @Override

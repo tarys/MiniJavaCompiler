@@ -314,7 +314,7 @@ method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:na
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, returnType, paramsList, innerBlock);
-                                        parser.getAnalyzer().methodDeclaration(returnType, expression, innerBlock);
+                                        parser.getAnalyzer().methodDeclaration(returnType, paramsList, expression, innerBlock, RESULT);
                                    :}
                                   | PUBLIC_KEYWORD type:returnType IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
@@ -322,7 +322,7 @@ method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:na
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, returnType, paramsList);
-                                        parser.getAnalyzer().methodDeclaration(returnType, expression);
+                                        parser.getAnalyzer().methodDeclaration(returnType, paramsList, expression, RESULT);
                                    :}
                                   | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
@@ -330,18 +330,21 @@ method_declaration              ::= PUBLIC_KEYWORD type:returnType IDENTIFIER:na
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, "void", paramsList, innerBlock);
-                                        parser.getAnalyzer().methodDeclaration(innerBlock);
+                                        parser.getAnalyzer().methodDeclaration(paramsList, innerBlock, RESULT);
                                    :}
                                   | PUBLIC_KEYWORD VOID_KEYWORD IDENTIFIER:name method_params_declaration:paramsList
                                     LEFT_FIG_PARENTHESIS
                                     RIGHT_FIG_PARENTHESIS
                                    {:
                                         RESULT = parser.getNameTableBuilder().declareMethod(name, "void", paramsList);
-                                        parser.getAnalyzer().methodDeclaration();
+                                        parser.getAnalyzer().methodDeclaration(paramsList, RESULT);
                                    :}
                                   ;
 
 method_params_declaration       ::= LEFT_PARENTHESIS RIGHT_PARENTHESIS
+                                    {:
+                                        RESULT = new LinkedList<Entry>();
+                                    :}
                                   | LEFT_PARENTHESIS params_list_declaration:paramsList RIGHT_PARENTHESIS
                                     {:
                                         RESULT = paramsList;

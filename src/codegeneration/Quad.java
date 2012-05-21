@@ -58,20 +58,28 @@ public class Quad {
         String operationString = operation.equals(Operation.BRBACK) ? "BR" : operation.toString();
         Object arg1String = "--";
         if (argument1 != null) {
-            if (operation.equals(Operation.BR)) {
-                arg1String = "<" + (((Quad) argument1).getQuadNumber() + 1) + ">";
-            } else if (operation.equals(Operation.BRBACK)) {
-                arg1String = "<" + (((Quad) argument1).getQuadNumber()) + ">";
-            } else {
-                arg1String = argument1;
+            switch (operation) {
+                case BR:
+                    arg1String = "<" + (((Quad) argument1).getQuadNumber() + 1) + ">";
+                    break;
+                case BRBACK:
+                    arg1String = "<" + (((Quad) argument1).getQuadNumber()) + ">";
+                    break;
+                case PUSH:
+                    arg1String = "<" + (((Quad) argument1).getQuadNumber() + 1) + ">";
+                    break;
+                default:
+                    arg1String = argument1;
             }
         }
         Object arg2String = "--";
         if (argument2 != null) {
-            if (operation.equals(Operation.BZ)) {
-                arg2String = "<" + (((Quad) argument2).getQuadNumber() + 1) + ">";
-            } else {
-                arg2String = argument2;
+            switch (operation) {
+                case BZ:
+                    arg2String = "<" + (((Quad) argument2).getQuadNumber() + 1) + ">";
+                    break;
+                default:
+                    arg2String = argument2;
             }
         }
         Object resultString = "--";
