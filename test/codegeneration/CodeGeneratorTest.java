@@ -41,8 +41,8 @@ public class CodeGeneratorTest {
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
-            System.out.println(quad);
             Assert.assertEquals(expected.get(k++), quad.toString());
+            System.out.println(quad);
         }
     }
 
@@ -70,8 +70,8 @@ public class CodeGeneratorTest {
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
-            System.out.println(quad);
             Assert.assertEquals(expected.get(k++), quad.toString());
+            System.out.println(quad);
         }
     }
 
@@ -93,8 +93,8 @@ public class CodeGeneratorTest {
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
-            System.out.println(quad);
             Assert.assertEquals(expected.get(k++), quad.toString());
+            System.out.println(quad);
         }
     }
 
@@ -120,21 +120,24 @@ public class CodeGeneratorTest {
         parser.parse();
         List<String> expected = new LinkedList<String>();
         int i = 1;
-        expected.add(i++ + ". (BZ, true, <5>, --)");
+        expected.add(i++ + ". (LE, 2, 1, T[0])");
+        expected.add(i++ + ". (AND, false, T[0], T[1])");
+        expected.add(i++ + ". (OR, true, T[1], T[2])");
+        expected.add(i++ + ". (BZ, T[2], <8>, --)");
         expected.add(i++ + ". (STORE, true, --, 'b')");
         expected.add(i++ + ". (STORE, true, --, 'b2')");
-        expected.add(i++ + ". (BR, <7>, --, --)");
+        expected.add(i++ + ". (BR, <10>, --, --)");
         expected.add(i++ + ". (STORE, 1, --, 'a')");
         expected.add(i++ + ". (STORE, 1, --, 'ab')");
-        expected.add(i++ + ". (BZ, false, <11>, --)");
+        expected.add(i++ + ". (BZ, false, <14>, --)");
         expected.add(i++ + ". (STORE, \"123\", --, 's1')");
         expected.add(i++ + ". (STORE, \"123\", --, 's2')");
         expected.add(i++ + ". (STORE, \"123\", --, 's3')");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
+            Assert.assertEquals(expected.get(k++), quad.toString());
             System.out.println(quad);
-//            Assert.assertEquals(expected.get(k++), quad.toString());
         }
     }
 
@@ -144,7 +147,7 @@ public class CodeGeneratorTest {
                 "public class MainClass{" +
                 "   public static void main (String[] args){" +
                 "       boolean k = false;" +
-                "       while(true || false && true){" +
+                "       while(true || false && true || false){" +
                 "           int i = 2;" +
                 "       }" +
                 "   }" +
@@ -155,14 +158,15 @@ public class CodeGeneratorTest {
         expected.add(i++ + ". (STORE, false, --, 'k')");
         expected.add(i++ + ". (AND, false, true, T[0])");
         expected.add(i++ + ". (OR, true, T[0], T[1])");
-        expected.add(i++ + ". (BZ, T[1], <6>, --)");
+        expected.add(i++ + ". (OR, T[1], false, T[2])");
+        expected.add(i++ + ". (BZ, T[2], <8>, --)");
         expected.add(i++ + ". (STORE, 2, --, 'i')");
         expected.add(i++ + ". (BR, <2>, --, --)");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
+            Assert.assertEquals(expected.get(k++), quad.toString());
             System.out.println(quad);
-//            Assert.assertEquals(expected.get(k++), quad.toString());
         }
     }
 }

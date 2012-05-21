@@ -8,11 +8,12 @@ import semantic.SemanticException;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class CodeGenerator extends AnalyzerDecorator {
     private static int maxTempVariableIndex = 0;
 
-    private Object getLastQuadResult(TemporaryEntry arg) {
+    private Object getLastQuadResult(Entry arg) {
         List<Quad> code = arg.getByteCode();
         Quad lastQuad = code.get(code.size() - 1);
         return lastQuad.getResult();
@@ -34,13 +35,53 @@ public class CodeGenerator extends AnalyzerDecorator {
     private List<Quad> optimizeCode(List<Quad> byteCode) {
         List<Quad> result = new LinkedList<Quad>();
         int quadCount = 0;
-        for (Quad quad : byteCode) {
+        ListIterator<Quad> iterator = byteCode.listIterator();
+        while (iterator.hasNext()) {
+            Quad quad = iterator.next();
             switch (quad.getOperation()) {
                 case CONST:
+                    List<Quad> linkQuads = findLinksInQuads(quad, byteCode);
+                    if (!linkQuads.isEmpty() && iterator.hasNext()) {
+                        Quad followingQuad = iterator.next();
+                        correctLinksInQuads(followingQuad, linkQuads);
+                        if (iterator.hasPrevious()) {
+                            iterator.previous();
+                        }
+                    }
                     break;
                 default:
                     quad.setQuadNumber(++quadCount);
                     result.add(quad);
+            }
+        }
+        return result;
+    }
+
+    private void correctLinksInQuads(Quad followingQuad, List<Quad> byteCode) {
+        for (Quad inputQuad : byteCode) {
+            if (inputQuad.getOperation().equals(Operation.BZ)) {
+                inputQuad.setArgument2(followingQuad);
+            } else if (inputQuad.getOperation().equals(Operation.BR)
+                    || inputQuad.getOperation().equals(Operation.BRBACK)) {
+                inputQuad.setArgument1(followingQuad);
+            }
+        }
+    }
+
+    private List<Quad> findLinksInQuads(Quad quad, List<Quad> byteCode) {
+        List<Quad> result = new LinkedList<Quad>();
+        for (Quad inputQuad : byteCode) {
+            if (inputQuad.getOperation().equals(Operation.BZ)) {
+                Quad candidate = (Quad) inputQuad.getArgument2();
+                if (candidate.equals(quad)) {
+                    result.add(inputQuad);
+                }
+            } else if (inputQuad.getOperation().equals(Operation.BR)
+                    || inputQuad.getOperation().equals(Operation.BRBACK)) {
+                Quad candidate = (Quad) inputQuad.getArgument1();
+                if (candidate.equals(quad)) {
+                    result.add(inputQuad);
+                }
             }
         }
         return result;
@@ -191,9 +232,11 @@ public class CodeGenerator extends AnalyzerDecorator {
         Quad firstConditionQuad = conditionExpression.getByteCode().get(0);
         Quad lastInnerQuad = innerCode.get(innerCode.size() - 1);
         result.addAllQuads(conditionExpression.getByteCode());
-        result.addQuad(new Quad(Operation.BZ, getLastQuadResult(conditionExpression), lastInnerQuad, null));
+        Quad returnToConditionQuad = new Quad(Operation.BRBACK, firstConditionQuad, null, null);
+        Quad exitWhileQuad = new Quad(Operation.BZ, getLastQuadResult(conditionExpression), returnToConditionQuad, null);
+        result.addQuad(exitWhileQuad);
         result.addAllQuads(innerBlock.getByteCode());
-        result.addQuad(new Quad(Operation.BRBACK, firstConditionQuad, null, null));
+        result.addQuad(returnToConditionQuad);
     }
 
     @Override
