@@ -62,6 +62,8 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         syntaxAnalysButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         programTree = new javax.swing.JTree(new NameTableJTreeModel(null));
+        jScrollPane4 = new javax.swing.JScrollPane();
+        quadTextPane = new javax.swing.JTextPane();
         mainMenuBar = new javax.swing.JMenuBar();
         mainMenu = new javax.swing.JMenu();
         getLexemeMenuItem = new javax.swing.JMenuItem();
@@ -79,7 +81,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         sourceCodeArea.setLineWrap(true);
         sourceCodeArea.setRows(5);
         sourceCodeArea.setTabSize(4);
-        sourceCodeArea.setText("class ClassBefore{\n   public String field1 = \"str\";\n   public int method1(byte b, char c, String str){\n       b = 'c';\n       if (true){\n           String str = \"\";\n           int i = System.in.read();\n       }\n       System.out.println(1);\n       return b;\n   }\n}\npublic class MainClass{\n   public boolean f1 = -3.4028235E+38;\n   public String f2 = true||false;\n   public static void main (String[] args){\n       int c = -15;\n       System.out.println(\"Hello, world!\");\n   }\n}\nclass ClassAfter1{\n   public boolean field1 = true;\n}\nclass ClassAfter2{\n   public void method1(ClassAfter2 arg){\n       String str;\n       boolean b2 = 1;\n       int i = System.in.read();\n       while(1>0){\n           char c = -2147483647;\n           if((true && false) || false){\n               System.out.println(\"Hello, world!\");\n           }\n       }\n   }\n}");
+        sourceCodeArea.setText("class ClassBefore{\n   public String field1 = \"str\";\n   public int method1(int c, String str){\n       if (true){\n           String i = System.in.read();\n           System.out.println(i);           \n       }\n       str = \"\";\n       return 10 + c*3;\n   }\n}\npublic class MainClass{\n   public float f1 = -3.4028235E+38;\n   public boolean f2 = true||false;\n   public static void main (String[] args){\n       ClassBefore cb = new ClassBefore();       \n       int c = cb.method1(100, \"Hello!\");\n       System.out.println(\"Hello, world!\");\n   }\n}");
         sourceCodeArea.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 sourceCodeAreaCaretUpdate(evt);
@@ -162,7 +164,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
                 .addComponent(syntaxAnalysButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(179, Short.MAX_VALUE))
+                .addContainerGap(311, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
@@ -175,6 +177,8 @@ public class MainLab1JFrame extends javax.swing.JFrame {
         );
 
         jScrollPane2.setViewportView(programTree);
+
+        jScrollPane4.setViewportView(quadTextPane);
 
         mainMenu.setText("Menu");
 
@@ -222,15 +226,19 @@ public class MainLab1JFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane4)
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
 
@@ -347,11 +355,16 @@ public class MainLab1JFrame extends javax.swing.JFrame {
             Entry rootEntry = syntaxAnalyzer.getNameTable().get(0);
             programTree.setModel(new NameTableJTreeModel(rootEntry));
             logInfo("The syntax is correct");
+            StringBuffer quadStringBuffer = new StringBuffer();
             List<Quad> quads = syntaxAnalyzer.getByteCode();
             for (Quad quad : quads) {
-                logInfo(quad);
+               quadStringBuffer.append(quad); 
+               quadStringBuffer.append("\n"); 
             }
+            quadTextPane.setText(quadStringBuffer.toString());
         } catch (Exception ex) {
+            programTree.setModel(null);
+            quadTextPane.setText("");
             logError(ex.getMessage());
         }
     }
@@ -404,6 +417,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JComboBox lexemeTypeComboBox;
     private la.LexicalAnalyzer lexicalAnalyzer;
@@ -413,6 +427,7 @@ public class MainLab1JFrame extends javax.swing.JFrame {
     private javax.swing.JMenu mainMenu;
     private javax.swing.JMenuBar mainMenuBar;
     private javax.swing.JTree programTree;
+    private javax.swing.JTextPane quadTextPane;
     private javax.swing.JTextArea sourceCodeArea;
     private javax.swing.JButton syntaxAnalysButton;
     // End of variables declaration//GEN-END:variables

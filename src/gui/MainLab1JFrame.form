@@ -82,18 +82,23 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jScrollPane2" pref="311" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+              <Component id="jScrollPane4" min="-2" pref="236" max="-2" attributes="0"/>
+              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+              <Component id="jScrollPane2" pref="127" max="32767" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane2" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="jScrollPane4" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" max="32767" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -150,7 +155,7 @@
                   <Component id="syntaxAnalysButton" min="-2" pref="23" max="-2" attributes="0"/>
                   <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                   <Component id="exitButton" min="-2" pref="23" max="-2" attributes="0"/>
-                  <EmptySpace pref="179" max="32767" attributes="0"/>
+                  <EmptySpace pref="311" max="32767" attributes="0"/>
               </Group>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
@@ -180,7 +185,7 @@
                 <Property name="lineWrap" type="boolean" value="true"/>
                 <Property name="rows" type="int" value="5"/>
                 <Property name="tabSize" type="int" value="4"/>
-                <Property name="text" type="java.lang.String" value="class ClassBefore{&#xa;   public String field1 = &quot;str&quot;;&#xa;   public int method1(byte b, char c, String str){&#xa;       b = &apos;c&apos;;&#xa;       if (true){&#xa;           String str = &quot;&quot;;&#xa;           int i = System.in.read();&#xa;       }&#xa;       System.out.println(1);&#xa;       return b;&#xa;   }&#xa;}&#xa;public class MainClass{&#xa;   public boolean f1 = -3.4028235E+38;&#xa;   public String f1 = true||false;&#xa;   public static void main (String[] args){&#xa;       int c = -15;&#xa;       System.out.println(&quot;Hello, world!&quot;);&#xa;   }&#xa;}&#xa;class ClassAfter1{&#xa;   public boolean field1 = true;&#xa;}&#xa;class ClassAfter2{&#xa;   public void method1(ClassAfter2 arg){&#xa;       String str;&#xa;       boolean b2 = 1;&#xa;       int i = System.in.read();&#xa;       while(1&gt;0){&#xa;           char c = -2147483647;&#xa;           if((true &amp;&amp; false) || false){&#xa;               System.out.println(&quot;Hello, world!&quot;);&#xa;           }&#xa;       }&#xa;       return;&#xa;   }&#xa;}"/>
+                <Property name="text" type="java.lang.String" value="class ClassBefore{&#xa;   public String field1 = &quot;str&quot;;&#xa;   public int method1(int c, String str){&#xa;       if (true){&#xa;           String i = System.in.read();&#xa;           System.out.println(i);           &#xa;       }&#xa;       str = &quot;&quot;;&#xa;       return 10 + c*3;&#xa;   }&#xa;}&#xa;public class MainClass{&#xa;   public float f1 = -3.4028235E+38;&#xa;   public boolean f2 = true||false;&#xa;   public static void main (String[] args){&#xa;       ClassBefore cb = new ClassBefore();       &#xa;       int c = cb.method1(100, &quot;Hello!&quot;);&#xa;       System.out.println(&quot;Hello, world!&quot;);&#xa;   }&#xa;}"/>
               </Properties>
               <Events>
                 <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="sourceCodeAreaCaretUpdate"/>
@@ -259,6 +264,17 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTree(new NameTableJTreeModel(null))"/>
           </AuxValues>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane4">
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTextPane" name="quadTextPane">
         </Component>
       </SubComponents>
     </Container>
