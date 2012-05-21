@@ -187,7 +187,13 @@ public class CodeGenerator extends AnalyzerDecorator {
     @Override
     public void whileStatement(TemporaryEntry conditionExpression, Entry innerBlock, Entry result) throws SemanticException {
         getAnalyzer().whileStatement(conditionExpression, innerBlock, result);
-
+        List<Quad> innerCode = innerBlock.getByteCode();
+        Quad firstConditionQuad = conditionExpression.getByteCode().get(0);
+        Quad lastInnerQuad = innerCode.get(innerCode.size() - 1);
+        result.addAllQuads(conditionExpression.getByteCode());
+        result.addQuad(new Quad(Operation.BZ, getLastQuadResult(conditionExpression), lastInnerQuad, null));
+        result.addAllQuads(innerBlock.getByteCode());
+        result.addQuad(new Quad(Operation.BRBACK, firstConditionQuad, null, null));
     }
 
     @Override
@@ -195,6 +201,7 @@ public class CodeGenerator extends AnalyzerDecorator {
         getAnalyzer().ifStatement(conditionExpression, thenBlock, elseBlock, result);
         List<Quad> thenCode = thenBlock.getByteCode();
         Quad lastThenQuad = thenCode.get(thenCode.size() - 1);
+        result.addAllQuads(conditionExpression.getByteCode());
         Quad ifFalseQuad = new Quad(Operation.BZ, getLastQuadResult(conditionExpression), lastThenQuad, null);
         result.addQuad(ifFalseQuad);
         result.addAllQuads(thenCode);

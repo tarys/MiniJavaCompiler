@@ -17,14 +17,6 @@ public class Quad {
         this.quadNumber = totalQuadCount++;
     }
 
-    public static int getTotalQuadCount() {
-        return totalQuadCount;
-    }
-
-    public static void setTotalQuadCount(int totalQuadCount) {
-        Quad.totalQuadCount = totalQuadCount;
-    }
-
     public int getQuadNumber() {
         return quadNumber;
     }
@@ -63,10 +55,13 @@ public class Quad {
 
     @Override
     public String toString() {
+        String operationString = operation.equals(Operation.BRBACK) ? "BR" : operation.toString();
         Object arg1String = "--";
         if (argument1 != null) {
             if (operation.equals(Operation.BR)) {
                 arg1String = "<" + (((Quad) argument1).getQuadNumber() + 1) + ">";
+            } else if (operation.equals(Operation.BRBACK)) {
+                arg1String = "<" + (((Quad) argument1).getQuadNumber()) + ">";
             } else {
                 arg1String = argument1;
             }
@@ -83,7 +78,7 @@ public class Quad {
         if (result != null) {
             resultString = result;
         }
-        return quadNumber + ". (" + operation +
+        return quadNumber + ". (" + operationString +
                 ", " + arg1String +
                 ", " + arg2String +
                 ", " + resultString +
