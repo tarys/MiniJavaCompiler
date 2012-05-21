@@ -72,6 +72,13 @@ public class Quad {
                         arg1String = argument1.toString();
                     }
                     break;
+                case RETURN:
+                    if (argument1 instanceof Quad) {
+                        arg1String = "<" + (((Quad) argument1).getQuadNumber()) + ">";
+                    } else {
+                        arg1String = argument1.toString();
+                    }
+                    break;
                 default:
                     arg1String = argument1.toString();
             }

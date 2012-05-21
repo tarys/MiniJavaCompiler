@@ -209,24 +209,28 @@ public class CodeGenerator extends AnalyzerDecorator {
 
     @Override
     public TemporaryEntry methodCallExpression(String methodName, List<TemporaryEntry> actualParameters) throws SemanticException {
-        return getAnalyzer().methodCallExpression(methodName, actualParameters);
+        TemporaryEntry result = getAnalyzer().methodCallExpression(methodName, actualParameters);
+        MethodEntry method = result.getCallMethod();
+        if ((method != null)) {
+            Quad methodCall = new Quad(Operation.MCALL, "THIS", methodName, null);
+            Quad returnQuad = new Quad(Operation.RETURN, null, null, null);
+            ListIterator<TemporaryEntry> iterator = actualParameters.listIterator(actualParameters.size());
+            while (iterator.hasPrevious()) {
+                result.addQuad(new Quad(Operation.PUSH, getLastQuadResult(iterator.previous()), null, null));
+            }
+            result.addQuad(methodCall);
+            result.addAllQuads(method.getByteCode());
+            Quad popQuad = new Quad(Operation.POP, null, null, "T[" + maxTempVariableIndex + "]");
+            returnQuad.setArgument1(popQuad);
+            result.addQuad(returnQuad);
+            result.addQuad(popQuad);
+        }
+        return result;
     }
 
     @Override
     public TemporaryEntry methodCallExpression(String methodName) throws SemanticException {
-        TemporaryEntry result = getAnalyzer().methodCallExpression(methodName);
-        MethodEntry method = result.getCallMethod();
-        if ((method != null)) {
-            Quad methodCall = new Quad(Operation.MCALL, "THIS", methodName, "T[" + maxTempVariableIndex++ + "]");
-            Quad pushQuad = new Quad(Operation.PUSH, methodCall, null, null);
-            Quad returnQuad = new Quad(Operation.RETURN, methodCall, null, null);
-            result.addQuad(pushQuad);
-            result.addQuad(methodCall);
-            result.addAllQuads(method.getByteCode());
-            result.addQuad(returnQuad);
-        }
-
-        return result;
+        return this.methodCallExpression(methodName, new LinkedList<TemporaryEntry>());
     }
 
     @Override

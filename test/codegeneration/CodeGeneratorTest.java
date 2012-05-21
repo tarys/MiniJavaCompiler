@@ -271,14 +271,26 @@ public class CodeGeneratorTest {
         parser.parse();
         List<String> expected = new LinkedList<String>();
         int i = 1;
-        expected.add(i++ + ". (OBJ, MyClass, --, T[0])");
-        expected.add(i++ + ". (STORE, T[0], --, 'mc')");
-        expected.add(i++ + ". (FCALL, 'mc', a, T[0])");
-        expected.add(i++ + ". (STORE, T[0], --, 'b')");
+        expected.add(i++ + ". (STORE, 1, --, 'c')");
+        expected.add(i++ + ". (ADD, 4, 'c', T[0])");
+        expected.add(i++ + ". (PUSH, \"str\", --, --)");
+        expected.add(i++ + ". (PUSH, 3, --, --)");
+        expected.add(i++ + ". (MCALL, THIS, a, --)");
+        expected.add(i++ + ". (POP, --, --, T[1])");
+        expected.add(i++ + ". (STORE, T[1], --, 'i')");
+        expected.add(i++ + ". (POP, --, --, T[1])");
+        expected.add(i++ + ". (STORE, T[1], --, 's')");
+        expected.add(i++ + ". (PRINTLN, 's', --, --)");
+        expected.add(i++ + ". (ADD, 'i', 2, T[0])");
+        expected.add(i++ + ". (PUSH, T[0], --, --)");
+        expected.add(i++ + ". (RETURN, <14>, --, --)");
+        expected.add(i++ + ". (POP, --, --, T[1])");
+        expected.add(i++ + ". (ADD, T[0], T[1], T[1])");
+        expected.add(i++ + ". (STORE, T[1], --, 'c')");
         int k = 0;
         List<Quad> code = parser.getByteCode();
         for (Quad quad : code) {
-//            Assert.assertEquals(expected.get(k++), quad.toString());
+            Assert.assertEquals(expected.get(k++), quad.toString());
             System.out.println(quad);
         }
     }
